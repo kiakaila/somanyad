@@ -1,45 +1,22 @@
 extends index
 
 block domains-content
-  .row
-    .col-sm-3
-      h2 Domains
-      .btn-group-vertical
-        button.btn.btn-success Actives
-        button.btn.btn-warning Unverified
-        button.btn.btn-danger Disabled
-        
-    .col-sm-8#domains-content-right-content
-      br
-      .row
-        .col-sm-3
-          a(href="/domains/addNewDomain").btn.btn-default Add New Domain
-        .col-sm-9
-          .pull-right
-            input(type="text", placeholder="Search")
-      .dangers #{error}
-      br
-      .row
-        .col-sm-2
-          h2 index
-        .col-sm-2
-          h2 status
-        .col-sm-3
-          h2 forward          
-        .col-sm-2
-          h2 setup
-        .col-sm-3
-          h2 domain
-
+  table.table.table-striped.table-hover
+    thead
+      tr
+        th #
+        th status
+        th forward
+        th domain
+        th action
+    tbody
       for domain, idx in domains
-        .row
-          .col-sm-2
-            h2 #{idx}
-          .col-sm-2
-            h2 #{domain.status}
-          .col-sm-3
-            h2 #{domain.forward_email}
-          .col-sm-2        
-            a(href="/domains/setup?domain=" + domain.domain).btn.btn-default setup            
-          .col-sm-3
-            h2 #{domain.domain}
+        tr
+          td #{idx}
+          td #{domain.status}
+          td #{domain.forward_email}
+          td #{domain.domain}
+          td 
+            a(href="/domains/setup?domain=" + domain.domain).btn.btn-primary.btn-xs setup            
+  a(href="/domains/addNewDomain").btn.btn-success Add New Domain
+  .dangers #{error}
