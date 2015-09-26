@@ -1,13 +1,13 @@
 extends index
 
 block domains-content
-  .row
-    .col-sm-8
-      h2 Add Your Domain
-      form(action="/domains/addNewDomain", method="post")
-        input(type='hidden', name='_csrf', value=_csrf)
-        .input-group
-          input.form-control(type="text", placeholder="mydomain.com", name="domain")
-          span.input-group-btn
-            button.btn.btn-success(type="submit") Add Domain
-            a.btn.btn-warning(href="/domains/") Cancel
+  form.form-horizontal(action="/domains/addNewDomain", method="post")
+    input(type='hidden', name='_csrf', value=_csrf)
+    .form-group
+      label.col-lg-2.control-label(for='domain') 域名
+      .col-lg-10
+        input.form-control(type="text", placeholder="mydomain.com", name="domain")
+    .form-group
+      .col-lg-10.col-lg-offset-2
+        button.btn.btn-default(type='reset') 取消
+        button.btn.btn-primary(type='submit') 提交

@@ -1,0 +1,9 @@
+extends index
+
+block domains-content
+  form(action="/domains/addNewDomain", method="post")
+    input(type='hidden', name='_csrf', value=_csrf)
+    .form-group
+      label.control-label(for='domain') 将#{domain}收到的邮件转发到
+      input.form-control(type="text", placeholder="your-email@host.com", name="email_forword")
+    button.btn.btn-primary(type='submit') 提交

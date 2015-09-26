@@ -6,17 +6,15 @@ block content
     .col-md-3
       ul.nav.nav-pills.nav-stacked
         li(class=active_item=="domains" ? "active": "")
-          a(href="/domains/") Domains
-        li(class=active_item=="emails" ? "active": "")
-          a(href="/domains/emails") Emails
+          a(href="/domains/") 域名
         li(class=active_item=="forward" ? "active": "")
-          a(href="/domains/forward") Forward
+          a(href="/domains/forward") 转发策略
         li(class=active_item=="tongji" ? "active": "")
-          a(href="/domains/tongji") Tracking
+          a(href="/domains/tongji") 统计
     .col-md-9
       ul.breadcrumb
         li
-          a(href="#") Home
-        li.active Domains
+          a(href="#") 首页
+        li.active 域名  
           
       block domains-content

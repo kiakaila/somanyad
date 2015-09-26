@@ -119,6 +119,7 @@ app.get('/domains/tongji', passportConf.isAuthenticated, domainsController.tongj
 app.get("/domains/addNewDomain", passportConf.isAuthenticated, domainsController.addNewDomain);
 app.post("/domains/addNewDomain", passportConf.isAuthenticated, domainsController.addNewDomain_post);
 app.get("/domains/newDomainSetup", passportConf.isAuthenticated, domainsController.newDomainSetup);
+app.get("/domains/newDomainSetup2", passportConf.isAuthenticated, domainsController.newDomainSetup2);
 app.get("/domains/api_cnameVerifyStatus", passportConf.isAuthenticated, domainsController.api_cnameVerifyStatus);
 app.get("/domains/api_mxVerifyStatus", passportConf.isAuthenticated, domainsController.api_mxVerifyStatus);
 app.get("/domains/setupForwardTo", passportConf.isAuthenticated, domainsController.setupForwardTo);

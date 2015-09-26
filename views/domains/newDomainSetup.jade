@@ -2,41 +2,33 @@ extends index
 
 block domains-content
 
-  h3 And add DNS Records to Identify domain owner
+  h3 第一步：给您的域名设置一个CNAME记录
   
   table.table.table-striped.table-hover
     thead
       tr
-        th Type
-        th Hostname
-        th Enter This Value
-        th Status
+        th 类型 Type
+        th 子域名 Hostname
+        th 指向
       tr
         th CNAME
         th #{cname}
         th #{cnamePointTo}
-        th cnameVerifyStatus: xxxxx
         
-  h3 Please add mx record for domain #{domain} like the following:
-  
+  h3 第二步：设置MX记录
+        
   table.table.table-striped.table-hover
     thead
       tr
-        th Type
-        th Priority
-        th Enter This Value
-        th Status
+        th 类型 Type
+        th 优先级 Priority
+        th 指向
     tbody
       for mailServer in mailServers
         tr
           td MX
           td 10
           td #{mailServer}
-          td mxVerifyStatus: xxxx
   
-  a(onclick="location.reload()").btn.btn-success Verify
-  a(href="/domains/setupForwardTo?domain=#{domain}").btn.btn-success Next(after Verify)
-  p cname Verify api: 
-  p /domains/api_cnameVerifyStatus?domain=#{domain}
-  p mx Verify api: 
-  p /domains/api_mxVerifyStatus?domain=#{domain}
+  a(href='/domains/newDomainSetup2?domain=#{domain}').btn.btn-success 下一步 
+    i.fa.fa-arrow-right

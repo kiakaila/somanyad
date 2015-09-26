@@ -19,3 +19,15 @@ exports.addNewDomain = domains.addNewDomain;
 exports.addNewDomain_post = domains.addNewDomain_post;
 exports.newDomainSetup = domains.newDomainSetup;
 exports.setupForwardTo = domains.setupForwardTo;
+
+
+
+exports.newDomainSetup2 = function (req, res) {
+  var domain = req.query.domain;
+  var emails = [];
+
+  return res.render("domains/newDomainSetup2", {
+    domain: domain,
+    emails: emails
+  });
+}

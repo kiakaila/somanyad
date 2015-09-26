@@ -5,18 +5,17 @@ block domains-content
     thead
       tr
         th #
-        th status
-        th forward
-        th domain
-        th action
+        th 域名
+        th 转发策略
+        th 收件箱
+        th 编辑
     tbody
       for domain, idx in domains
         tr
           td #{idx}
-          td #{domain.status}
-          td #{domain.forward_email}
           td #{domain.domain}
+          td #{domain.forward_type}
+          td #{domain.forward_email || '未设置'}
           td 
-            a(href="/domains/setup?domain=" + domain.domain).btn.btn-primary.btn-xs setup            
-  a(href="/domains/addNewDomain").btn.btn-success Add New Domain
-  .dangers #{error}
+            a(href="/domains/setup?domain=" + domain.domain).btn.btn-info.btn-xs 设置            
+  a(href="/domains/addNewDomain").btn.btn-success 添加新域名
