@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="13.3">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>370</x>
+      <y>0</y>
+      <w>100</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>登陆</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>370</x>
+      <y>160</y>
+      <w>100</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>添加域名</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>370</x>
+      <y>280</y>
+      <w>100</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>设定转发对象</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>560</x>
+      <y>150</y>
+      <w>100</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>验证域名
+MX 地址设定</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>560</x>
+      <y>280</y>
+      <w>100</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>验证地址</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>320</x>
+      <y>70</y>
+      <w>420</w>
+      <h>300</h>
+    </coordinates>
+    <panel_attributes>要点</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>460</x>
+      <y>160</y>
+      <w>120</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>100.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>460</x>
+      <y>280</y>
+      <w>120</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>100.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>220</x>
+      <y>400</y>
+      <w>540</w>
+      <h>260</h>
+    </coordinates>
+    <panel_attributes>转发机制</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>420</x>
+      <y>430</y>
+      <w>100</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>任意转发</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>420</x>
+      <y>470</y>
+      <w>320</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>白名单机制
+------
+只有在白名单上的邮件,才进行转发</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>420</x>
+      <y>540</y>
+      <w>330</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>黑名单机制
+------
+只要不进入黑名单,都转发</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>180</x>
+      <y>680</y>
+      <w>580</w>
+      <h>330</h>
+    </coordinates>
+    <panel_attributes>付费机制
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>210</x>
+      <y>720</y>
+      <w>360</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>试用
+------
+每月免费转发150封, 满额,提示邮件</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>210</x>
+      <y>790</y>
+      <w>360</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>月付
+------
+每月0.9元 (限1000封/月)(满额提示邮件, 允许超限100封)
+每月1.8元 (不限)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>210</x>
+      <y>890</y>
+      <w>360</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>年付
+-------
+每年9.9元 (限1000封/月)
+每年19.8元(不限)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>230</x>
+      <y>430</y>
+      <w>170</w>
+      <h>170</h>
+    </coordinates>
+    <panel_attributes>恶意发件地址列表
+-----
+凡是被当做恶意地址的
+直接拒绝接收
+无视白名单,黑名单机制</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>590</x>
+      <y>820</y>
+      <w>160</w>
+      <h>180</h>
+    </coordinates>
+    <panel_attributes>收款
+------
+淘宝自动发货
+------
+paypal 收款
+------
+支付宝转账
+用户自己确认付款后
+直接开通限制
+然后工作人员(上淘宝确认)
+------
+支付宝转账,其实可以不去确认
+直接当做用户有转就行了, 主要是投入产出问题
+去一个一个核对的时间, 比不上赚的钱</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>610</x>
+      <y>710</y>
+      <w>100</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>超限提醒
+------
+超限后,发提醒邮件
+并且允许超限100封</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>610</x>
+      <y>750</y>
+      <w>100</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>到期提醒
+------
+到期后,发邮件提醒
+并且,允许超期1个月, 然后降到试用状态</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

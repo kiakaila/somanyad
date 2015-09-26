@@ -1,0 +1,59 @@
+extends index
+
+block domains-content
+
+  h3 And add DNS Records to Identify domain owner
+  .row
+    .col-sm-3
+      p Type
+    .col-sm-3
+      p Hostname
+    .col-sm-3
+      p Enter This Value
+    .col-sm-3
+      p Status
+  .row
+    .col-sm-3
+      p CNAME
+    .col-sm-3
+      p #{cname}
+    .col-sm-3
+      p #{cnamePointTo}      
+    .col-sm-3
+      p cnameVerifyStatus: xxxxx
+
+  h3 Please add mx record for domain #{domain} like the following:
+  .row
+    .col-sm-3
+      p Type
+    .col-sm-3
+      p Priority
+    .col-sm-3
+      p Enter This Value
+    .col-sm-3
+      p Status
+  for mailServer in mailServers
+    .row
+      .col-sm-3
+        p MX
+      .col-sm-3
+        p 10
+      .col-sm-3
+        p #{mailServer}
+      .col-sm-3
+        p mxVerifyStatus: xxxx
+  .row
+    .col-sm-3.col-sm-offset-6
+      a(onclick="location.reload()").btn.btn-success Verify
+    .col-sm-3
+      a(href="/domains/setupForwardTo?domain=#{domain}").btn.btn-success Next(after Verify)
+  .row
+    .col-sm-2
+      p cname Verify api: 
+    .col-sm-6
+      p /domains/api_cnameVerifyStatus?domain=#{domain}
+  .row
+    .col-sm-2
+      p mx Verify api: 
+    .col-sm-6
+      p /domains/api_mxVerifyStatus?domain=#{domain}

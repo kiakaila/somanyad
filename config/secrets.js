@@ -21,15 +21,20 @@
 
 module.exports = {
 
+  // cname
+  cnamePre: "somanyad",
+  cnamePointTo: "cname.somanyad.com",
+  mailServers: ["mail.somanyad.com", "mx1.somanyad.com"],
+
   db: process.env.MONGODB || process.env.MONGOLAB_URI || 'mongodb://localhost:27017/test',
 
   sessionSecret: process.env.SESSION_SECRET || 'Your Session Secret goes here',
 
   mailgun: {
-    user: process.env.MAILGUN_USER || 'postmaster@sandbox697fcddc09814c6b83718b9fd5d4e5dc.mailgun.org',
-    password: process.env.MAILGUN_PASSWORD || '29eldds1uri6'
+    user: process.env.MAILGUN_USER || 'postmaster@mg.somanyad.com',
+    password: process.env.MAILGUN_PASSWORD || '1f8191ae70b7aa6eaa4ea85af5caab37'
   },
-  
+
   mandrill: {
     user: process.env.MANDRILL_USER || 'hackathonstarterdemo',
     password: process.env.MANDRILL_PASSWORD || 'E1K950_ydLR4mHw12a0ldA'

@@ -28,6 +28,7 @@ var homeController = require('./controllers/home');
 var userController = require('./controllers/user');
 var apiController = require('./controllers/api');
 var contactController = require('./controllers/contact');
+var domainsController = require("./controllers/domains");
 
 /**
  * API keys and Passport configuration.
@@ -110,6 +111,23 @@ app.post('/account/profile', passportConf.isAuthenticated, userController.postUp
 app.post('/account/password', passportConf.isAuthenticated, userController.postUpdatePassword);
 app.post('/account/delete', passportConf.isAuthenticated, userController.postDeleteAccount);
 app.get('/account/unlink/:provider', passportConf.isAuthenticated, userController.getOauthUnlink);
+
+app.get('/domains', passportConf.isAuthenticated, domainsController.home);
+app.get('/domains/emails', passportConf.isAuthenticated, domainsController.emails)
+app.get('/domains/forward', passportConf.isAuthenticated, domainsController.forward);
+app.get('/domains/tongji', passportConf.isAuthenticated, domainsController.tongji);
+app.get("/domains/addNewDomain", passportConf.isAuthenticated, domainsController.addNewDomain);
+app.post("/domains/addNewDomain", passportConf.isAuthenticated, domainsController.addNewDomain_post);
+app.get("/domains/newDomainSetup", passportConf.isAuthenticated, domainsController.newDomainSetup);
+app.get("/domains/api_cnameVerifyStatus", passportConf.isAuthenticated, domainsController.api_cnameVerifyStatus);
+app.get("/domains/api_mxVerifyStatus", passportConf.isAuthenticated, domainsController.api_mxVerifyStatus);
+app.get("/domains/setupForwardTo", passportConf.isAuthenticated, domainsController.setupForwardTo);
+app.get("/domains/setup", passportConf.isAuthenticated, domainsController.setup);
+
+app.get("/domains/api_addForwardEmail", passportConf.isAuthenticated, domainsController.api_addForwardEmail);
+app.get("/domains/api_emailVerify", domainsController.api_emailVerify);
+app.get("/domains/api_emailVerifyList", passportConf.isAuthenticated, domainsController.api_emailVerifyList);
+app.get("/domains/api_removeEmailVerify", passportConf.isAuthenticated, domainsController.api_removeEmailVerify);
 
 /**
  * API examples routes.

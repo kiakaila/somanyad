@@ -1,0 +1,21 @@
+extends index
+
+block domains-content
+  p #{domain}
+  p #{error}
+
+  form(action="addForwardEmail", method="post")
+    input(type='hidden', name='_csrf', value=_csrf)    
+    .form-group
+      label(for="emailInput") Email Address
+      input(type="email", placeholder="Email")#emailInput.form-control
+    button.btn.btn-default.pull-right(type="submit") Submit
+  
+  .dropdown
+    button#dropdownEmail.btn.btn-default.dropdown-toggle(type="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="true")
+      | Email
+      span.caret
+    ul.dropdown-menu(aria-labelledby="dropdownEmail")
+      for email in emails
+        li
+          a(href="#") #{email}

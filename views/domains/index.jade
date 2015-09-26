@@ -1,0 +1,21 @@
+extends ../layout
+
+block content
+
+  nav.navbar.navbar-default
+    .container-fluid
+      .navbar-header
+        a.navbar-brand(href="#") SomanyAd
+      
+      .navbar-collapse.collapse
+        ul.nav.navbar-nav
+          li(class=active_item=="domains" ? "active": "")
+            a(href="/domains/") Domains
+          li(class=active_item=="emails" ? "active": "")
+            a(href="/domains/emails") Emails
+          li(class=active_item=="forward" ? "active": "")
+            a(href="/domains/forward") Forward
+          li(class=active_item=="tongji" ? "active": "")
+            a(href="/domains/tongji") Tracking
+  
+  block domains-content
