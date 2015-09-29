@@ -28,7 +28,7 @@ module.exports = {
   domain: "somanyad.com",
   mailServers: ["mail.somanyad.com", "mx1.somanyad.com"],
 
-  db: process.env.MONGODB || process.env.MONGOLAB_URI || 'mongodb://localhost:27017/test',
+  db: process.env.MONGODB || process.env.MONGOLAB_URI || 'mongodb://localhost:27017/emailD',
 
   sessionSecret: process.env.SESSION_SECRET || 'Your Session Secret goes here',
 

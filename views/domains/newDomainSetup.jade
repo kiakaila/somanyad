@@ -5,8 +5,8 @@ block content
     .row
       .col-md-8.col-md-offset-1
         h4 将域名邮箱: 
-          strong @#{domain}
-          | 收到的邮件,转发到 #{forward_email}
+          strong @#{domain.domain}
+          | 收到的邮件,转发到 #{domain.email}
         .gray 以下是您的域名邮箱创建方法。请根据提示步骤进行设置。
         br
         .panel.panel-default
@@ -53,10 +53,10 @@ block content
                         | 复制
                       | )
                     th.domain_type MX
-            h5 第三步: 验证邮箱#{forward_email}的所有权
-            p 为了,防止你的邮件发到别人的邮箱, 服务器已经发送了一封邮件到你的邮箱#{forward_email}里了, 你只需要点击邮箱里面的确定链接即可
+            h5 第三步: 验证邮箱#{domain.email}的所有权
+            p 为了,防止你的邮件发到别人的邮箱, 服务器已经发送了一封邮件到你的邮箱#{domain.email}里了, 你只需要点击邮箱里面的确定链接即可
             
-            a(href='/domains/newDomainSetup2?domain=#{domain}').btn.btn-success 提交验证 
+            a(href='/domains/newDomainSetup2?domain=#{domain.domain}').btn.btn-success 提交验证 
               i.fa.fa-arrow-right
 
             

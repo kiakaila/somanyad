@@ -4,15 +4,47 @@ var domains = require("./domains");
 var domains_api = require("./api_domains");
 var router = require("express").Router();
 var Domain = require("../../models/Domain").Domain;
+var EmailVerified = require("../../models/Domain").EmailVerified;
+var async = require("async");
 
 function locals_domains (req, res, next) {
-    Domain.find({user: req.user._id}, function (err, domains) {
-      if (err) {
-        domains = [];
+
+  async.series([
+    function (done) {
+      EmailVerified.find({user: req.user._id}, function (err, emailVs) {
+        done(err, emailVs);
+      });
+    },
+    function (done) {
+      Domain.find({user: req.user._id}, function (err, domains) {
+        done(err, domains);
+      });
+    }
+  ], function (err, results) {
+    if (err) {
+      req.flash("error", err);
+    }
+    var emailVs = results[0];
+    var domains = results[1];
+    console.log(results);
+    for (domainIdx in domains) {
+      for (emailVIdx in emailVs) {
+        var domain = domains[domainIdx];
+        var emailV = emailVs[emailVIdx];
+        if (domain.forward_email.equals(emailV._id)) {
+          domain.email = emailV.email
+        }
+        console.log(domain);
+        console.log(emailV);
+        console.log(domain.forward_email);
+        console.log(emailV._id);
+        console.log(domain.forward_email.equals(emailV._id));
       }
-      res.locals.domains = domains;
-      next();
-    });
+    }
+    res.locals.domains = domains || []
+    next();
+  })
+
 }
 
 

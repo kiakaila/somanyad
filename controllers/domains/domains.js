@@ -112,44 +112,75 @@ exports.addNewDomain_post = function (req, res) {
 }
 
 exports.newDomainSetup = function (req, res) {
-  var domain = req.query.domain;
-  Domain.find({domain: domain, user: req.user._id}, function (err, domain) {
-    if (err) {
-      console.log(err);
-      res.locals.message = err.message
+  var domainStr = req.query.domain;
+  async.waterfall([
+    // 查找该域名
+    function (done) {
+      Domain.findOne({domain: domainStr, user: req.user._id}, function (err, domain) {
+        done(err, domain)
+      })
+    },
+    // 查找相关的转发目的地
+    function (domain, done) {
+      EmailVerified.findOne({_id: domain.forward_email}, function (err, emailV) {
+        done(err, domain, emailV)
+      });
+    }],
+    // 渲染
+    function (err, domain, emailV) {
+      console.log(arguments);
+      if (err) {
+        res.locals.message = err.message
+        return res.render("domains/newDomainSetup", {
+          domain: domain || { domain: domainStr },
+          err: err,
+          mailServers: [],
+          cnamePointTo: secrets.cnamePointTo
+        });
+      }
+
+      var cname = dnslookup.cnameFun(domainStr, req.user._id);
+      var mailServers = secrets.mailServers
+
+      domain.email = emailV.email;
       return res.render("domains/newDomainSetup", {
         domain: domain,
-        err: err,
-        mailServers: [],
+        cname: cname,
+        mailServers: mailServers,
         cnamePointTo: secrets.cnamePointTo
       });
     }
-
-    var cname = dnslookup.cnameFun(domain, req.user._id);
-    var mailServers = secrets.mailServers
-
-    return res.render("domains/newDomainSetup", {
-      domain: domain.domain,
-      forward_email: domain.forward_email,
-      cname: cname,
-      mailServers: mailServers,
-      cnamePointTo: secrets.cnamePointTo
-    });
-  });
-
-
-
+  );
 }
 
 
 exports.newDomainSetup2 = function (req, res) {
-  var domain = req.query.domain;
+  var domainStr = req.query.domain;
   var emails = [];
 
-  return res.render("domains/newDomainSetup2", {
-    domain: domain,
-    emails: emails
-  });
+  async.waterfall([
+    function (done) {
+      Domain.findOne({domain: domainStr, user: req.user._id}, function (err, domain) {
+        done(err, domain);
+      });
+    },
+    function (domain, done) {
+      EmailVerified.findOne({_id: domain.forward_email}, function (err, emailV) {
+        done(err, domain, emailV)
+      })
+    }
+  ], function (err, domain, emailV) {
+    if (err) {
+      req.flash("error", err);
+      return res.render("domains/newDomainSetup2", {
+        domain: domain
+      })
+    }
+    domain.email = emailV.email;
+    return res.render("domains/newDomainSetup2", {
+      domain: domain
+    });
+  })
 }
 
 

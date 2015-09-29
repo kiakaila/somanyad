@@ -5,11 +5,11 @@ block content
     .row
       .col-md-8.col-md-offset-1
         p 将域名
-          strong #{domain}
-          | 收到的邮件转发到 ${forward_email}
+          strong @#{domain.domain}
+          | 收到的邮件转发到 #{domain.email}
         .panel.panel-default
           .panel-heading 完成创建
           .panel-body
             h5 感谢您申请域名邮箱转发服务
             p 我们正在验证您的域名, 请稍后查看验证进度.
-            button.btn.btn-success 完成
+            a(href="/domains/").btn.btn-success 完成
