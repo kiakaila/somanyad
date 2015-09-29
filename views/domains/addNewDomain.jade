@@ -1,13 +1,33 @@
-extends index
+extends ../layout
 
-block domains-content
-  form.form-horizontal(action="/domains/addNewDomain", method="post")
-    input(type='hidden', name='_csrf', value=_csrf)
-    .form-group
-      label.col-lg-2.control-label(for='domain') 域名
-      .col-lg-10
-        input.form-control(type="text", placeholder="mydomain.com", name="domain")
-    .form-group
-      .col-lg-10.col-lg-offset-2
-        button.btn.btn-default(type='reset') 取消
-        button.btn.btn-primary(type='submit') 提交
+block content
+  
+  .container(style="margin-top: 20px;")
+    .row
+      .panel.panel-default
+        .panel-heading 创建域名邮箱
+        .panel-body
+          p
+            | 如果你拥有域名 example.com, 你就可以创建 xxx@example.com 的邮箱.
+            | 你就可用通过,任意的前缀地址, 来接受邮件, 知道谁卖了你的账户信息(或者谁的裤子被拖了)
+          p
+            | 更重要的是, 密码更安全了...
+          form.form-horizontal(action="/domains/addNewDomain", method="post", style="margin-top: 20px;")
+            input(type='hidden', name='_csrf', value=_csrf)
+            .container
+              .row
+                .col-md-4
+                  p 将域名:
+                  .input-group
+                    span.input-group-addon#basic-addon1 www
+                    input.form-control(type="text", placeholder="example.com", aria-describedby="basic-addon1", name="domain")
+                .col-md-4
+                  p 收到的邮件转发到邮箱:
+                  .input-group
+                    input.form-control(type="text", placeholder="your-email@example.com", aria-describedby="basic-addon1", name="forward_email")
+                .col-md-1
+                  p √
+                  button.btn.btn-info(type="submit") 下一步
+                .col-md-1
+                  p ×
+                  button.btn.btn-default(type="reset") 取消

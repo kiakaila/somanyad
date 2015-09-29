@@ -3,34 +3,22 @@ var Domain = require("../../models/Domain").Domain;
 var Forward = require("../../models/Domain").Forward;
 var EmailVerified = require("../../models/Domain").EmailVerified;
 var dnslookup = require("../../lib/dnslookup");
-var settings = require("../../config/secrets")
+var secrets = require("../../config/secrets");
+var async = require("async");
+
+var transporter = require("../contact").transporter;
 
 exports.home = function (req, res) {
 
-  Domain.find({user: req.user._id}, function (err, domains) {
-
-    console.log(err, domains, "hello");
-    if (err) {
-
-      return res.render('domains/home', {
+  return res.render('domains/home', {
         title: "Manage Domains",
-        active_item: "domains",
-        error: err.message,
-        domains: domains
-      })
-    }
-
-    res.render('domains/home', {
-      title: "Manage Domains",
-      active_item: "domains",
-      domains: domains
-    })
-  })
+        active_item: "home"
+      });
 }
 
 exports.setup = function (req, res) {
   var domain = req.query.domain
-  
+
   res.render("domains/setup", {
     domain: domain
   })
@@ -75,32 +63,92 @@ exports.addNewDomain = function (req, res) {
 exports.addNewDomain_post = function (req, res) {
   var domain = req.body.domain;
   var user = req.user;
-  console.log(req.body);
-  Domain.findOrCreate({domain: domain, user: user._id}, function (err, domain) {
-    if (err) {
-      req.flash('errors', { msg: err.message });
-      return res.redirect('/domains/addNewDomain');
-    }
-    if (domain == null) {
-      req.flash("errors", { msg: "create domain failure, please contact adminer!"})
-      return res.redirect("/domains/addNewDomain");
-    }
+  var forward_email = req.body.forward_email;
 
-    console.log(domain);
-    return res.redirect("/domains/newDomainSetup?domain=" + domain.domain)
-  })
+  async.waterfall([
+    // 查找或者创建一条域名记录
+    function (done) {
+      Domain.findOrCreate({domain: domain, user: user._id}, function (err, domain) {
+        done(err, domain)
+      })
+    },
+    // 查找或者创建一条邮箱所有权的记录
+    function (domain, done) {
+      EmailVerified.findOrCreate({user: user._id, email: forward_email}, function (err, emailVerify) {
+        done(err, domain, emailVerify)
+      })
+    },
+    // 发送验证邮箱所有权的邮件
+    function (domain, emailVerify, done) {
+      var mailOptions = {
+        to: forward_email,
+        from: secrets.verifyEmailSender,
+        subject: '验证邮箱所有权',
+        text: '你是否允许用户: '  + req.user.email + '转发邮件给你, 如果允许请点击下面的链接, 或者将下面的链接复制到浏览器地址栏\n\n' +
+          'http://' + req.headers.host + '/domains/emailVerify?id=' + emailVerify._id + '&email=' + emailVerify.email + '\n\n' +
+          ' 如果不允许, 则无需进行操作.\n'
+      };
+      transporter.sendMail(mailOptions, function(err) {
+        req.flash('info', { msg: 'An e-mail has been sent to ' + forward_email + ' with further instructions.' });
+        done(err, domain, emailVerify);
+      });
+    },
+    // 关联域名记录与邮箱所有权记录
+    function (domain, emailVerify, done) {
+      domain.forward_email = emailVerify._id;
+      domain.save(function (err) {
+        done(err, domain, 'done');
+      })
+    }],
+    // 渲染请求
+    function (err, domain) {
+      if (err) {
+        req.flash('errors', { msg: (err || new Error("create domain failure, please contact adminster!")).message });
+        return res.redirect('/domains/addNewDomain');
+      }
+      return res.redirect("/domains/newDomainSetup?domain=" + domain.domain)
+    }
+  );
 }
 
 exports.newDomainSetup = function (req, res) {
   var domain = req.query.domain;
-  var cname = dnslookup.cnameFun(domain, req.user._id);
-  var mailServers = settings.mailServers
+  Domain.find({domain: domain, user: req.user._id}, function (err, domain) {
+    if (err) {
+      console.log(err);
+      res.locals.message = err.message
+      return res.render("domains/newDomainSetup", {
+        domain: domain,
+        err: err,
+        mailServers: [],
+        cnamePointTo: secrets.cnamePointTo
+      });
+    }
 
-  return res.render("domains/newDomainSetup", {
+    var cname = dnslookup.cnameFun(domain, req.user._id);
+    var mailServers = secrets.mailServers
+
+    return res.render("domains/newDomainSetup", {
+      domain: domain.domain,
+      forward_email: domain.forward_email,
+      cname: cname,
+      mailServers: mailServers,
+      cnamePointTo: secrets.cnamePointTo
+    });
+  });
+
+
+
+}
+
+
+exports.newDomainSetup2 = function (req, res) {
+  var domain = req.query.domain;
+  var emails = [];
+
+  return res.render("domains/newDomainSetup2", {
     domain: domain,
-    cname: cname,
-    mailServers: mailServers,
-    cnamePointTo: settings.cnamePointTo
+    emails: emails
   });
 }
 
@@ -119,7 +167,6 @@ exports.setupForwardTo = function (req, res) {
 
     EmailVerified.find({user: req.user._id}, function (err, emails) {
       if (err) {
-        console.log(err);
         return res.render("domains/setupForwardTo", {
           domain: domainStr,
           emails: []

@@ -1,20 +1,29 @@
 extends ../layout
 
 block content
-  br
-  .row
-    .col-md-3
-      ul.nav.nav-pills.nav-stacked
-        li(class=active_item=="domains" ? "active": "")
-          a(href="/domains/") 域名
-        li(class=active_item=="forward" ? "active": "")
-          a(href="/domains/forward") 转发策略
-        li(class=active_item=="tongji" ? "active": "")
-          a(href="/domains/tongji") 统计
-    .col-md-9
-      ul.breadcrumb
-        li
-          a(href="#") 首页
-        li.active 域名  
+  //- br
+  //- .row
+  //-   .col-md-3
+  //-     ul.nav.nav-pills.nav-stacked
+  //-       li(class=active_item=="domains" ? "active": "")
+  //-         a(href="/domains/") 域名
+  //-       li(class=active_item=="forward" ? "active": "")
+  //-         a(href="/domains/forward") 转发策略
+  //-       li(class=active_item=="tongji" ? "active": "")
+  //-         a(href="/domains/tongji") 统计
+  //-   .col-md-9
+  //-     ul.breadcrumb
+  //-       li
+  //-         a(href="#") 首页
+  //-       li.active 域名  
+  ul.nav.nav-tabs
+    li(role="presentation" class=active_item=="home" ? "active": "")
+      a(href="#") 首页
+    for domain in domains
+      li(role="presentation" class=active_item==domain ? "active": "")
+        a(href="#") #{domain.domain}
+    li(role="presentation" class="")
+      a(href="/domains/addNewDomain")
+        img(src="https://res.mail.qq.com/zh_CN/htmledition/images/domainmail/ico_add.gif")
           
-      block domains-content
+  block domains-content

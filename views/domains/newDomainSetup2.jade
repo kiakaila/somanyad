@@ -1,9 +1,15 @@
-extends index
+extends ../layout
 
-block domains-content
-  form(action="/domains/addNewDomain", method="post")
-    input(type='hidden', name='_csrf', value=_csrf)
-    .form-group
-      label.control-label(for='domain') 将#{domain}收到的邮件转发到
-      input.form-control(type="text", placeholder="your-email@host.com", name="email_forword")
-    button.btn.btn-primary(type='submit') 提交
+block content
+  .container
+    .row
+      .col-md-8.col-md-offset-1
+        p 将域名
+          strong #{domain}
+          | 收到的邮件转发到 ${forward_email}
+        .panel.panel-default
+          .panel-heading 完成创建
+          .panel-body
+            h5 感谢您申请域名邮箱转发服务
+            p 我们正在验证您的域名, 请稍后查看验证进度.
+            button.btn.btn-success 完成

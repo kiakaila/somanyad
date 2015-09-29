@@ -1,21 +1,61 @@
 extends index
 
 block domains-content
-  table.table.table-striped.table-hover
-    thead
-      tr
-        th #
-        th 域名
-        th 转发策略
-        th 收件箱
-        th 编辑
-    tbody
-      for domain, idx in domains
-        tr
-          td #{idx}
-          td #{domain.domain}
-          td #{domain.forward_type}
-          td #{domain.forward_email || '未设置'}
-          td 
-            a(href="/domains/setup?domain=" + domain.domain).btn.btn-info.btn-xs 设置            
-  a(href="/domains/addNewDomain").btn.btn-success 添加新域名
+  .container
+    .row
+      .col-md-12
+        table.table.table-striped.table-bordered
+          caption
+            .row
+              .col-md-2
+                h3.pull-left 我的域名邮箱
+              .col-md-1
+                a.pull-left(href="/domains/addNewDomain") 添加
+          thead
+            tr
+              th.name 域名
+              th.cnameVerifyStatus 验证所有权
+              th.mx MX记录
+              th.forward_email 转发到
+              th.fee_plan 可用额度
+              th.operation 操作
+          tbody
+            for domain in domains
+              tr
+                th.name #{domain.domain}
+                if domain.cnameVerifyStatus
+                  th.cnameVerifyStatus #{domain.cnameVerifyStatus}
+                else
+                  th.cnameVerifyStatus 
+                    | 尚未通过
+                    a(href="#") 手动验证
+                if domain.mxVerifyStatus
+                  th.mx #{domain.mx}
+                else
+                  th.mx
+                    | 未设置或暂未生效
+                    a(href="#") 如何设置
+                th.forward_email #{domain.forward_email}
+                th.fee_plan #{domain.fee_plan}
+                th.operation 注销
+            
+            
+  
+  //- table.table.table-striped.table-hover
+  //-   thead
+  //-     tr
+  //-       th #
+  //-       th 域名
+  //-       th 转发策略
+  //-       th 收件箱
+  //-       th 编辑
+  //-   tbody
+  //-     for domain, idx in domains
+  //-       tr
+  //-         td #{idx}
+  //-         td #{domain.domain}
+  //-         td #{domain.forward_type}
+  //-         td #{domain.forward_email || '未设置'}
+  //-         td 
+  //-           a(href="/domains/setup?domain=" + domain.domain).btn.btn-info.btn-xs 设置            
+  //- a(href="/domains/addNewDomain").btn.btn-success 添加新域名

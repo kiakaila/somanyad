@@ -8,6 +8,8 @@ var transporter = nodemailer.createTransport({
   }
 });
 
+// send email server
+exports.transporter = transporter;
 /**
  * GET /contact
  * Contact form page.
@@ -37,7 +39,7 @@ exports.postContact = function(req, res) {
   var from = req.body.email;
   var name = req.body.name;
   var body = req.body.message;
-  var to = 'your@email.com';
+  var to = from + "@" + secrets.domain;
   var subject = 'Contact Form | Hackathon Starter';
 
   var mailOptions = {

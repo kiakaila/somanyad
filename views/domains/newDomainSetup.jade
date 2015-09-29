@@ -1,34 +1,63 @@
 extends index
 
-block domains-content
+block content
+  .container
+    .row
+      .col-md-8.col-md-offset-1
+        h4 将域名邮箱: 
+          strong @#{domain}
+          | 收到的邮件,转发到 #{forward_email}
+        .gray 以下是您的域名邮箱创建方法。请根据提示步骤进行设置。
+        br
+        .panel.panel-default
+          .panel-heading 请验证域名的所有权并设置MX记录
+          .panel-body
+            h5 第一步：验证域名
+            p 给您的域名设置一个CNAME记录
+            table.table.table-striped.table-bordered
+              thead
+                tr
+                  th.name 主机名
+                  th.ip_address IP地址
+                  th.domain_type 类型
+              tbody
+                tr
+                  th.name #{cname} (
+                    a(href="javascript:ret=getTop().copyToClipboard('#{cname}');if(ret){getTop().showInfo('已复制到剪贴板')}else{getTop().showInfo('复制失败');};")
+                      | 复制
+                    | )
+                  th.ip_address #{cnamePointTo} (
+                    a(href="javascript:;", 
+                      onclick="ret=getTop().copyToClipboard('#{cnamePointTo}');if(ret){getTop().showInfo('已复制到剪贴板')}else{getTop().showInfo('复制失败');}")
+                      | 复制
+                    | )
+                  th.domain_type CNAME(Alias)
+            small.gray (CNAME解析一般在2-24小时后生效。如果您无法直接设置您的域名，请联系您的域名服务商)
+            br
+            br
+            h5 第二步：设置MX记录
+            p MX记录用来指定由我们来对您的域名提供邮件服务。请将您的MX记录优先级设为10。
+            table.table.table-striped.table-bordered
+              thead
+                tr
+                  th.name 主机名
+                  th.ip_address MX服务器地址
+                  th.domain_type 类型
+              tbody
+                for mailServer in mailServers
+                  tr
+                    th.name @
+                    th.ip_address #{mailServer} (
+                      a(href="javascript:;", 
+                        onclick="ret=getTop().copyToClipboard('#{mailServer}');if(ret){getTop().showInfo('已复制到剪贴板')}else{getTop().showInfo('复制失败');}")
+                        | 复制
+                      | )
+                    th.domain_type MX
+            h5 第三步: 验证邮箱#{forward_email}的所有权
+            p 为了,防止你的邮件发到别人的邮箱, 服务器已经发送了一封邮件到你的邮箱#{forward_email}里了, 你只需要点击邮箱里面的确定链接即可
+            
+            a(href='/domains/newDomainSetup2?domain=#{domain}').btn.btn-success 提交验证 
+              i.fa.fa-arrow-right
 
-  h3 第一步：给您的域名设置一个CNAME记录
-  
-  table.table.table-striped.table-hover
-    thead
-      tr
-        th 类型 Type
-        th 子域名 Hostname
-        th 指向
-      tr
-        th CNAME
-        th #{cname}
-        th #{cnamePointTo}
+            
         
-  h3 第二步：设置MX记录
-        
-  table.table.table-striped.table-hover
-    thead
-      tr
-        th 类型 Type
-        th 优先级 Priority
-        th 指向
-    tbody
-      for mailServer in mailServers
-        tr
-          td MX
-          td 10
-          td #{mailServer}
-  
-  a(href='/domains/newDomainSetup2?domain=#{domain}').btn.btn-success 下一步 
-    i.fa.fa-arrow-right
