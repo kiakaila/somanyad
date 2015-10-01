@@ -4,14 +4,14 @@ var domains = require("./domains");
 var domains_api = require("./api_domains");
 var router = require("express").Router();
 var Domain = require("../../models/Domain").Domain;
-var EmailVerified = require("../../models/Domain").EmailVerified;
+var EmailVerify = require("../../models/Domain").EmailVerify;
 var async = require("async");
 
 function locals_domains (req, res, next) {
 
   async.series([
     function (done) {
-      EmailVerified.find({user: req.user._id}, function (err, emailVs) {
+      EmailVerify.find({user: req.user._id}, function (err, emailVs) {
         done(err, emailVs);
       });
     },
@@ -33,6 +33,7 @@ function locals_domains (req, res, next) {
         var emailV = emailVs[emailVIdx];
         if (domain.forward_email_is(emailV)) {
           domain.email = emailV.email
+          domain.email_hadVerify = emailV.passVerify;
         }
       }
     }
@@ -53,7 +54,7 @@ function userOwnerDomain(req, res, next) {
         })
       },
       function (domain, done) {
-        EmailVerified.findOne({_id: domain.forward_email}, function (err, emailV) {
+        EmailVerify.findOne({_id: domain.forward_email}, function (err, emailV) {
           domain.email = (emailV || {}).email
           done(err);
         })
@@ -95,16 +96,19 @@ router.get("/newDomainSetup", domains.newDomainSetup);
 router.get("/newDomainSetup2", domains.newDomainSetup2);
 
 
+// 验证允许转发的邮件地址
+router.get("/emailVerify", domains.emailVerify);
 
-
-router.get("/api_cnameVerifyStatus", domains_api.cnameVerifyStatus);
-router.get("/api_mxVerifyStatus", domains_api.mxVerifyStatus);
-router.get("/setupForwardTo", domains.setupForwardTo);
-router.get("/setup", domains.setup);
-router.get("/api_addForwardEmail", emailVerify.addForwardEmail);
-router.get("/api_emailVerify", emailVerify.emailVerify);
-router.get("/api_emailVerifyList", emailVerify.emailVerifyList);
-router.get("/api_removeEmailVerify", emailVerify.removeEmailVerify);
+//
+//
+// router.get("/api_cnameVerifyStatus", domains_api.cnameVerifyStatus);
+// router.get("/api_mxVerifyStatus", domains_api.mxVerifyStatus);
+// router.get("/setupForwardTo", domains.setupForwardTo);
+// router.get("/setup", domains.setup);
+// router.get("/api_addForwardEmail", emailVerify.addForwardEmail);
+// router.get("/api_emailVerify", emailVerify.emailVerify);
+// router.get("/api_emailVerifyList", emailVerify.emailVerifyList);
+// router.get("/api_removeEmailVerify", emailVerify.removeEmailVerify);
 
 
 exports.router = router;

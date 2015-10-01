@@ -1,0 +1,13 @@
+extends ../layout
+
+block content
+
+  .container
+    if emailV
+      .row
+        .col-md-6
+          p 你好, 你的邮件地址#{emailV.email}已经验证
+    else
+      .row
+        .col-md-6
+          p 抱歉, 验证链接不正确, 请重新发送链接, 或者联系管理员

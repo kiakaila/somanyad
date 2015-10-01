@@ -1,7 +1,7 @@
 
 var Domain = require("../../models/Domain").Domain;
 var Forward = require("../../models/Domain").Forward;
-var EmailVerified = require("../../models/Domain").EmailVerified;
+var EmailVerify = require("../../models/Domain").EmailVerify;
 var WhiteSendList = require("../../models/Domain").WhiteSendList;
 var BlackReceiveList = require("../../models/Domain").BlackReceiveList;
 var dnslookup = require("../../lib/dnslookup");
@@ -108,7 +108,7 @@ exports.change_forward_email_post = function (req, res) {
   async.waterfall([
     // 查找之前的转发记录,
     function (done) {
-      EmailVerified.findOrCreate({user: req.user._id, email: forward_email}, function (err, emailV) {
+      EmailVerify.findOrCreate({user: req.user._id, email: forward_email}, function (err, emailV) {
         done(err, emailV)
       })
     },
@@ -170,7 +170,7 @@ exports.addNewDomain_post = function (req, res) {
     },
     // 查找或者创建一条邮箱所有权的记录
     function (domain, done) {
-      EmailVerified.findOrCreate({user: user._id, email: forward_email}, function (err, emailVerify) {
+      EmailVerify.findOrCreate({user: user._id, email: forward_email}, function (err, emailVerify) {
         done(err, domain, emailVerify)
       })
     },
@@ -204,7 +204,7 @@ exports.newDomainSetup = function (req, res) {
     },
     // 查找相关的转发目的地
     function (domain, done) {
-      EmailVerified.findOne({_id: domain.forward_email}, function (err, emailV) {
+      EmailVerify.findOne({_id: domain.forward_email}, function (err, emailV) {
         done(err, domain, emailV)
       });
     },
@@ -268,7 +268,7 @@ exports.newDomainSetup2 = function (req, res) {
     },
     // 查找域名的转发邮件记录
     function (domain, done) {
-      EmailVerified.findOne({_id: domain.forward_email}, function (err, emailV) {
+      EmailVerify.findOne({_id: domain.forward_email}, function (err, emailV) {
         done(err, domain, emailV)
       })
     },
@@ -315,72 +315,96 @@ exports.newDomainSetup2 = function (req, res) {
   })
 }
 
+// 验证允许转发的邮件地址
+exports.emailVerify = function (req, res) {
+  var id = req.query.id;
+  var email = req.query.email;
+
+  EmailVerify.findOne({_id: id, email: email}, function (err, emailV) {
+    if (err || emailV == null) {
+      req.flash("error", (err || new Error("email verify record not found!")));
+      console.log(err, emailV);
+      return res.render("domains/emailVerify");
+    } else {
+      emailV.passVerify = true;
+      emailV.save(function (err) {
+        if (err) {
+          req.flash("error", err);
+        }
+        console.log(err, emailV);
+        res.locals.emailV = emailV;
+        return res.render("domains/emailVerify");
+      });
+    }
+  });
+}
 
 //
-exports.setupForwardTo = function (req, res) {
-  var domainStr = req.query.domain;
-
-  Domain.findOne({domain: domainStr}, function (err, domain) {
-    if (err) {
-      return res.render("domains/setupForwardTo", {
-        domain: domainStr,
-        error: err.message
-      });
-    }
-
-    EmailVerified.find({user: req.user._id}, function (err, emails) {
-      if (err) {
-        return res.render("domains/setupForwardTo", {
-          domain: domainStr,
-          emails: []
-        });
-      }
-
-      return res.render("domains/setupForwardTo", {
-        domain: domainStr,
-        emails: emails
-      });
-    })
-  })
-}
-
-
-
-exports.setup = function (req, res) {
-  var domain = req.query.domain
-
-  res.render("domains/setup", {
-    domain: domain
-  })
-}
-
-exports.emails = function (req, res) {
-
-  res.render("domains/emails", {
-    active_item: "emails"
-  })
-}
-exports.emails_forward = function (req, res) {
-  var domainStr = req.query.domain;
-  Domain.findOne({domain: domainStr, user: req.user._id}, function (err, domain) {
-    if (err) {
-      return res.send(err);
-    }
-    if (domain) {
-
-    }
-  })
-}
-
-exports.forward = function (req, res) {
-  res.render("domains/forward", {
-    active_item: "forward"
-  })
-}
-
-
-exports.tongji = function (req, res) {
-  res.render("domains/tongji", {
-    active_item: "tongji"
-  })
-}
+// //
+// exports.setupForwardTo = function (req, res) {
+//   var domainStr = req.query.domain;
+//
+//   Domain.findOne({domain: domainStr}, function (err, domain) {
+//     if (err) {
+//       return res.render("domains/setupForwardTo", {
+//         domain: domainStr,
+//         error: err.message
+//       });
+//     }
+//
+//     EmailVerify.find({user: req.user._id}, function (err, emails) {
+//       if (err) {
+//         return res.render("domains/setupForwardTo", {
+//           domain: domainStr,
+//           emails: []
+//         });
+//       }
+//
+//       return res.render("domains/setupForwardTo", {
+//         domain: domainStr,
+//         emails: emails
+//       });
+//     })
+//   })
+// }
+//
+//
+//
+// exports.setup = function (req, res) {
+//   var domain = req.query.domain
+//
+//   res.render("domains/setup", {
+//     domain: domain
+//   })
+// }
+//
+// exports.emails = function (req, res) {
+//
+//   res.render("domains/emails", {
+//     active_item: "emails"
+//   })
+// }
+// exports.emails_forward = function (req, res) {
+//   var domainStr = req.query.domain;
+//   Domain.findOne({domain: domainStr, user: req.user._id}, function (err, domain) {
+//     if (err) {
+//       return res.send(err);
+//     }
+//     if (domain) {
+//
+//     }
+//   })
+// }
+//
+// exports.forward = function (req, res) {
+//   res.render("domains/forward", {
+//     active_item: "forward"
+//   })
+// }
+//
+//
+// exports.tongji = function (req, res) {
+//   res.render("domains/tongji", {
+//     active_item: "tongji"
+//   })
+// }

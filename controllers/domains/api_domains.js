@@ -1,7 +1,7 @@
 
 var Domain = require("../../models/Domain").Domain;
 var Forward = require("../../models/Domain").Forward;
-var EmailVerified = require("../../models/Domain").EmailVerified;
+var EmailVerify = require("../../models/Domain").EmailVerify;
 var SendEmailVerify = require("../../models/Domain").SendEmailVerify;
 
 var dnslookup = require("../../lib/dnslookup");
@@ -16,7 +16,7 @@ exports.selectForwardEmail = function (req, res) {
   // 1. 找到 email 记录
   // 2. 找到 domain 记录
   // 3. 更新 domain 记录
-  EmailVerified.find({email: email, user: uid}, function (err, emailV) {
+  EmailVerify.find({email: email, user: uid}, function (err, emailV) {
     if (err || emailV == null) {
       return res.send({
         status: "Failure",

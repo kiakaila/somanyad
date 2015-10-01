@@ -82,7 +82,7 @@ var blackReceiveListSchema = new Schema({
 })
 blackReceiveListSchema.plugin(findOrCreate);
 
-module.exports.EmailVerified = mongoose.model("EmailVerified", emailVerifySchema);
+module.exports.EmailVerify = mongoose.model("EmailVerify", emailVerifySchema);
 module.exports.Domain = mongoose.model('Domain', domainSchema);
 module.exports.WhiteSendList = mongoose.model("WhiteList", whiteSendListSchema);
 module.exports.BlackReceiveList = mongoose.model("BlackList", blackReceiveListSchema);
