@@ -1,0 +1,73 @@
+extends index
+
+block domains-content
+  br
+  .container  
+    .row
+      .col-md-8
+        form(action="/domains/edit/forward_email?domain=" + active_item, method="post")
+          input(type='hidden', name='_csrf', value=_csrf)
+          .input-group
+            span.input-group-addon 将发送到xxx@#{active_item}的邮件转发到
+            input.form-control(type="text", value=domain.email || "xxxx@example.com", name="forward_email")
+            span(type="submit").btn.btn-success.input-group-addon 修改
+      .col-md-3.col-md-offset-1
+        table.table.table-bordered
+          .tbody
+            tr
+              th.type 验证所有权
+              th.status 已验证
+            tr
+              th.type mx记录
+              th.status 未设置或者未生效
+                a(href="#") 如何设置
+            tr
+              th.type 可用额度(每月)
+              th.status 100/100
+    hr
+    .row
+      .col-md-12
+        table.table.table-striped.table-bordered
+          caption
+            .row
+              .col-md-4
+                h3.pull-left 废弃地址
+              .col-md-4                
+                small
+                  | 凡是发送到废弃地址的邮件都退回去
+            .row
+              
+              .col-md-12
+                form(action="/domains/edit/addBlackList?domain=" + active_item, method="post")
+                  input(type='hidden', name='_csrf', value=_csrf)
+                  .row
+                    .col-md-4
+                      .input-group
+                        input.form-control(type="text", placeholder="地址", name="blockAddress")
+                        span.input-group-addon @#{active_item}
+                    .col-md-6
+                      input.form-control(type="text", name="replyInfo", 
+                                          placeholder="退回信息, 添加退回信息,如果是用户发的邮件,则可以提示他发到别的邮箱里")
+                    .col-md-2
+                      button.btn.btn-success(type="submit") 添加
+          thead
+            tr
+              th.address 地址
+              th.replyInfo 退回去信息
+              th.operation 操作
+          tbody
+            for email in BlackList
+              tr
+                th.address.col-md-3 #{email.blockAddress}@#{active_item}
+                th.replyInfo.col-md-5
+                  .row
+                    .col-md-11
+                      form(action="/domains/edit/changeBlackItemReplyinfo?domain=" + active_item + "&blockAddress=" + email.blockAddress, method="post")
+                        input(type='hidden', name='_csrf', value=_csrf)
+                        .input-group
+                          input.form-control(type="text", value=email.replyInfo, name="replyInfo")
+                          span.input-group-addon 修改
+                th.operation
+                  a(href="/domains/edit/removeBlackItem?domain=" + active_item + "&blockAddress=" + email.blockAddress)
+                    | 删除
+                

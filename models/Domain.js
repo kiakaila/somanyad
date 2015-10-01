@@ -44,31 +44,45 @@ var domainSchema = new mongoose.Schema({
 domainSchema.plugin(findOrCreate);
 domainSchema.plugin(createdModifiedPlugin, {index: true});
 
+domainSchema.methods.forward_email_is = function (emailV) {
+  if (this.forward_email && emailV && this.forward_email.equals(emailV._id)) {
+    return true;
+  }
+  return false;
+}
+
 domainSchema.pre("save", function (next) {
   if (this.domain.length < 3) {
     return next(new Error("不是正确的域名, 域名长度不对"));
   }
   next();
 })
-// 白名单机制
-// 只有白名单里的邮件地址, 才允许转发
-
-var whiteListSchema = new Schema({
-    domain: ObjectId
-  , allowUser: String
+// 白名单机制 -- 针对发送方
+// 凡是发送方在白名单里的邮件地址的, 都进行转发
+// 该机制无视  黑名单机制 (就是, 即使是发送到黑名单里面的地址, 也进行转发)
+var whiteSendListSchema = new Schema({
+    user: ObjectId,
+    // domain: xxxx.xxx
+    domain: String,
+    // address: xxxx@xxx.xxx
+    address: String,
     // 该user 地址是否处于激活状态,
 		// 如果处于非激活状态, 则该地址收到的邮件自动拒绝
-  , active: { type: Boolean, default: true }
+    active: { type: Boolean, default: true }
 })
-
-// 黑名单机制
-// 凡是不在黑名单里的邮件地址, 都转发
-var blackListSchema = new Schema({
-    domain: ObjectId
-  , blockUser: String
+whiteSendListSchema.plugin(findOrCreate);
+// 黑名单机制 -- 针对接收邮件地址
+// 凡是接收邮件地址在黑名单的都拒绝掉
+var blackReceiveListSchema = new Schema({
+    user: ObjectId,
+    // blockAddress@domain ==> email address
+    domain: String,
+    blockAddress: String,
+    replyInfo: String
 })
+blackReceiveListSchema.plugin(findOrCreate);
 
 module.exports.EmailVerified = mongoose.model("EmailVerified", emailVerifySchema);
 module.exports.Domain = mongoose.model('Domain', domainSchema);
-module.exports.WhiteList = mongoose.model("WhiteList", whiteListSchema);
-module.exports.BlackList = mongoose.model("BlackList", blackListSchema);
+module.exports.WhiteSendList = mongoose.model("WhiteList", whiteSendListSchema);
+module.exports.BlackReceiveList = mongoose.model("BlackList", blackReceiveListSchema);

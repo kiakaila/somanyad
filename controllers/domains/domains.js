@@ -2,18 +2,155 @@
 var Domain = require("../../models/Domain").Domain;
 var Forward = require("../../models/Domain").Forward;
 var EmailVerified = require("../../models/Domain").EmailVerified;
+var WhiteSendList = require("../../models/Domain").WhiteSendList;
+var BlackReceiveList = require("../../models/Domain").BlackReceiveList;
 var dnslookup = require("../../lib/dnslookup");
 var secrets = require("../../config/secrets");
 var async = require("async");
 
 var transporter = require("../contact").transporter;
 
+// 显示所有域名相关信息
 exports.home = function (req, res) {
 
   return res.render('domains/home', {
         title: "Manage Domains",
         active_item: "home"
       });
+}
+
+// 编辑某域名
+exports.edit = function (req, res) {
+  var domainStr = req.query.domain;
+
+  async.waterfall([
+    function (done) {
+      BlackReceiveList.find({user: req.user._id, domain: domainStr}, function (err, blackList) {
+        done(err, blackList)
+      })
+    },
+    function (blackList, done) {
+      WhiteSendList.find({user: req.user._id, domain: domainStr}, function (err, whiteList) {
+        done(err, blackList, whiteList);
+      })
+    }
+  ], function (err, blackList, whiteList) {
+    req.flash("error", err)
+    console.log(arguments);
+    return res.render('domains/edit', {
+          title: "Manage Domains",
+          active_item: domainStr,
+          BlackList: blackList || [],
+          WhiteList: whiteList || []
+        });
+  })
+
+
+}
+// 为某域名添加黑名单
+exports.addBlackList_post = function (req, res) {
+  var domainStr = req.query.domain;
+  var blockAddress = req.body.blockAddress;
+  var replyInfo = req.body.replyInfo;
+
+  var obj = {
+    user: req.user._id,
+    domain: domainStr,
+    blockAddress: blockAddress,
+    replyInfo: replyInfo
+  }
+
+  BlackReceiveList.findOrCreate(obj, function (err, blackItem) {
+    if (err || blackItem == null) {
+      err = err || new Error("create blackItem failure!");
+      req.flash("error", err);
+    }
+    return res.redirect("/domains/edit?domain=" + domainStr);
+  });
+}
+
+// 修改黑名单回退信息
+exports.changeBlackItemReplyinfo_post = function (req, res) {
+  var domainStr = req.query.domain;
+  var blockAddress = req.query.blockAddress;
+  var replyInfo = req.body.replyInfo;
+
+  var obj = {user: req.user._id, domain: domainStr, blockAddress: blockAddress};
+  BlackReceiveList.update(obj, {replyInfo: replyInfo}, function (err, blackItem) {
+    if (err) {
+      req.flash("error", err)
+    }
+    return res.redirect("/domains/edit?domain=" + domainStr);
+  });
+}
+// 删除某条黑名单
+exports.removeBlackItem = function (req, res) {
+  var domainStr = req.query.domain;
+  var blockAddress = req.query.blockAddress;
+  var obj = {
+    user: req.user._id,
+    domain: domainStr,
+    blockAddress: blockAddress
+  }
+  BlackReceiveList.remove(obj, function (err) {
+    if (err) {
+      req.flash("error", err)
+    }
+    return res.redirect("/domains/edit?domain=" + domainStr);
+  });
+}
+// // 添加白名单地址
+// exports.addWhiteList_post = function (req, res) {
+//
+// }
+
+// 将某个域名的转发邮件修改为另一个邮件地址
+exports.change_forward_email_post = function (req, res) {
+  var domainStr = req.query.domain;
+  var forward_email = req.body.forward_email;
+
+  async.waterfall([
+    // 查找之前的转发记录,
+    function (done) {
+      EmailVerified.findOrCreate({user: req.user._id, email: forward_email}, function (err, emailV) {
+        done(err, emailV)
+      })
+    },
+    // 发送验证邮箱所有权的邮件
+    function (emailVerify, done) {
+
+      if (emailVerify.passVerify) {
+        done(null, emailVerify);
+        return;
+      }
+      // 如果这个记录没有通过验证, 那么需要发送验证邮件
+      var mailOptions = {
+        to: forward_email,
+        from: secrets.verifyEmailSender,
+        subject: '验证邮箱所有权',
+        text: '你是否允许用户: '  + req.user.email + '转发邮件给你, 如果允许请点击下面的链接, 或者将下面的链接复制到浏览器地址栏\n\n' +
+          'http://' + req.headers.host + '/domains/emailVerify?id=' + emailVerify._id + '&email=' + emailVerify.email + '\n\n' +
+          ' 如果不允许, 则无需进行操作.\n'
+      };
+      transporter.sendMail(mailOptions, function(err) {
+        req.flash('info', { msg: 'An e-mail has been sent to ' + forward_email + ' with further instructions.' });
+        done(err, emailVerify);
+      });
+    },
+    // 关联域名记录与邮箱所有权记录
+    function (emailVerify, done) {
+      var domain = res.locals.domain;
+      domain.forward_email = emailVerify._id;
+      domain.save(function (err) {
+        done(err, domain, 'done');
+      })
+    },
+  ], function (err) {
+    if (err) {
+      req.flash("error", err)
+    }
+    return res.redirect("/domains/edit?domain=" + domainStr);
+  })
 }
 
 exports.setup = function (req, res) {
@@ -55,11 +192,13 @@ exports.tongji = function (req, res) {
   })
 }
 
+// 添加新域名
 exports.addNewDomain = function (req, res) {
   res.render("domains/addNewDomain", {
     active_item: "domains"
   })
 }
+// 添加新域名 -- 提交表单, 如果需要, 则发送邮件所有权验证邮件
 exports.addNewDomain_post = function (req, res) {
   var domain = req.body.domain;
   var user = req.user;
@@ -80,6 +219,10 @@ exports.addNewDomain_post = function (req, res) {
     },
     // 发送验证邮箱所有权的邮件
     function (domain, emailVerify, done) {
+      if (emailVerify.passVerify) {
+        return done(domain, emailVerify)
+      }
+      // 如果这个记录没有通过验证, 那么需要发送验证邮件
       var mailOptions = {
         to: forward_email,
         from: secrets.verifyEmailSender,
@@ -110,7 +253,7 @@ exports.addNewDomain_post = function (req, res) {
     }
   );
 }
-
+// 添加新域名 -- 步骤1, 告诉用户怎么设置
 exports.newDomainSetup = function (req, res) {
   var domainStr = req.query.domain;
   async.waterfall([
@@ -153,7 +296,7 @@ exports.newDomainSetup = function (req, res) {
   );
 }
 
-
+// 添加新域名 -- 完成
 exports.newDomainSetup2 = function (req, res) {
   var domainStr = req.query.domain;
   var emails = [];
