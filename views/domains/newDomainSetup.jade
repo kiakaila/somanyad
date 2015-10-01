@@ -53,9 +53,11 @@ block content
                         | 复制
                       | )
                     th.domain_type MX
-            h5 第三步: 验证邮箱#{domain.email}的所有权
-            p 为了,防止你的邮件发到别人的邮箱, 服务器已经发送了一封邮件到你的邮箱#{domain.email}里了, 你只需要点击邮箱里面的确定链接即可
-            
+            if !domain.email_hadVerify
+              p #{domain}
+              h5 第三步: 验证邮箱#{domain.email}的所有权
+              p 为了,防止你的邮件发到别人的邮箱, 服务器已经发送了一封邮件到你的邮箱#{domain.email}里了, 你只需要点击邮箱里面的确定链接即可
+              
             a(href='/domains/newDomainSetup2?domain=#{domain.domain}').btn.btn-success 提交验证 
               i.fa.fa-arrow-right
 

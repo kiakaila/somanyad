@@ -211,7 +211,7 @@ exports.newDomainSetup = function (req, res) {
     // 发送验证邮箱所有权的邮件
     function (domain, emailVerify, done) {
       if (emailVerify.passVerify) {
-        return done(domain, emailVerify)
+        return done(null, domain, emailVerify)
       }
       // 如果这个记录没有通过验证, 那么需要发送验证邮件
       var mailOptions = {
@@ -229,7 +229,7 @@ exports.newDomainSetup = function (req, res) {
     }],
     // 渲染
     function (err, domain, emailV) {
-      console.log(arguments);
+      
       if (err) {
         res.locals.message = err.message
         return res.render("domains/newDomainSetup", {
@@ -244,6 +244,7 @@ exports.newDomainSetup = function (req, res) {
       var mailServers = secrets.mailServers
 
       domain.email = emailV.email;
+      domain.email_hadVerify = emailV.passVerify;
       return res.render("domains/newDomainSetup", {
         domain: domain,
         cname: cname,

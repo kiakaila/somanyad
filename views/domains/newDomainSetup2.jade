@@ -10,7 +10,7 @@ block content
         .panel.panel-default
           .panel-heading 完成创建
           .panel-body
-            h5 感谢您申请域名邮箱转发服务
+            h5 感谢您申请域名邮箱转发服务 (这里需要做ajax 处理, 用api 方式,防止卡主用户)
             table.table.table-bordered
               tbody
                 tr
@@ -30,6 +30,6 @@ block content
                   if domain.email_hadVerify
                     th.status 通过
                   else
-                  th.status 邮件链接未点击
+                    th.status 邮件链接未点击
             p 我们正在验证您的域名, 请稍后查看验证进度.
             a(href="/domains/").btn.btn-success 完成
