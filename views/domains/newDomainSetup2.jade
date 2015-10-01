@@ -11,5 +11,25 @@ block content
           .panel-heading 完成创建
           .panel-body
             h5 感谢您申请域名邮箱转发服务
+            table.table.table-bordered
+              tbody
+                tr
+                  th.type CNAME 验证
+                  if domain.cname_hadVerify
+                    th.status 通过
+                  else
+                    th.status 尚未通过(一般在2~24小时内生效)
+                tr
+                  th.type MX 记录
+                  if domain.mx_hadVerify
+                    th.status 通过
+                  else
+                  th.status 未设置或暂未生效(一般在2~24小时内生效)
+                tr
+                  th.type 邮件地址验证(#{domain.email})
+                  if domain.email_hadVerify
+                    th.status 通过
+                  else
+                  th.status 邮件链接未点击
             p 我们正在验证您的域名, 请稍后查看验证进度.
             a(href="/domains/").btn.btn-success 完成

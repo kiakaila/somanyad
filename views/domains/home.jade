@@ -23,19 +23,21 @@ block domains-content
             for domain in domains
               tr
                 th.name #{domain.domain}
-                if domain.cnameVerifyStatus
+                if domain.cname_hadVerify
                   th.cnameVerifyStatus #{domain.cnameVerifyStatus}
                 else
                   th.cnameVerifyStatus 
                     | 尚未通过
-                    a(href="#") 手动验证
-                if domain.mxVerifyStatus
+                    a(href="/domains/newDomainSetup?domain=" + domain.domain) 手动验证
+                if domain.mx_hadVerify
                   th.mx #{domain.mx}
                 else
                   th.mx
                     | 未设置或暂未生效
-                    a(href="#") 如何设置
+                    a(href="/domains/newDomainSetup?domain=" + domain.domain) 如何设置
                 th.forward_email #{domain.email}
+                  if !domain.email_hadVerify
+                    a(href="/domains/newDomainSetup?domain=" + domain.domain) 再次发送验证邮件
                 th.fee_plan #{domain.fee_plan}
                 th.operation 注销
             

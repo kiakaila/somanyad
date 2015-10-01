@@ -86,12 +86,14 @@ router.get("/edit/removeBlackItem", userOwnerDomain, domains.removeBlackItem);
 
 // 添加新域名
 router.get("/addNewDomain", domains.addNewDomain);
-// 添加新域名 -- 提交表单, 如果需要, 则发送邮件所有权验证邮件
+// 添加新域名 -- 提交表单,
 router.post("/addNewDomain", domains.addNewDomain_post);
 // 添加新域名 -- 步骤1, 告诉用户怎么设置
+// 如果需要, 则发送邮件所有权验证邮件
 router.get("/newDomainSetup", domains.newDomainSetup);
 // 添加新域名 -- 完成
 router.get("/newDomainSetup2", domains.newDomainSetup2);
+
 
 
 
