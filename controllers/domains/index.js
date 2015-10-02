@@ -2,6 +2,7 @@
 var emailVerify = require("./api_emailVerify");
 var domains = require("./domains");
 var domains_api = require("./api_domains");
+var fee_plan = require("./fee_plan");
 var router = require("express").Router();
 var Domain = require("../../models/Domain").Domain;
 var EmailVerify = require("../../models/Domain").EmailVerify;
@@ -22,7 +23,7 @@ function locals_domains (req, res, next) {
     }
   ], function (err, results) {
     if (err) {
-      req.flash("error", err);
+      req.flash('errors', { msg: err.message });
     }
     var emailVs = results[0];
     var domains = results[1];
@@ -49,6 +50,9 @@ function userOwnerDomain(req, res, next) {
     async.waterfall([
       function (done) {
         Domain.findOne({domain: domainStr, user: req.user._id}, function (err, domain) {
+          if (domain == null) {
+            err = new Error("domain not found!")
+          }
           res.locals.domain = domain;
           done(err, domain);
         })
@@ -95,10 +99,15 @@ router.get("/newDomainSetup", domains.newDomainSetup);
 // 添加新域名 -- 完成
 router.get("/newDomainSetup2", domains.newDomainSetup2);
 
+// 域名删除
+router.get('/deleteDomain', userOwnerDomain, domains.deleteDomain);
+router.post('/deleteDomain', userOwnerDomain, domains.deleteDomain_post);
 
 // 验证允许转发的邮件地址
 router.get("/emailVerify", domains.emailVerify);
 
+// 获取,已用额度
+router.get("/fee_plan/use", fee_plan.used);
 //
 //
 // router.get("/api_cnameVerifyStatus", domains_api.cnameVerifyStatus);

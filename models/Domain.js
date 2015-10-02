@@ -57,22 +57,8 @@ domainSchema.pre("save", function (next) {
   }
   next();
 })
-// 白名单机制 -- 针对发送方
-// 凡是发送方在白名单里的邮件地址的, 都进行转发
-// 该机制无视  黑名单机制 (就是, 即使是发送到黑名单里面的地址, 也进行转发)
-var whiteSendListSchema = new Schema({
-    user: ObjectId,
-    // domain: xxxx.xxx
-    domain: String,
-    // address: xxxx@xxx.xxx
-    address: String,
-    // 该user 地址是否处于激活状态,
-		// 如果处于非激活状态, 则该地址收到的邮件自动拒绝
-    active: { type: Boolean, default: true }
-})
-whiteSendListSchema.plugin(findOrCreate);
-// 黑名单机制 -- 针对接收邮件地址
-// 凡是接收邮件地址在黑名单的都拒绝掉
+
+// 作废地址 -- 凡是发到作废地址的, 直接退回
 var blackReceiveListSchema = new Schema({
     user: ObjectId,
     // blockAddress@domain ==> email address
@@ -82,7 +68,42 @@ var blackReceiveListSchema = new Schema({
 })
 blackReceiveListSchema.plugin(findOrCreate);
 
-module.exports.EmailVerify = mongoose.model("EmailVerify", emailVerifySchema);
+// 转发记录 --  用于统计用户额度
+var forwardRecordSchema = new Schema({
+    user: ObjectId,
+    // 发件人是谁
+    from: String,
+    // 收件域名
+    domain: String,
+    // 收件地址栏
+    toUser: String
+});
+// 转发日期
+forwardRecordSchema.plugin(createdModifiedPlugin, {index: true});
+// 用户付费情况
+var feePlanSchema = new Schema({
+  user: ObjectId,
+  // 用户付费日期
+  startAt: { type: Date, default: Date.now },
+  // 用户剩余会员月份
+  count: Number
+})
+// 用户的付费记录, 譬如什么时候, 付了多少钱
+var feePlanRecordSchema = new Schema({
+  user: ObjectId,
+  // 什么时候
+  pay_date:  { type: Date, default: Date.now },
+  // 付了多少钱
+  money: Number,
+  // 购买会员月数
+  count: Number,
+  // 付费id
+  pay_id: String,
+  // 付费类型
+  pay_type: String
+})
+
+module.exports.EmailVerify = mongoose.model("EmailVerifyq", emailVerifySchema);
 module.exports.Domain = mongoose.model('Domain', domainSchema);
-module.exports.WhiteSendList = mongoose.model("WhiteList", whiteSendListSchema);
 module.exports.BlackReceiveList = mongoose.model("BlackList", blackReceiveListSchema);
+module.exports.ForwardRecords = mongoose.model("ForwardRecord", forwardRecordSchema);

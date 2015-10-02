@@ -2,7 +2,6 @@
 var Domain = require("../../models/Domain").Domain;
 var Forward = require("../../models/Domain").Forward;
 var EmailVerify = require("../../models/Domain").EmailVerify;
-var WhiteSendList = require("../../models/Domain").WhiteSendList;
 var BlackReceiveList = require("../../models/Domain").BlackReceiveList;
 var dnslookup = require("../../lib/dnslookup");
 var secrets = require("../../config/secrets");
@@ -28,20 +27,14 @@ exports.edit = function (req, res) {
       BlackReceiveList.find({user: req.user._id, domain: domainStr}, function (err, blackList) {
         done(err, blackList)
       })
-    },
-    function (blackList, done) {
-      WhiteSendList.find({user: req.user._id, domain: domainStr}, function (err, whiteList) {
-        done(err, blackList, whiteList);
-      })
     }
-  ], function (err, blackList, whiteList) {
-    req.flash("error", err)
+  ], function (err, blackList) {
+    req.flash('errors', { msg: err.message })
     console.log(arguments);
     return res.render('domains/edit', {
           title: "Manage Domains",
           active_item: domainStr,
-          BlackList: blackList || [],
-          WhiteList: whiteList || []
+          BlackList: blackList || []
         });
   })
 
@@ -63,7 +56,7 @@ exports.addBlackList_post = function (req, res) {
   BlackReceiveList.findOrCreate(obj, function (err, blackItem) {
     if (err || blackItem == null) {
       err = err || new Error("create blackItem failure!");
-      req.flash("error", err);
+      req.flash('errors', { msg: err.message });
     }
     return res.redirect("/domains/edit?domain=" + domainStr);
   });
@@ -78,7 +71,7 @@ exports.changeBlackItemReplyinfo_post = function (req, res) {
   var obj = {user: req.user._id, domain: domainStr, blockAddress: blockAddress};
   BlackReceiveList.update(obj, {replyInfo: replyInfo}, function (err, blackItem) {
     if (err) {
-      req.flash("error", err)
+      req.flash('errors', { msg: err.message })
     }
     return res.redirect("/domains/edit?domain=" + domainStr);
   });
@@ -94,7 +87,7 @@ exports.removeBlackItem = function (req, res) {
   }
   BlackReceiveList.remove(obj, function (err) {
     if (err) {
-      req.flash("error", err)
+      req.flash('errors', { msg: err.message })
     }
     return res.redirect("/domains/edit?domain=" + domainStr);
   });
@@ -143,7 +136,7 @@ exports.change_forward_email_post = function (req, res) {
     },
   ], function (err) {
     if (err) {
-      req.flash("error", err)
+      req.flash('errors', { msg: err.message })
     }
     return res.redirect("/domains/edit?domain=" + domainStr);
   })
@@ -205,6 +198,8 @@ exports.newDomainSetup = function (req, res) {
     // 查找相关的转发目的地
     function (domain, done) {
       EmailVerify.findOne({_id: domain.forward_email}, function (err, emailV) {
+        err = err ||
+              emailV == null ? new Error("never found email record") : null;
         done(err, domain, emailV)
       });
     },
@@ -223,15 +218,17 @@ exports.newDomainSetup = function (req, res) {
           ' 如果不允许, 则无需进行操作.\n'
       };
       transporter.sendMail(mailOptions, function(err) {
+        // ???? 这个有生效吗 ???
         req.flash('info', { msg: 'An e-mail has been sent to ' + emailVerify.email + ' with further instructions.' });
         done(err, domain, emailVerify);
       });
     }],
     // 渲染
     function (err, domain, emailV) {
-      
+
       if (err) {
-        res.locals.message = err.message
+        // res.locals.message = err.message
+        req.flash('errors', { msg: err.message })
         return res.render("domains/newDomainSetup", {
           domain: domain || { domain: domainStr },
           err: err,
@@ -303,7 +300,7 @@ exports.newDomainSetup2 = function (req, res) {
     }
   ], function (err, domain, emailV) {
     if (err) {
-      req.flash("error", err);
+      req.flash('errors', { msg: err.message });
       return res.render("domains/newDomainSetup2", {
         domain: domain
       });
@@ -313,8 +310,32 @@ exports.newDomainSetup2 = function (req, res) {
     return res.render("domains/newDomainSetup2", {
       domain: domain
     });
+  });
+}
+
+// 域名删除
+exports.deleteDomain = function (req, res) {
+  var domainStr = req.query.domain;
+
+  return res.render("domains/deleteDomain", {
+    domain: domainStr
+  });
+}
+
+// 域名删除
+exports.deleteDomain_post = function (req, res) {
+  var domainStr = req.query.domain;
+  Domain.remove({domain: domainStr, user: req.user._id}, function (err, domains) {
+    if (err || domains == null) {
+      err = err || new Error("not found domain: " + domainStr);
+      req.flash('errors', { msg: err.message });
+    }
+    return res.render("domains/deleteDomain2", {
+      msg: err == null ?  "删除成功" : "删除失败, 请联系管理员"
+    });
   })
 }
+
 
 // 验证允许转发的邮件地址
 exports.emailVerify = function (req, res) {
@@ -323,14 +344,14 @@ exports.emailVerify = function (req, res) {
 
   EmailVerify.findOne({_id: id, email: email}, function (err, emailV) {
     if (err || emailV == null) {
-      req.flash("error", (err || new Error("email verify record not found!")));
+      req.flash('errors', (err || new Error("email verify record not found!")));
       console.log(err, emailV);
       return res.render("domains/emailVerify");
     } else {
       emailV.passVerify = true;
       emailV.save(function (err) {
         if (err) {
-          req.flash("error", err);
+          req.flash('errors', { msg: err.message });
         }
         console.log(err, emailV);
         res.locals.emailV = emailV;

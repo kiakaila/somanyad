@@ -17,7 +17,7 @@ block domains-content
               th.cnameVerifyStatus 验证所有权
               th.mx MX记录
               th.forward_email 转发到
-              th.fee_plan 可用额度
+              th.fee_plan 已用额度
               th.operation 操作
           tbody
             for domain in domains
@@ -39,7 +39,9 @@ block domains-content
                   if !domain.email_hadVerify
                     a(href="/domains/newDomainSetup?domain=" + domain.domain) 再次发送验证邮件
                 th.fee_plan #{domain.fee_plan}
-                th.operation 注销
+                th.operation 
+                  a(href="/domains/deleteDomain?domain=" + domain.domain) 删除
+                
             
             
   
