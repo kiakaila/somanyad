@@ -275,6 +275,17 @@ exports.newDomainSetup2 = function (req, res) {
       dnslookup.domainVerify(domain.domain, req.user._id, function (err) {
         if (err) {
           domain.cname_hadVerify = false;
+          // 定时, 两小时后,自动检测是否
+          setTimeout(function () {
+            dnslookup.domainVerify(domain.domain, req.user._id, function (err) {
+              if (err) {
+                domain.cnameVerifyStatus = false;
+              } else {
+                domain.cnameVerifyStatus = true;
+              }
+              domain.save();
+            })
+          }, 2 * 60 * 60);
         } else {
           domain.cname_hadVerify = true;
         }
@@ -289,6 +300,17 @@ exports.newDomainSetup2 = function (req, res) {
       dnslookup.mxVerify(domain.domain, secrets.mailServers, function (err) {
         if (err) {
           domain.mx_hadVerify = false;
+          // 定时, 两小时后,自动检测是否
+          setTimeout(function () {
+            dnslookup.mxVerify(domain.domain, secrets.mailServers, function (err) {
+              if (err) {
+                domain.mxVerifyStatus = false;
+              } else {
+                domain.mxVerifyStatus = true;
+              }
+              domain.save();
+            })
+          }, 2 * 60 * 60);
         } else {
           domain.mx_hadVerify = true;
         }
