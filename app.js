@@ -21,6 +21,8 @@ var passport = require('passport');
 var expressValidator = require('express-validator');
 var assets = require('connect-assets');
 
+var i18n = require("i18n");
+
 /**
  * Controllers (route handlers).
  */
@@ -47,6 +49,16 @@ var app = express();
 mongoose.connect(secrets.db);
 mongoose.connection.on('error', function() {
   console.error('MongoDB Connection Error. Please make sure that MongoDB is running.');
+});
+
+/**
+ * i18n configuration
+ */
+i18n.configure({
+  locales: ['en', 'zh'],
+  defaultLocale: 'en',
+
+  directory: __dirname + '/locales'
 });
 
 /**
@@ -90,7 +102,10 @@ app.use(function(req, res, next) {
 });
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
 
+// default: using 'accept-language' header to guess language settings
+app.use(i18n.init);
 
+app.use(domainsController.locals_domains);
 /**
  * Primary app routes.
  */

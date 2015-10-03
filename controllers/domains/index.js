@@ -10,6 +10,10 @@ var async = require("async");
 
 function locals_domains (req, res, next) {
 
+  if (req.user == undefined) {
+    return next();
+  }
+
   async.series([
     function (done) {
       EmailVerify.find({user: req.user._id}, function (err, emailVs) {
@@ -41,7 +45,6 @@ function locals_domains (req, res, next) {
     res.locals.domains = domains || []
     next();
   })
-
 }
 
 function userOwnerDomain(req, res, next) {
@@ -69,7 +72,6 @@ function userOwnerDomain(req, res, next) {
   }
 }
 
-router.use(locals_domains);
 // router.use(userOwnerDomain);
 // 显示所有域名相关信息
 router.get('/', domains.home);
@@ -121,3 +123,4 @@ router.get("/fee_plan/use", fee_plan.used);
 
 
 exports.router = router;
+exports.locals_domains = locals_domains;

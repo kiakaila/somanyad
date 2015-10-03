@@ -12,17 +12,26 @@
     .collapse.navbar-collapse
       ul.nav.navbar-nav
         li(class=title=='Home'?'active':undefined)
-          a(href='/') Home
-        li(class=title=='API Examples'?'active':undefined)
-          a(href='/api') API Examples
+          a(href='/') #{__('首页')}
+        li(class=title=='Price'?'active':undefined)
+          a(href='/price') #{__('价格')}
+        li(class=title=='Product'?'active':undefined)
+          a(href='/product') #{__('产品')}
+        //- li(class=title=='API Examples'?'active':undefined)
+        //-   a(href='/api') API Examples
         li(class=title=='Contact'?'active':undefined)
-          a(href='/contact') Contact
+          a(href='/contact') #{__('联系我们')}
+
+          
       ul.nav.navbar-nav.navbar-right
+        if domains
+          li(class=title=='My Domains'?'active':undefined)
+            a(href='/domains') #{__('我的域名')}      
         if !user
           li(class=title=='Login'?'active':undefined)
-            a(href='/login') Login
+            a(href='/login') #{__('登陆')}
           li(class=title=='Create Account'?'active':undefined)
-            a(href='/signup') Create Account
+            a(href='/signup') #{__('注册')}
         else
           li.dropdown(class=title=='Account Management'?'active':undefined)
             a.dropdown-toggle(href='#', data-toggle='dropdown')
@@ -34,10 +43,7 @@
               i.caret
             ul.dropdown-menu
               li
-                a(href='/account') 账号
+                a(href='/account') #{__('账号')}
               li.divider
               li
-                a(href="/domains") 域名
-              li.divider
-              li
-                a(href='/logout') 退出
+                a(href='/logout') #{__('退出')}
