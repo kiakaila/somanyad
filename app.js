@@ -110,6 +110,8 @@ app.use(domainsController.locals_domains);
  * Primary app routes.
  */
 app.get('/', homeController.index);
+app.get('/price', homeController.price);
+app.get('/product', homeController.product);
 app.get('/login', userController.getLogin);
 app.post('/login', userController.postLogin);
 app.get('/logout', userController.logout);
@@ -128,6 +130,7 @@ app.post('/account/delete', passportConf.isAuthenticated, userController.postDel
 app.get('/account/unlink/:provider', passportConf.isAuthenticated, userController.getOauthUnlink);
 
 app.use("/domains", passportConf.isAuthenticated, domainsController.router);
+
 
 /**
  * API examples routes.
