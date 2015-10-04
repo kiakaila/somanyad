@@ -16,12 +16,14 @@ var _ = require('lodash');
 var MongoStore = require('connect-mongo')(session);
 var flash = require('express-flash');
 var path = require('path');
-var mongoose = require('mongoose');
 var passport = require('passport');
 var expressValidator = require('express-validator');
 var assets = require('connect-assets');
 
 var i18n = require("i18n");
+
+// connect to database
+require("./db");
 
 /**
  * Controllers (route handlers).
@@ -31,6 +33,8 @@ var userController = require('./controllers/user');
 var apiController = require('./controllers/api');
 var contactController = require('./controllers/contact');
 var domainsController = require("./controllers/domains");
+
+var domainsMiddleware = require("./controllers/domains/middleware");
 
 /**
  * API keys and Passport configuration.
@@ -42,14 +46,6 @@ var passportConf = require('./config/passport');
  * Create Express server.
  */
 var app = express();
-
-/**
- * Connect to MongoDB.
- */
-mongoose.connect(secrets.db);
-mongoose.connection.on('error', function() {
-  console.error('MongoDB Connection Error. Please make sure that MongoDB is running.');
-});
 
 /**
  * i18n configuration
@@ -105,7 +101,7 @@ app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }))
 // default: using 'accept-language' header to guess language settings
 app.use(i18n.init);
 
-app.use(domainsController.locals_domains);
+app.use(domainsMiddleware.locals_domains);
 /**
  * Primary app routes.
  */

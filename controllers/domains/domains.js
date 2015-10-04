@@ -24,76 +24,26 @@ exports.edit = function (req, res) {
 
   async.waterfall([
     function (done) {
-      BlackReceiveList.find({user: req.user._id, domain: domainStr}, function (err, blackList) {
+      BlackReceiveList.find({user: req.user._id, domain: res.locals.domain._id}, function (err, blackList) {
         done(err, blackList)
       })
     }
   ], function (err, blackList) {
-    req.flash('errors', { msg: err.message })
+    if (err) {
+      req.flash('errors', { msg: err.message });
+    }
+
     console.log(arguments);
     return res.render('domains/edit', {
           title: "Manage Domains",
           active_item: domainStr,
           BlackList: blackList || []
         });
-  })
-
-
-}
-// 为某域名添加黑名单
-exports.addBlackList_post = function (req, res) {
-  var domainStr = req.query.domain;
-  var blockAddress = req.body.blockAddress;
-  var replyInfo = req.body.replyInfo;
-
-  var obj = {
-    user: req.user._id,
-    domain: domainStr,
-    blockAddress: blockAddress,
-    replyInfo: replyInfo
-  }
-
-  BlackReceiveList.findOrCreate(obj, function (err, blackItem) {
-    if (err || blackItem == null) {
-      err = err || new Error("create blackItem failure!");
-      req.flash('errors', { msg: err.message });
-    }
-    return res.redirect("/domains/edit?domain=" + domainStr);
-  });
-}
-
-// 修改黑名单回退信息
-exports.changeBlackItemReplyinfo_post = function (req, res) {
-  var domainStr = req.query.domain;
-  var blockAddress = req.query.blockAddress;
-  var replyInfo = req.body.replyInfo;
-
-  var obj = {user: req.user._id, domain: domainStr, blockAddress: blockAddress};
-  BlackReceiveList.update(obj, {replyInfo: replyInfo}, function (err, blackItem) {
-    if (err) {
-      req.flash('errors', { msg: err.message })
-    }
-    return res.redirect("/domains/edit?domain=" + domainStr);
-  });
-}
-// 删除某条黑名单
-exports.removeBlackItem = function (req, res) {
-  var domainStr = req.query.domain;
-  var blockAddress = req.query.blockAddress;
-  var obj = {
-    user: req.user._id,
-    domain: domainStr,
-    blockAddress: blockAddress
-  }
-  BlackReceiveList.remove(obj, function (err) {
-    if (err) {
-      req.flash('errors', { msg: err.message })
-    }
-    return res.redirect("/domains/edit?domain=" + domainStr);
   });
 }
 
 // 将某个域名的转发邮件修改为另一个邮件地址
+// 要先验证新的地址是否允许转发
 exports.change_forward_email_post = function (req, res) {
   var domainStr = req.query.domain;
   var forward_email = req.body.forward_email;
@@ -345,6 +295,7 @@ exports.deleteDomain = function (req, res) {
 }
 
 // 域名删除
+// middleware.userOwnerDomain
 exports.deleteDomain_post = function (req, res) {
   var domainStr = req.query.domain;
   Domain.remove({domain: domainStr, user: req.user._id}, function (err, domains) {
@@ -382,73 +333,3 @@ exports.emailVerify = function (req, res) {
     }
   });
 }
-
-//
-// //
-// exports.setupForwardTo = function (req, res) {
-//   var domainStr = req.query.domain;
-//
-//   Domain.findOne({domain: domainStr}, function (err, domain) {
-//     if (err) {
-//       return res.render("domains/setupForwardTo", {
-//         domain: domainStr,
-//         error: err.message
-//       });
-//     }
-//
-//     EmailVerify.find({user: req.user._id}, function (err, emails) {
-//       if (err) {
-//         return res.render("domains/setupForwardTo", {
-//           domain: domainStr,
-//           emails: []
-//         });
-//       }
-//
-//       return res.render("domains/setupForwardTo", {
-//         domain: domainStr,
-//         emails: emails
-//       });
-//     })
-//   })
-// }
-//
-//
-//
-// exports.setup = function (req, res) {
-//   var domain = req.query.domain
-//
-//   res.render("domains/setup", {
-//     domain: domain
-//   })
-// }
-//
-// exports.emails = function (req, res) {
-//
-//   res.render("domains/emails", {
-//     active_item: "emails"
-//   })
-// }
-// exports.emails_forward = function (req, res) {
-//   var domainStr = req.query.domain;
-//   Domain.findOne({domain: domainStr, user: req.user._id}, function (err, domain) {
-//     if (err) {
-//       return res.send(err);
-//     }
-//     if (domain) {
-//
-//     }
-//   })
-// }
-//
-// exports.forward = function (req, res) {
-//   res.render("domains/forward", {
-//     active_item: "forward"
-//   })
-// }
-//
-//
-// exports.tongji = function (req, res) {
-//   res.render("domains/tongji", {
-//     active_item: "tongji"
-//   })
-// }

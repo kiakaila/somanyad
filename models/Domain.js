@@ -61,8 +61,9 @@ domainSchema.pre("save", function (next) {
 // 作废地址 -- 凡是发到作废地址的, 直接退回
 var blackReceiveListSchema = new Schema({
     user: ObjectId,
-    // blockAddress@domain ==> email address
-    domain: String,
+
+    domain: ObjectId,
+    // blockAddress + @ + `find domain by domainId` ==> email address
     blockAddress: String,
     replyInfo: String
 })
