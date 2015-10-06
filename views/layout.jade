@@ -1,22 +1,30 @@
 doctype html
-html
+html.no-js
   head
     meta(charset='utf-8')
     meta(http-equiv='X-UA-Compatible', content='IE=edge')
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    meta(name="robots", content="all, follow")
     meta(name='csrf-token', content=_csrf)
     title #{title} - SoManyAD
     != css('main')
     != css("somanyad")
+    //- != css("freelancer/freelancer")
     include partials/favicon
+    include partials/head
   body
-    include partials/header
+    block header
+      include partials/header
 
-    .container
-      br
+    block flash
       include partials/flash
-      block content
+    block content
+    block footer
+      include partials/footer
 
-    include partials/footer
+    block footer-js
+      != js("lib/jquery-2.1.3.min")      
+      != js("lib/bootstrap.min")
+      != js('main')
 
-    != js('application')
+  

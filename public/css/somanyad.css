@@ -1,3 +1,43 @@
 .gray {
   color: #868686;
 }
+
+/*body {
+  background: url("/img/p1.jpg") no-repeat center center fixed;
+  background-size: cover;
+}*/
+/*
+.container .lead {
+  color: white;
+}
+
+.border {
+  border-style: dashed;
+  border-width: 1px;
+  border-color: red;
+}*/
+
+#home {
+  background-color: yellow;
+}
+#price {
+  background-color: red;
+}
+#product {
+  background-color: yellow;
+}
+#contact {
+  background-color: red;
+}
+
+
+/*.right_bottom {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}*/
+section {
+  min-height: 50vh;
+  position: relative;
+  padding-top: 60px;
+}
