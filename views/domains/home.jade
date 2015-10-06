@@ -36,7 +36,6 @@ block domains-content
             th.forward_email #{domain.email}
               if !domain.email_hadVerify
                 a(href="/domains/newDomainSetup?domain=" + domain.domain) 再次发送验证邮件
-            th.fee_plan #{domain.fee_plan}
             th.operation 
               a(href="/domains/deleteDomain?domain=" + domain.domain) 删除
                 
