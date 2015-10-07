@@ -4,14 +4,8 @@ block domains-content
   br
   .container  
     .row
-      .col-md-8
-        form(action="/domains/edit/forward_email?domain=" + active_item, method="post")
-          input(type='hidden', name='_csrf', value=_csrf)
-          .input-group
-            span.input-group-addon 将发送到xxx@#{active_item}的邮件转发到
-            input.form-control(type="text", value=domain.email || "xxxx@example.com", name="forward_email")
-            span(type="submit").btn.btn-success.input-group-addon 修改
-      .col-md-3.col-md-offset-1
+      .col-md-12
+        br
         table.table.table-bordered
           .tbody
             tr
@@ -24,6 +18,13 @@ block domains-content
             tr
               th.type 可用额度(每月)
               th.status 100/100
+      .col-md-12
+        form(action="/domains/edit/forward_email?domain=" + active_item, method="post")
+          input(type='hidden', name='_csrf', value=_csrf)
+          .input-group
+            span.input-group-addon 将发送到xxx@#{active_item}的邮件转发到
+            input.form-control(type="text", value=domain.email || "xxxx@example.com", name="forward_email")
+            span(type="submit").btn.btn-success.input-group-addon 修改
     hr
     .row
       .col-md-12
