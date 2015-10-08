@@ -14,7 +14,6 @@ exports.home = function (req, res) {
 
   async.waterfall([], function (err, receiveMailCount) {
     return res.render('domains/home', {
-          title: "Domains",
           active_item: "home",
         });
   })

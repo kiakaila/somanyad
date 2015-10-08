@@ -43,6 +43,8 @@ exports.locals_domains = function (req, res, next) {
     return next();
   }
 
+  res.locals.title = "Domains"
+
   async.series([
     function (done) {
       EmailVerify.find({user: req.user._id}, function (err, emailVs) {
