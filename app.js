@@ -101,7 +101,7 @@ app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }))
 // default: using 'accept-language' header to guess language settings
 app.use(i18n.init);
 
-app.use(domainsMiddleware.locals_domains);
+// app.use(domainsMiddleware.locals_domains);
 /**
  * Primary app routes.
  */

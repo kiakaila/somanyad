@@ -9,7 +9,9 @@ var Domain = require("../../models/Domain").Domain;
 var EmailVerify = require("../../models/Domain").EmailVerify;
 var userOwnerDomain = require("./middleware").userOwnerDomain;
 var async = require("async");
+var m = require('./middleware');
 
+router.use(m.locals_domains);
 // router.use(userOwnerDomain);
 // 显示所有域名相关信息
 router.get('/', domains.home);

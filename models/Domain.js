@@ -3,8 +3,9 @@ var crypto = require('crypto');
 var mongoose = require('mongoose')
   , Schema = mongoose.Schema
   , ObjectId = Schema.ObjectId;
-var createdModifiedPlugin = require("mongoose-createdmodified").createdModifiedPlugin;
+var stampIt = require("mongoose-stamp");
 var findOrCreate = require("mongoose-findorcreate")
+var moment = require("moment");
 
 // 判断是否允许某个用户把邮件转发到某个指定邮箱
 var emailVerifySchema = new mongoose.Schema({
@@ -17,7 +18,7 @@ var emailVerifySchema = new mongoose.Schema({
   , passVerify: { type: Boolean, default: false }
 });
 
-emailVerifySchema.plugin(createdModifiedPlugin);
+emailVerifySchema.plugin(stampIt);
 emailVerifySchema.plugin(findOrCreate);
 
 emailVerifySchema.methods.SendVerifyEmail = function (cb) {
@@ -42,7 +43,7 @@ var domainSchema = new mongoose.Schema({
 })
 
 domainSchema.plugin(findOrCreate);
-domainSchema.plugin(createdModifiedPlugin, {index: true});
+domainSchema.plugin(stampIt);
 
 domainSchema.methods.forward_email_is = function (emailV) {
   if (this.forward_email && emailV && this.forward_email.equals(emailV._id)) {
@@ -74,13 +75,42 @@ var forwardRecordSchema = new Schema({
     user: ObjectId,
     // 发件人是谁
     from: String,
+    // toUser + '@' + domain ===> emailAddress
     // 收件域名
     domain: String,
     // 收件地址栏
     toUser: String
 });
 // 转发日期
-forwardRecordSchema.plugin(createdModifiedPlugin, {index: true});
+forwardRecordSchema.plugin(stampIt);
+// cb(err, totalCount, [each,])
+forwardRecordSchema.statics.fn_totalsForwardCount = function (uid, cb) {
+  var d_start = moment().date(1).toDate();
+  var d_end = moment().date(31).toDate();
+  return this.model("ForwardRecord").aggregate([
+    {
+      $match: {
+        user: uid,
+        createAt: {
+          $lte: d_end,
+          $gte: d_start
+        }
+      }
+    },
+    {
+      $group: {
+        _id: "$domain",
+        count: { $sum: 1}
+      }
+    }
+  ], function (err, results) {
+    var count = results.reduce(function (previous, elem) {
+      return previous.count + elem.count;
+    }, 0);
+    cb(err, count, results);
+  });
+}
+
 // 用户付费情况
 var feePlanSchema = new Schema({
   user: ObjectId,
