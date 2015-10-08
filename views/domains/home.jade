@@ -8,7 +8,7 @@ block domains-content
         h3 
           | 我的域名邮箱 &nbsp;
           a.btn.btn-success(href="/domains/addNewDomain") 添加
-          span.pull-right 已用额度: xxx/100
+          span.pull-right 已用额度: #{totalForwardCount}/100
         
       thead
         tr
@@ -21,20 +21,22 @@ block domains-content
         for domain in domains
           tr
             th.name #{domain.domain}
-            if domain.cname_hadVerify
-              th.cnameVerifyStatus #{domain.cnameVerifyStatus}
+            if domain.cnameVerifyStatus
+              th.cnameVerifyStatus 已通过
             else
               th.cnameVerifyStatus 
                 | 尚未通过
                 a(href="/domains/newDomainSetup?domain=" + domain.domain) 手动验证
-            if domain.mx_hadVerify
+            if domain.mxVerifyStatus
               th.mx #{domain.mx}
             else
               th.mx
                 | 未设置或暂未生效
                 a(href="/domains/newDomainSetup?domain=" + domain.domain) 如何设置
             th.forward_email #{domain.email}
-              if !domain.email_hadVerify
+              if domain.email_hadVerify
+                | &nbsp;&nbsp;&nbsp; (#{domain.forwardCount})
+              else
                 a(href="/domains/newDomainSetup?domain=" + domain.domain) 再次发送验证邮件
             th.operation 
               a(href="/domains/deleteDomain?domain=" + domain.domain) 删除
