@@ -12,17 +12,15 @@
     .collapse.navbar-collapse
       ul.nav.navbar-nav
         li(class=title=='Home'?'active':undefined).page-scroll
-          a(href='#home') #{__('首页')}
+          a(href=title=='Home'?'#home':'/#home' ) #{__('首页')}
         li(class=title=='Price'?'active':undefined).page-scroll
-          a(href='#price') #{__('价格')}
+          a(href=title=='Home'?'#price':'/#price') #{__('价格')}
         li(class=title=='Product'?'active':undefined).page-scroll
-          a(href='#product') #{__('产品')}
+          a(href=title=='Home'?'#product':'/#product') #{__('产品')}
         //- li(class=title=='API Examples'?'active':undefined)
         //-   a(href='/api') API Examples
         li(class=title=='Contact'?'active':undefined).page-scroll
-          a(href='#contact') #{__('联系我们')}
-
-
+          a(href=title=='Home'?'#contact':'/#contact') #{__('联系我们')}
           
       ul.nav.navbar-nav.navbar-right
         if user
@@ -30,16 +28,16 @@
             a(href='/domains') #{__('我的域名')}      
         if !user
           li(class=title=='Login'?'active':undefined)
-            a(href='/login') #{__('登陆')}
+            a(href='/login') #{__('登录')}
           li(class=title=='Create Account'?'active':undefined)
             a(href='/signup') #{__('注册')}
         else
           li.dropdown(class=title=='Account Management'?'active':undefined)
             a.dropdown-toggle(href='#', data-toggle='dropdown')
-              if user.profile.picture
-                img(src='#{user.profile.picture}')
-              else
-                img(src='#{user.gravatar(60)}')
+              //- if user.profile.picture
+              //-   img(src='#{user.profile.picture}')
+              //- else
+              //-   img(src='#{user.gravatar(60)}')
               | #{user.profile.name || user.email || user.id}&nbsp;
               i.caret
             ul.dropdown-menu

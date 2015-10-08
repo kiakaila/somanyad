@@ -2,45 +2,42 @@ extends index
 
 block domains-content
   .container
-    .row
-      .col-md-12
-        table.table.table-striped.table-bordered
-          caption
-            .row
-              .col-md-2
-                h3.pull-left 我的域名邮箱
-              .col-md-1
-                a.pull-left(href="/domains/addNewDomain") 添加
-          thead
-            tr
-              th.name 域名
-              th.cnameVerifyStatus 验证所有权
-              th.mx MX记录
-              th.forward_email 转发到
-              th.fee_plan 已用额度(每月)
-              th.operation 操作
-          tbody
-            for domain in domains
-              tr
-                th.name #{domain.domain}
-                if domain.cname_hadVerify
-                  th.cnameVerifyStatus #{domain.cnameVerifyStatus}
-                else
-                  th.cnameVerifyStatus 
-                    | 尚未通过
-                    a(href="/domains/newDomainSetup?domain=" + domain.domain) 手动验证
-                if domain.mx_hadVerify
-                  th.mx #{domain.mx}
-                else
-                  th.mx
-                    | 未设置或暂未生效
-                    a(href="/domains/newDomainSetup?domain=" + domain.domain) 如何设置
-                th.forward_email #{domain.email}
-                  if !domain.email_hadVerify
-                    a(href="/domains/newDomainSetup?domain=" + domain.domain) 再次发送验证邮件
-                th.fee_plan #{domain.fee_plan}
-                th.operation 
-                  a(href="/domains/deleteDomain?domain=" + domain.domain) 删除
+    br
+    table.table.table-striped.table-bordered
+      caption
+        h3 
+          | 我的域名邮箱 &nbsp;
+          a.btn.btn-success(href="/domains/addNewDomain") 添加
+          span.pull-right 已用额度: xxx/100
+        
+      thead
+        tr
+          th.name 域名
+          th.cnameVerifyStatus 验证所有权
+          th.mx MX记录
+          th.forward_email 转发到
+          th.operation 操作
+      tbody
+        for domain in domains
+          tr
+            th.name #{domain.domain}
+            if domain.cname_hadVerify
+              th.cnameVerifyStatus #{domain.cnameVerifyStatus}
+            else
+              th.cnameVerifyStatus 
+                | 尚未通过
+                a(href="/domains/newDomainSetup?domain=" + domain.domain) 手动验证
+            if domain.mx_hadVerify
+              th.mx #{domain.mx}
+            else
+              th.mx
+                | 未设置或暂未生效
+                a(href="/domains/newDomainSetup?domain=" + domain.domain) 如何设置
+            th.forward_email #{domain.email}
+              if !domain.email_hadVerify
+                a(href="/domains/newDomainSetup?domain=" + domain.domain) 再次发送验证邮件
+            th.operation 
+              a(href="/domains/deleteDomain?domain=" + domain.domain) 删除
                 
             
             
