@@ -28,7 +28,7 @@ block domains-content
                 | 尚未通过
                 a(href="/domains/newDomainSetup?domain=" + domain.domain) 手动验证
             if domain.mxVerifyStatus
-              th.mx #{domain.mx}
+              th.mx 已生效
             else
               th.mx
                 | 未设置或暂未生效
