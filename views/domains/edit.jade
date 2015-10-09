@@ -7,17 +7,40 @@ block domains-content
       .col-md-12
         br
         table.table.table-bordered
+          .thead
+            tr
+              th.cnameOwner 验证所有权
+              th.mxVerify mx记录
+              th.usedInfo 已用额度
+              th.forward_email 转发到
           .tbody
             tr
-              th.type 验证所有权
-              th.status 已验证
-            tr
-              th.type mx记录
-              th.status 未设置或者未生效
-                a(href="#") 如何设置
-            tr
-              th.type 可用额度(每月)
-              th.status 100/100
+              // 验证所有权
+              if domain.cnameVerifyStatus
+                th.cnameVerifyStatus 已通过
+              else
+                th.cnameVerifyStatus 
+                  | 尚未通过
+                  a(href="/domains/newDomainSetup?domain=" + domain.domain) 手动验证
+                  
+              // mx记录
+              if domain.mxVerifyStatus
+                th.mx 已生效
+              else
+                th.mx
+                  | 未设置或暂未生效
+                  a(href="/domains/newDomainSetup?domain=" + domain.domain) 如何设置
+              
+              // 已用额度
+              th.status #{domain.forwardCount}/100
+              
+              // 转发到
+              th.forward_email #{domain.email}
+                if domain.email_hadVerify
+                  | &nbsp;&nbsp;&nbsp;
+                else
+                  a(href="/domains/newDomainSetup?domain=" + domain.domain) 再次发送验证邮件
+              
       .col-md-12
         form(action="/domains/edit/forward_email?domain=" + active_item, method="post")
           input(type='hidden', name='_csrf', value=_csrf)
