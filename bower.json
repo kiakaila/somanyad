@@ -1,0 +1,26 @@
+{
+  "name": "somanyad",
+  "main": "index.js",
+  "version": "0.0.0",
+  "authors": [
+    "Lai Jinyan <ljy080829@gmail.com>"
+  ],
+  "description": "",
+  "moduleType": [
+    "es6"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "public/bowerlib",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "Chart.js": "~1.0.2",
+    "moment": "~2.10.6"
+  }
+}

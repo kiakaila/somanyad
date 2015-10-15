@@ -1,0 +1,40 @@
+extends ../layout
+
+block content
+  .container.feePlan
+    
+    br
+    .row
+      .col-md-offset-1.col-md-10
+        .panel.panel-default
+          .panel-heading
+            //- a(href="#").btn.btn-default.pull-right.text-right 对比
+            .row
+              .col-md-4
+                p.pull-right 账号: #{accountId} &nbsp;&nbsp;&nbsp; (#{user.email && user.email})
+          .panel-body
+            block members-content
+              .row
+                ul.nav.nav-tabs.nav-justified#huiyuan
+                  li(huiyuantype="qingtong")
+                    a(href="#") 青铜流量包
+                  li(huiyuantype="baijin").active
+                    a(href="#") 白金流量包
+                  li(huiyuantype="huangjin")
+                    a(href="#") 黄金流量包
+                  li(huiyuantype="chaoji")
+                    a(href="#") 超级流量包
+              br
+              
+              .row.feeContent
+                include qingtong
+                include baijin  
+                include huangjin
+                include chaoji              
+
+  include availRecord
+
+  br
+  br
+  br
+  br

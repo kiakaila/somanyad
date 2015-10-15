@@ -18,13 +18,17 @@ html.no-js
 
     block flash
       include partials/flash
-    block content
+    .container
+      block content
     block footer
       include partials/footer
 
     block footer-js
+      != js("moment/min/moment.min")
       != js("lib/jquery-2.1.3.min")      
       != js("lib/bootstrap.min")
+      != js("Chart.js/Chart.min")
       != js('main')
+      
 
   

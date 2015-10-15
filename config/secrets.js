@@ -27,6 +27,7 @@ module.exports = {
   verifyEmailSender: "verify@somanyad.com",
   domain: "somanyad.com",
   mailServers: ["mx1.somanyad.com", "mx2.somanyad.com"],
+  loginSuccessRedirectUrl: "/members/",
 
   db: process.env.MONGODB || process.env.MONGOLAB_URI || 'mongodb://localhost:27017/emailD',
 

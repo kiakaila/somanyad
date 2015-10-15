@@ -12,18 +12,20 @@
     .collapse.navbar-collapse
       ul.nav.navbar-nav
         li(class=title=='Home'?'active':undefined).page-scroll
-          a(href=title=='Domains'?'/#home':'#home' ) #{__('首页')}
+          a(href=title=='Home'?'#home':'/#home' ) #{__('首页')}
         li(class=title=='Price'?'active':undefined).page-scroll
-          a(href=title=='Domains'?'/#price':'#price') #{__('价格')}
+          a(href=title=='Home'?'#price':'/#price') #{__('价格')}
         li(class=title=='Product'?'active':undefined).page-scroll
-          a(href=title=='Domains'?'/#product':'#product') #{__('产品')}
+          a(href=title=='Home'?'#product':'/#product') #{__('产品')}
         //- li(class=title=='API Examples'?'active':undefined)
         //-   a(href='/api') API Examples
         li(class=title=='Contact'?'active':undefined).page-scroll
-          a(href=title=='Domains'?'/#contact':'#contact') #{__('联系我们')}
+          a(href=title=='Home'?'#contact':'/#contact') #{__('联系我们')}
           
       ul.nav.navbar-nav.navbar-right
         if user
+          li(class=title=='Members'?'active':undefined)
+            a(href='/members') #{__('流量包')}      
           li(class=title=='Domains'?'active':undefined)
             a(href='/domains') #{__('我的域名')}      
         if !user

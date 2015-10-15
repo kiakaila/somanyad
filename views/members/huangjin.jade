@@ -1,0 +1,46 @@
+.col-md-12#huangjin.hidden
+  form(action="/members/feeplan", method="post")
+    input(type='hidden', name='_csrf', value=_csrf)
+    input(type="hidden", name="feeType", value="huangjin")
+    br
+    .row
+      .col-md-offset-1.col-md-2
+        p.pull-right 开通流量包类型:
+      .col-md-9
+        .row
+          .col-md-5
+            p 黄金流量包 (30,000/转发,每月)
+    br
+    .row
+      .col-md-offset-1.col-md-2
+        p.pull-right 应付金额:
+      .col-md-9
+        p.shouldPay 20元(每年20元)
+    br
+    .row
+      .col-md-offset-1.col-md-2
+        p.pull-right 开通时长:
+      .col-md-9  
+        .row
+          .col-md-5
+            .form-inline
+              .form-group
+                .input-group
+                  .input-group-addon
+                    label 购买
+                  input.form-control(type="number", min="1", max="36", value="1", name="count")
+                  .input-group-addon
+                    label 年
+          .col-md-5
+            p.duration 
+    br
+    .row
+      .col-md-offset-1.col-md-2
+        p.pull-right 支付:
+      .col-md-9
+        .row 
+          .col-md-5
+            button(type="submit").btn.btn-default 支付宝
+          .col-md-offset-1.col-md-5.hidden
+            .btn-group.btn-group-justified
+              a(href="#").btn.btn-success.has-error Paypal

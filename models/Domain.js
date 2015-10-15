@@ -111,28 +111,6 @@ forwardRecordSchema.statics.fn_totalsForwardCount = function (uid, cb) {
   });
 }
 
-// 用户付费情况
-var feePlanSchema = new Schema({
-  user: ObjectId,
-  // 用户付费日期
-  startAt: { type: Date, default: Date.now },
-  // 用户剩余会员月份
-  count: Number
-})
-// 用户的付费记录, 譬如什么时候, 付了多少钱
-var feePlanRecordSchema = new Schema({
-  user: ObjectId,
-  // 什么时候
-  pay_date:  { type: Date, default: Date.now },
-  // 付了多少钱
-  money: Number,
-  // 购买会员月数
-  count: Number,
-  // 付费id
-  pay_id: String,
-  // 付费类型
-  pay_type: String
-})
 
 module.exports.EmailVerify = mongoose.model("EmailVerifyq", emailVerifySchema);
 module.exports.Domain = mongoose.model('Domain', domainSchema);

@@ -12,12 +12,9 @@ var transporter = require("../contact").transporter;
 // 显示所有域名相关信息
 exports.home = function (req, res) {
 
-  async.waterfall([], function (err, receiveMailCount) {
-    return res.render('domains/home', {
-          active_item: "home",
-        });
-  })
-
+  return res.render('domains/home', {
+        active_item: "home",
+      });
 }
 
 // 编辑某域名

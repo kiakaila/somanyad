@@ -33,6 +33,7 @@ var userController = require('./controllers/user');
 var apiController = require('./controllers/api');
 var contactController = require('./controllers/contact');
 var domainsController = require("./controllers/domains");
+var membersController = require("./controllers/members");
 
 var domainsMiddleware = require("./controllers/domains/middleware");
 
@@ -65,7 +66,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 app.use(compress());
 app.use(assets({
-  paths: ['public/css', 'public/js']
+  paths: ['public/css', 'public/js', 'public/bowerlib']
 }));
 app.use(logger('dev'));
 app.use(favicon(path.join(__dirname, 'public/favicon.ico')));
@@ -92,22 +93,19 @@ app.use(function(req, res, next) {
   res.locals.user = req.user;
   next();
 });
-app.use(function(req, res, next) {
-  if (/api/i.test(req.path)) req.session.returnTo = req.path;
-  next();
-});
+// app.use(function(req, res, next) {
+//   if (/api/i.test(req.path)) req.session.returnTo = req.path;
+//   next();
+// });
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
 
 // default: using 'accept-language' header to guess language settings
 app.use(i18n.init);
-
 // app.use(domainsMiddleware.locals_domains);
 /**
  * Primary app routes.
  */
 app.get('/', homeController.index);
-app.get('/price', homeController.price);
-app.get('/product', homeController.product);
 app.get('/login', userController.getLogin);
 app.post('/login', userController.postLogin);
 app.get('/logout', userController.logout);
@@ -126,7 +124,7 @@ app.post('/account/delete', passportConf.isAuthenticated, userController.postDel
 app.get('/account/unlink/:provider', passportConf.isAuthenticated, userController.getOauthUnlink);
 
 app.use("/domains", passportConf.isAuthenticated, domainsController.router);
-
+app.use("/members", passportConf.isAuthenticated, membersController.router);
 
 /**
  * API examples routes.
@@ -168,27 +166,27 @@ app.post('/api/bitcore', apiController.postBitcore);
  */
 app.get('/auth/instagram', passport.authenticate('instagram'));
 app.get('/auth/instagram/callback', passport.authenticate('instagram', { failureRedirect: '/login' }), function(req, res) {
-  res.redirect(req.session.returnTo || '/');
+  res.redirect(req.session.returnTo || secrets.loginSuccessRedirectUrl  || '/');
 });
 app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email', 'user_location'] }));
 app.get('/auth/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/login' }), function(req, res) {
-  res.redirect(req.session.returnTo || '/');
+  res.redirect(req.session.returnTo || secrets.loginSuccessRedirectUrl  || '/');
 });
 app.get('/auth/github', passport.authenticate('github'));
 app.get('/auth/github/callback', passport.authenticate('github', { failureRedirect: '/login' }), function(req, res) {
-  res.redirect(req.session.returnTo || '/');
+  res.redirect(req.session.returnTo || secrets.loginSuccessRedirectUrl  || '/');
 });
 app.get('/auth/google', passport.authenticate('google', { scope: 'profile email' }));
 app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/login' }), function(req, res) {
-  res.redirect(req.session.returnTo || '/');
+  res.redirect(req.session.returnTo || secrets.loginSuccessRedirectUrl  || '/');
 });
 app.get('/auth/twitter', passport.authenticate('twitter'));
 app.get('/auth/twitter/callback', passport.authenticate('twitter', { failureRedirect: '/login' }), function(req, res) {
-  res.redirect(req.session.returnTo || '/');
+  res.redirect(req.session.returnTo || secrets.loginSuccessRedirectUrl  || '/');
 });
 app.get('/auth/linkedin', passport.authenticate('linkedin', { state: 'SOME STATE' }));
 app.get('/auth/linkedin/callback', passport.authenticate('linkedin', { failureRedirect: '/login' }), function(req, res) {
-  res.redirect(req.session.returnTo || '/');
+  res.redirect(req.session.returnTo || secrets.loginSuccessRedirectUrl  || '/');
 });
 
 /**
