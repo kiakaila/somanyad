@@ -10,13 +10,13 @@ block domains-content
           a.btn.btn-success(href="/domains/addNewDomain") 添加
           span.pull-right 
             | 当期剩余可用流量: &nbsp;
-            a(href="/members/") #{nowCanUseCount || 0}
+            a(href="/members/") #{nowCanUseCount == -1 ? "不限": nowCanUseCount}
             | &nbsp;
           
         
       thead
         tr
-          th.name 域名
+          th.name.text-center 域名
           th.cnameVerifyStatus 验证所有权
           th.mx MX记录
           th.forward_email 转发到
@@ -24,7 +24,8 @@ block domains-content
       tbody
         for domain in domains
           tr
-            th.name #{domain.domain}
+            th.name.text-center
+              a(href="/domains/edit?domain=#{domain.domain}") #{domain.domain}
             if domain.cnameVerifyStatus
               th.cnameVerifyStatus 已通过
             else

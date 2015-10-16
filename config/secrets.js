@@ -23,7 +23,7 @@ module.exports = {
 
   // cname
   cnamePre: "somanyad",
-  cnamePointTo: "cname.somanyad.com",
+  cnamePointTo: "somanyad.com",
   verifyEmailSender: "verify@somanyad.com",
   domain: "somanyad.com",
   mailServers: ["mx1.somanyad.com", "mx2.somanyad.com"],

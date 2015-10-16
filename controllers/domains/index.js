@@ -36,7 +36,7 @@ router.get("/cnamelookup", m.userOwnerDomain, domains_api.cnameVerifyStatus)
 router.get("/mxlookup", m.userOwnerDomain, domains_api.mxVerifyStatus)
 
 // 编辑某域名
-router.get("/edit", m.userOwnerDomain, m.userDomainInfo, domains.edit);
+router.get("/edit", m.userOwnerDomain, domains.edit);
 
 
 // 验证允许转发的邮件地址

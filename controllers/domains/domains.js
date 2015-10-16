@@ -33,7 +33,7 @@ exports.edit = function (req, res) {
     }
 
     return res.render('domains/edit', {
-          title: "Manage Domains",
+          title: "Domains",
           active_item: domainStr,
           BlackList: blackList || []
         });
@@ -275,6 +275,7 @@ exports.newDomainSetup2 = function (req, res) {
         domain: domain
       });
     }
+
     domain.email = emailV.email;
     domain.email_hadVerify = emailV.passVerify;
     return res.render("domains/newDomainSetup2", {

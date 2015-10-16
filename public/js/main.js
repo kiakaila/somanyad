@@ -29,35 +29,20 @@ $(document).ready(function() {
   var now = moment();
   var nextD = moment().subtract(-1, "years");
 
-  [$("#baijin .duration"), $("#huangjin .duration"), $("#chaoji .duration")].forEach(function ($elem) {
+  [$("#free .duration"), $("#pay .duration")].forEach(function ($elem) {
 
     $elem.text( "" + now.format("YYYY-MM-DD") + "  ----  " + nextD.format("YYYY-MM-DD"));
   });
 
-  $("#baijin input").on("input", function () {
+  $("#pay input").on("input", function () {
     var count = $(this).val() || 1;
     var price = count * 10;
-    $("#baijin .shouldPay").text( price + "元(每年10元)")
+    $("#pay .shouldPay").text( price + "元(每年10元)")
 
     var nextD = moment().subtract(-count, "years");
-    $("#baijin .duration").text( "" + now.format("YYYY-MM-DD") + "  ----  " + nextD.format("YYYY-MM-DD"));
+    $("#pay .duration").text( "" + now.format("YYYY-MM-DD") + "  ----  " + nextD.format("YYYY-MM-DD"));
   });
 
-  $("#huangjin input").on("input", function () {
-    var count = $(this).val() || 1;
-    var price = count * 20;
-    $("#huangjin .shouldPay").text( price + "元(每年20元)");
-    var nextD = moment().subtract(-count, "years");
-    $("#huangjin .duration").text( "" + now.format("YYYY-MM-DD") + "  ----  " + nextD.format("YYYY-MM-DD"));
-  });
-
-  $("#chaoji input").on("input", function () {
-    var count = $(this).val() || 1;
-    var price = count * 30;
-    $("#chaoji .shouldPay").text( price + "元(每年30元)");
-    var nextD = moment().subtract(-count, "years");
-    $("#chaoji .duration").text( "" + now.format("YYYY-MM-DD") + "  ----  " + nextD.format("YYYY-MM-DD"));
-  });
 });
 
 $(document).ready(function () {

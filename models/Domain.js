@@ -36,8 +36,6 @@ var domainSchema = new mongoose.Schema({
     // 用户mx 记录是否设置正确
   , mxVerifyStatus: { type: Boolean, default: false}
   , user 		: ObjectId
-  // 转发策略
-  , forward_type: { type: String, default: "白名单" }
   // 转发邮箱 emailVerifySchema
   , forward_email: ObjectId
 })
@@ -77,7 +75,7 @@ var forwardRecordSchema = new Schema({
     from: String,
     // toUser + '@' + domain ===> emailAddress
     // 收件域名
-    domain: String,
+    toDomain: String,
     // 收件地址栏
     toUser: String
 });

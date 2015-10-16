@@ -10,6 +10,6 @@ exports.used = function (req, res) {
       domain: domain,
       count: count,
       err: err
-    })
-  })
+    });
+  });
 }

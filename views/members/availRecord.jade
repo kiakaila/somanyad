@@ -3,28 +3,20 @@
     .col-md-offset-1.col-md-10
       .panel.panel-default
         .panel-heading
-          .panel-title 当前可用流量包:
+          .panel-title 当前购买记录:
         .panel-body
-          if !freeFeePlan && feePlans.length == 0
+          if plans.length == 0
             .row
               .col-md-12
-                p 无有效流量包
-          if freeFeePlan
+                p 无购买记录
+          for plan in plans
             .row
               .col-md-3
-                p  #{freeFeePlan.member_type} &nbsp;&nbsp;&nbsp; 付费: 0 元
-              .col-md-4
-                p 有效期: #{freeFeePlan.member_startAt} --- #{freeFeePlan.member_expireAt}
-              .col-md-5
-                p 流量(已用/总计): &nbsp;&nbsp;&nbsp;(#{freeFeePlan.usedForwardCount}/#{freeFeePlan.totalForwardCount})
-          for plan in feePlans
-            .row
-              .col-md-3
-                p  #{plan.member_type} &nbsp;&nbsp;&nbsp; 付费: #{plan.pay_money} 元
+                p  类型: #{plan.feeType} &nbsp;&nbsp;&nbsp; 付费: #{plan.pay_money} 元
               .col-md-4
                 p 有效期: #{plan.member_startAt} --- #{plan.member_expireAt}
               .col-md-5
-                p 流量(已用/总计): &nbsp;&nbsp;&nbsp;(#{plan.usedForwardCount}/#{plan.totalForwardCount})
+                p 流量(已用/总计): &nbsp;&nbsp;&nbsp;(#{plan.usedCount}/#{ plan.availCount == -1 ?  "不限" : plan.availCount})
         
           hr
           .row
@@ -32,4 +24,3 @@
               p 转发记录(最近两周)
             .col-md-12
               canvas#myChart
-              

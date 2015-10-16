@@ -6,22 +6,8 @@ var getAvailableCount = require('../members/members').getAvailableCount; // 获�
 
 
 // 确保用户拥有某个域名
-exports.userOwnerDomain = function (req, res, next) {
-  var domainStr = req.query.domain || req.body.domain;
-  if (domainStr == null) {
-    return next(new Error("please input domain name!"));
-  }
-
-  Domain.findOne({domain: domainStr, user: req.user._id}, function (err, domain) {
-    err = err || domain == null ? new Error("domain not found!") : null;
-    next(err);
-  });
-}
-
-// 某个域名信息
 // 要求, 经过 locals_domains 中间件
-// 提供域名的基本信息, 转发数
-exports.userDomainInfo = function (req, res, next) {
+exports.userOwnerDomain = function (req, res, next) {
 
   var domainStr = req.query.domain || req.body.domain;
   if (domainStr != null) {
@@ -34,7 +20,8 @@ exports.userDomainInfo = function (req, res, next) {
       }
     }
   }
-  return next("domain not found!");
+
+  return next(new Error("please input domain name!"));
 }
 
 exports.locals_domains = function (req, res, next) {

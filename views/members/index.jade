@@ -16,21 +16,15 @@ block content
             block members-content
               .row
                 ul.nav.nav-tabs.nav-justified#huiyuan
-                  li(huiyuantype="qingtong").active
-                    a(href="#") 青铜流量包
-                  li(huiyuantype="baijin")
-                    a(href="#") 白金流量包
-                  li(huiyuantype="huangjin")
-                    a(href="#") 黄金流量包
-                  li(huiyuantype="chaoji")
-                    a(href="#") 超级流量包
+                  li(huiyuantype="free").active
+                    a(href="#") 免费
+                  li(huiyuantype="pay")
+                    a(href="#") 付费
               br
               
               .row.feeContent
-                include qingtong
-                include baijin  
-                include huangjin
-                include chaoji              
+                include free
+                include pay             
 
   include availRecord
 

@@ -11,7 +11,7 @@ block domains-content
             tr
               th.cnameOwner 验证所有权
               th.mxVerify mx记录
-              th.usedInfo 已用额度
+              th.usedInfo 当期可用额度
               th.forward_email 转发到
           .tbody
             tr
@@ -32,7 +32,7 @@ block domains-content
                   a(href="/domains/newDomainSetup?domain=" + domain.domain) 如何设置
               
               // 已用额度
-              th.status #{domain.forwardCount}/100
+              th.status #{nowCanUseCount == -1 ? "不限": nowCanUseCount}
               
               // 转发到
               th.forward_email #{domain.email}
@@ -44,10 +44,14 @@ block domains-content
       .col-md-12
         form(action="/domains/edit/forward_email?domain=" + active_item, method="post")
           input(type='hidden', name='_csrf', value=_csrf)
-          .input-group
-            span.input-group-addon 将发送到xxx@#{active_item}的邮件转发到
-            input.form-control(type="text", value=domain.email || "xxxx@example.com", name="forward_email")
-            span(type="submit").btn.btn-success.input-group-addon 修改
+          .row
+            .col-md-8
+              .input-group
+                span.input-group-addon 将发送到xxx@#{active_item}的邮件转发到
+                input.form-control(type="text", value=domain.email || "xxxx@example.com", name="forward_email")
+            .col-md-3
+              button(type="submit").btn.btn-success 修改
+          
     hr
     .row
       .col-md-12
@@ -88,9 +92,12 @@ block domains-content
                     .col-md-11
                       form(action="/domains/edit/changeBlackItemReplyinfo?domain=" + active_item + "&blockAddress=" + email.blockAddress, method="post")
                         input(type='hidden', name='_csrf', value=_csrf)
-                        .input-group
-                          input.form-control(type="text", value=email.replyInfo, name="replyInfo")
-                          span.input-group-addon 修改
+                        .row
+                          .col-md-10
+                            input.form-control(type="text", value=email.replyInfo, name="replyInfo")
+                              
+                          .col-md-2
+                            button(type="submit").btn.btn-default 修改
                 th.operation
                   a(href="/domains/edit/removeBlackItem?domain=" + active_item + "&blockAddress=" + email.blockAddress)
                     | 删除
