@@ -10,9 +10,9 @@ var moment = require("moment");
 
 var liuliangbao = {
   "qingtong": 3000, // 青铜流量包
-  "baijin": 3000, // 白金流量包
-  "huangjin": 3000 * 10, // 黄金流量包
-  "chaoji": 3000 * 100 // 超级流量包
+  "baijin": 3000, // 白金流量包, 3k
+  "huangjin": 3000 * 10, // 黄金流量包, 3w
+  "chaoji": 3000 * 100 // 超级流量包, 30w
 }
 var userObj = {
   // 用户id

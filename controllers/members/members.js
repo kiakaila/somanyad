@@ -20,8 +20,6 @@ exports.qingtong_post = function (req, res) {
   // 如果当前是流量包, 且不是青铜流量包
   //    无法续期
 
-  var memType = 1 // qingtong(1), baijin(1), huangjin(1), chaoji(1)
-
   var obj = {
     user: req.user._id,
     feeType: "qingtong",
@@ -37,7 +35,7 @@ exports.qingtong_post = function (req, res) {
     }
 
     return res.redirect("/members/")
-  })
+  });
 }
 
 // 付费流量包创建
@@ -80,5 +78,39 @@ exports.feeplan_post = function (req, res) {
       req.flash("success", {msg: "购买成功"})
     }
     return res.redirect("/members/");
+  });
+}
+
+exports.getAvailableCount = function (uid, cb) {
+
+  var obj = {
+    user: uid,
+    expireAt: {
+      $gte: moment()
+    }
+  }
+  async.parallel([
+    function (done) {
+      freeFeePlan.findOne(obj).sort({expireAt: 1}).exec(function (err, qingtongPlan) {
+        qingtongPlan = qingtongPlan || {};
+        var count = qingtongPlan.totalForwardCount - qingtongPlan.usedForwardCount
+        if (!count || count < 0) {
+          count = 0
+        }
+        done(null, count);
+      })
+    },
+    function (done) {
+      feePlan.find(obj, function (err, plans) {
+        var count = plans.reduce(function (previous, elem) {
+          return previous + elem.totalForwardCount - elem.usedForwardCount
+        }, 0)
+        done(null, count);
+      })
+    }
+  ], function (err, results) {
+    var qingtongCount = results[0];
+    var feePlanCount = results[1];
+    cb(qingtongCount + feePlanCount)
   });
 }

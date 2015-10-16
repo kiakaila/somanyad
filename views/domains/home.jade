@@ -8,7 +8,11 @@ block domains-content
         h3 
           | 我的域名邮箱 &nbsp;
           a.btn.btn-success(href="/domains/addNewDomain") 添加
-          span.pull-right 已用额度: #{totalForwardCount}/100
+          span.pull-right 
+            | 当期剩余可用流量: &nbsp;
+            a(href="/members/") #{nowCanUseCount || 0}
+            | &nbsp;
+          
         
       thead
         tr

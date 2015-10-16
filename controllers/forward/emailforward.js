@@ -7,6 +7,7 @@ var EmailVerify = require("../../models/Domain").EmailVerify;
 
 exports.forward = emailForward
 
+// 获取真正转发目的地
 function emailForward (mail_from, rcpt_to, cb) {
 	var toHost = rcpt_to.host;
   var toUser = rcpt_to.user;

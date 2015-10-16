@@ -46,6 +46,8 @@ router.use(function (req, res, next) {
       req.flash("error", { msg: err.message });
     }
 
+
+    // 格式化数据
     function formatDate(plan) {
       if (!plan) return;
       plan.member_expireAt = m(plan.expireAt).format("YYYY-MM-DD");

@@ -404,7 +404,6 @@ passport.use('venmo', new OAuth2Strategy({
  */
 exports.isAuthenticated = function(req, res, next) {
   if (req.isAuthenticated()) return next();
-  console.log(req.path);
   req.session.returnTo = req.originalUrl;
   res.redirect('/login');
 };

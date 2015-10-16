@@ -32,7 +32,6 @@ exports.edit = function (req, res) {
       req.flash('errors', { msg: err.message });
     }
 
-    console.log(arguments);
     return res.render('domains/edit', {
           title: "Manage Domains",
           active_item: domainStr,
