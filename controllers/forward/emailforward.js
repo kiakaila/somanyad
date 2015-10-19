@@ -3,7 +3,7 @@ var Domain = require("../../models/Domain").Domain;
 var Forward = require("../../models/Domain").Forward;
 var BlackReceiveList = require("../../models/Domain").BlackReceiveList;
 var EmailVerify = require("../../models/Domain").EmailVerify;
-var feePlan = require("./FeePlan").feePlan;
+var feePlan = require("../members/FeePlan").feePlan;
 
 
 exports.forward = emailForward
