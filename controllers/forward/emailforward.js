@@ -19,6 +19,7 @@ function emailForward (mail_from, rcpt_to, cb) {
     // 查看域名是否存在, 且通过验证
     function (done) {
       Domain.findOne({domain: rcpt_to.host, cnameVerifyStatus: true}, function (err, domain) {
+        err = err || domain == null ? new Error("domain(" + rcpt_to.host + ") not found!") : null;
         done(err, domain);
       });
     },
