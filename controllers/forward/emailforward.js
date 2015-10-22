@@ -65,6 +65,7 @@ function emailForward (mail_from, rcpt_to, cb) {
         if (err) {
           return done(err);
         }
+        console.log(plans);
         for (plan in plans) {
           if (plan.availCount == -1 || plan.usedCount < plan.availCount) {
             plan.usedCount += 1;
@@ -72,7 +73,7 @@ function emailForward (mail_from, rcpt_to, cb) {
             break;
           }
         }
-        return done(new Error("没有可用计划"))
+        return done(new Error("account was not pay fee"))
       });
     }
   ], function (err, domain, address) {
