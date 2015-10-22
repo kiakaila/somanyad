@@ -59,6 +59,7 @@ function emailForward (mail_from, rcpt_to, cb) {
     var lastIndexOfAt = address.lastIndexOf("@");
     if (lastIndexOfAt != -1) {
       var addressDomain = address.substring(lastIndexOfAt + 1);
+      console.log("addressDomain == toHost", addressDomain, toHost, addressDomain == toHost);
       if (addressDomain == toHost) {
         var err = new Error("请不要转发邮件给自己, 有的邮箱会拒绝接收,他发出去的邮件转发给他自己")
         return done(err)
