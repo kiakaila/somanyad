@@ -186,6 +186,8 @@ exports.newDomainSetup = function (req, res) {
     }],
     // 渲染
     function (err, domain, emailV) {
+      var cname = dnslookup.cnameFun(domainStr, req.user._id);
+      var mailServers = secrets.mailServers
 
       if (err) {
         // res.locals.message = err.message
@@ -193,13 +195,12 @@ exports.newDomainSetup = function (req, res) {
         return res.render("domains/newDomainSetup", {
           domain: domain || { domain: domainStr },
           err: err,
-          mailServers: [],
+          cname: cname,
+          mailServers: mailServers,
           cnamePointTo: secrets.cnamePointTo
         });
       }
 
-      var cname = dnslookup.cnameFun(domainStr, req.user._id);
-      var mailServers = secrets.mailServers
 
       domain.email = emailV.email;
       domain.email_hadVerify = emailV.passVerify;
