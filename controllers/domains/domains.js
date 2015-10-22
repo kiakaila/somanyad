@@ -6,6 +6,7 @@ var BlackReceiveList = require("../../models/Domain").BlackReceiveList;
 var dnslookup = require("../../lib/dnslookup");
 var secrets = require("../../config/secrets");
 var async = require("async");
+var sendmail = require('sendmail')();
 
 var transporter = require("../contact").transporter;
 
@@ -69,10 +70,25 @@ exports.change_forward_email_post = function (req, res) {
           'http://' + req.headers.host + '/domains/emailVerify?id=' + emailVerify._id + '&email=' + emailVerify.email + '\n\n' +
           ' 如果不允许, 则无需进行操作.\n'
       };
-      transporter.sendMail(mailOptions, function(err) {
-        req.flash('info', { msg: 'An e-mail has been sent to ' + forward_email + ' with further instructions.' });
+      sendmail({
+        from: 'no-reply@somanyad.com',
+        to: forward_email,
+        subject: 'test sendmail',
+        content: 'Mail of test sendmail ',
+      }, function(err, reply) {
+        if (err) {
+          req.flash('errors', { msg: err.message });
+        } else {
+          req.flash('info', { msg: 'An e-mail has been sent to ' + forward_email + ' with further instructions.' });
+        }
         done(err, emailVerify);
+        // console.log(err && err.stack);
+        // console.dir(reply);
       });
+      // transporter.sendMail(mailOptions, function(err) {
+        // req.flash('info', { msg: 'An e-mail has been sent to ' + forward_email + ' with further instructions.' });
+      //   done(err, emailVerify);
+      // });
     },
     // 关联域名记录与邮箱所有权记录
     function (emailVerify, done) {
