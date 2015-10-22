@@ -84,12 +84,15 @@ exports.change_forward_email_post = function (req, res) {
       var domain = res.locals.domain;
       domain.forward_email = emailVerify._id;
       domain.save(function (err) {
-        done(err, domain, 'done');
+        done(err, domain, emailVerify);
       })
     },
-  ], function (err) {
+  ], function (err, domain, emailVerify) {
     if (err) {
       req.flash('errors', { msg: err.message })
+    }
+    if (emailVerify.passVerify) {
+      req.flash('success', { msg: "邮件修改成功" })
     }
     return res.redirect("/domains/edit?domain=" + domainStr);
   })
