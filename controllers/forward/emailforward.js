@@ -66,12 +66,11 @@ function emailForward (mail_from, rcpt_to, cb) {
           return done(err);
         }
         console.log(plans);
-        for (plan in plans) {
-          console.log("plan.availCount == -1 || plan.usedCount < plan.availCount", plan, plan.availCount == -1 , plan.usedCount < plan.availCount);
+        for (planIdx in plans) {
+          var plan = plans[planIdx];
           if (plan.availCount == -1 || plan.usedCount < plan.availCount) {
             plan.usedCount += 1;
             return done(null, domain, address);
-            break;
           }
         }
         return done(new Error("account was not pay fee"))
