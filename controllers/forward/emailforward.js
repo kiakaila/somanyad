@@ -63,16 +63,16 @@ function emailForward (mail_from, rcpt_to, cb) {
 
       feePlan.find(q).sort({expireAt: 1}).exec(function (err, plans) {
         if (err) {
-          done(err);
+          return done(err);
         }
         for (plan in plans) {
           if (plan.availCount == -1 || plan.usedCount < plan.availCount) {
             plan.usedCount += 1;
-            done(null, domain, address);
+            return done(null, domain, address);
             break;
           }
         }
-        done(new Error("没有可用计划"))
+        return done(new Error("没有可用计划"))
       });
     }
   ], function (err, domain, address) {
