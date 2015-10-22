@@ -1,15 +1,7 @@
 var secrets = require('../config/secrets');
 var nodemailer = require("nodemailer");
-var transporter = nodemailer.createTransport({
-  service: 'Mailgun',
-  auth: {
-    user: secrets.mailgun.user,
-    pass: secrets.mailgun.password
-  }
-});
+var sendMail = require('../lib/swaks').sendMail;
 
-// send email server
-exports.transporter = transporter;
 /**
  * GET /contact
  * Contact form page.
@@ -49,9 +41,10 @@ exports.postContact = function(req, res) {
     text: body
   };
 
-  transporter.sendMail(mailOptions, function(err) {
+  sendMail(mailOptions, function(err) {
     if (err) {
-      req.flash('errors', { msg: err.message });
+      console.log(err);
+      req.flash('errors', { msg: "发送邮件失败, 请联系管理员" });
       return res.redirect('/contact');
     }
     req.flash('success', { msg: 'Email has been sent successfully!' });

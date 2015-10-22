@@ -5,7 +5,7 @@ var BlackReceiveList = require("../../models/Domain").BlackReceiveList;
 var EmailVerify = require("../../models/Domain").EmailVerify;
 var feePlan = require("../members/FeePlan").feePlan;
 var m = require("moment");
-
+var secrets = require("../../config/secrets");
 
 exports.forward = emailForward
 
@@ -13,6 +13,11 @@ exports.forward = emailForward
 function emailForward (mail_from, rcpt_to, cb) {
 	var toHost = rcpt_to.host;
   var toUser = rcpt_to.user;
+  var fromHost = mail_from.host;
+  // 如果是自己发出去的邮件,那么直接转发
+  if (fromHost == secrets.sendMailDomain) {
+    return cb(null);
+  }
 	// Check user's domain in db
 	// 检测 to field 邮件地址的 host 是否位于数据库(或者域名)
 
@@ -77,6 +82,6 @@ function emailForward (mail_from, rcpt_to, cb) {
       });
     }
   ], function (err, domain, address) {
-    cb(err, address);
+    cb(err, address || null);
   });
 }

@@ -24,7 +24,9 @@ module.exports = {
   // cname
   cnamePre: "somanyad",
   cnamePointTo: "somanyad.com",
+  sendMailDomain: "somanyad.com",
   verifyEmailSender: "verify@somanyad.com",
+  no_reply_passwordHasBeenChanged: "no_reply_passwordHasBeenChanged@somanyad.com",
   domain: "somanyad.com",
   mailServers: ["mx1.somanyad.com", "mx2.somanyad.com"],
   loginSuccessRedirectUrl: "/domains/",

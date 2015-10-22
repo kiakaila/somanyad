@@ -1,10 +1,10 @@
 var _ = require('lodash');
 var async = require('async');
 var crypto = require('crypto');
-var nodemailer = require('nodemailer');
 var passport = require('passport');
 var User = require('../models/User');
 var secrets = require('../config/secrets');
+var sendMail = require('../lib/swaks').sendMail;
 
 /**
  * GET /login
@@ -255,22 +255,22 @@ exports.postReset = function(req, res, next) {
         });
     },
     function(user, done) {
-      var transporter = nodemailer.createTransport({
-        service: 'Mailgun',
-        auth: {
-          user: secrets.mailgun.user,
-          pass: secrets.mailgun.password
-        }
-      });
+
       var mailOptions = {
         to: user.email,
-        from: 'hackathon@starter.com',
+        from: secrets.no_reply_passwordHasBeenChanged,
         subject: 'Your Hackathon Starter password has been changed',
         text: 'Hello,\n\n' +
           'This is a confirmation that the password for your account ' + user.email + ' has just been changed.\n'
       };
-      transporter.sendMail(mailOptions, function(err) {
-        req.flash('success', { msg: 'Success! Your password has been changed.' });
+      sendMail(mailOptions, function(err) {
+        if (err) {
+          console.log(err);
+          req.flash('errors', { msg: "发送邮件失败, 请联系管理员"})
+        } else {
+          req.flash('success', { msg: 'Success! Your password has been changed.' });
+        }
+
         done(err);
       });
     }
@@ -330,13 +330,6 @@ exports.postForgot = function(req, res, next) {
       });
     },
     function(token, user, done) {
-      var transporter = nodemailer.createTransport({
-        service: 'Mailgun',
-        auth: {
-          user: secrets.mailgun.user,
-          pass: secrets.mailgun.password
-        }
-      });
       var mailOptions = {
         to: user.email,
         from: secrets.verifyEmailSender,
@@ -346,8 +339,14 @@ exports.postForgot = function(req, res, next) {
           'http://' + req.headers.host + '/reset/' + token + '\n\n' +
           'If you did not request this, please ignore this email and your password will remain unchanged.\n'
       };
-      transporter.sendMail(mailOptions, function(err) {
-        req.flash('info', { msg: 'An e-mail has been sent to ' + user.email + ' with further instructions.' });
+      sendMail(mailOptions, function(err) {
+        if (err) {
+          console.log(err);
+          req.flash('errors', { msg: "发送邮件失败, 请联系管理员"})
+        } else {
+          req.flash('info', { msg: 'An e-mail has been sent to ' + user.email + ' with further instructions.' });
+        }
+
         done(err, 'done');
       });
     }

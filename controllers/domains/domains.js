@@ -6,9 +6,7 @@ var BlackReceiveList = require("../../models/Domain").BlackReceiveList;
 var dnslookup = require("../../lib/dnslookup");
 var secrets = require("../../config/secrets");
 var async = require("async");
-var sendmail = require('sendmail')();
-
-var transporter = require("../contact").transporter;
+var sendMail = require('../../lib/swaks').sendMail;
 
 // 显示所有域名相关信息
 exports.home = function (req, res) {
@@ -70,25 +68,15 @@ exports.change_forward_email_post = function (req, res) {
           'http://' + req.headers.host + '/domains/emailVerify?id=' + emailVerify._id + '&email=' + emailVerify.email + '\n\n' +
           ' 如果不允许, 则无需进行操作.\n'
       };
-      sendmail({
-        from: 'no-reply@somanyad.com',
-        to: forward_email,
-        subject: 'test sendmail',
-        content: 'Mail of test sendmail ',
-      }, function(err, reply) {
+      sendMail(mailOptions, function(err) {
         if (err) {
-          req.flash('errors', { msg: err.message });
+          console.log(err);
+          req.flash('errors', { msg: "发送邮件失败, 请联系管理员" });
         } else {
           req.flash('info', { msg: 'An e-mail has been sent to ' + forward_email + ' with further instructions.' });
         }
         done(err, emailVerify);
-        // console.log(err && err.stack);
-        // console.dir(reply);
       });
-      // transporter.sendMail(mailOptions, function(err) {
-        // req.flash('info', { msg: 'An e-mail has been sent to ' + forward_email + ' with further instructions.' });
-      //   done(err, emailVerify);
-      // });
     },
     // 关联域名记录与邮箱所有权记录
     function (emailVerify, done) {
@@ -181,9 +169,13 @@ exports.newDomainSetup = function (req, res) {
           'http://' + req.headers.host + '/domains/emailVerify?id=' + emailVerify._id + '&email=' + emailVerify.email + '\n\n' +
           ' 如果不允许, 则无需进行操作.\n'
       };
-      transporter.sendMail(mailOptions, function(err) {
-        // ???? 这个有生效吗 ???
-        req.flash('info', { msg: 'An e-mail has been sent to ' + emailVerify.email + ' with further instructions.' });
+      sendMail(mailOptions, function(err) {
+        if (err) {
+          console.log(err);
+          req.flash('errors', { msg: "发送邮件失败, 请联系管理员" });
+        } else {
+          req.flash('info', { msg: 'An e-mail has been sent to ' + forward_email + ' with further instructions.' });
+        }
         done(err, domain, emailVerify);
       });
     }],
