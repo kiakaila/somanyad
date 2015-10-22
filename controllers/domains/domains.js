@@ -71,7 +71,8 @@ exports.change_forward_email_post = function (req, res) {
       sendMail(mailOptions, function(err) {
         if (err) {
           console.log(err);
-          req.flash('errors', { msg: "发送邮件失败, 请联系管理员" });
+          err = new Error("发送邮件失败, 请联系管理员")
+          req.flash('errors', { msg: err.message });
         } else {
           req.flash('info', { msg: 'An e-mail has been sent to ' + forward_email + ' with further instructions.' });
         }
@@ -172,7 +173,8 @@ exports.newDomainSetup = function (req, res) {
       sendMail(mailOptions, function(err) {
         if (err) {
           console.log(err);
-          req.flash('errors', { msg: "发送邮件失败, 请联系管理员" });
+          err = new Error("发送邮件失败, 请联系管理员");
+          req.flash('errors', { msg: err.message });
         } else {
           req.flash('info', { msg: 'An e-mail has been sent to ' + forward_email + ' with further instructions.' });
         }

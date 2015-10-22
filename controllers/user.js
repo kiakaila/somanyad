@@ -266,7 +266,8 @@ exports.postReset = function(req, res, next) {
       sendMail(mailOptions, function(err) {
         if (err) {
           console.log(err);
-          req.flash('errors', { msg: "发送邮件失败, 请联系管理员"})
+          err = new Error("发送邮件失败, 请联系管理员")
+          req.flash('errors', { msg: err.message })
         } else {
           req.flash('success', { msg: 'Success! Your password has been changed.' });
         }
@@ -342,7 +343,8 @@ exports.postForgot = function(req, res, next) {
       sendMail(mailOptions, function(err) {
         if (err) {
           console.log(err);
-          req.flash('errors', { msg: "发送邮件失败, 请联系管理员"})
+          err = new Error("发送邮件失败, 请联系管理员")
+          req.flash('errors', { msg: err.message })
         } else {
           req.flash('info', { msg: 'An e-mail has been sent to ' + user.email + ' with further instructions.' });
         }

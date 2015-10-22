@@ -44,7 +44,8 @@ exports.postContact = function(req, res) {
   sendMail(mailOptions, function(err) {
     if (err) {
       console.log(err);
-      req.flash('errors', { msg: "发送邮件失败, 请联系管理员" });
+      err = new Error("发送邮件失败, 请联系管理员")
+      req.flash('errors', { msg: err.message });
       return res.redirect('/contact');
     }
     req.flash('success', { msg: 'Email has been sent successfully!' });
