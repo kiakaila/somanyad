@@ -67,6 +67,7 @@ function emailForward (mail_from, rcpt_to, cb) {
         }
         console.log(plans);
         for (plan in plans) {
+          console.log("plan.availCount == -1 || plan.usedCount < plan.availCount", plan, plan.availCount == -1 , plan.usedCount < plan.availCount);
           if (plan.availCount == -1 || plan.usedCount < plan.availCount) {
             plan.usedCount += 1;
             return done(null, domain, address);
