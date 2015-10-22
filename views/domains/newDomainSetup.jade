@@ -23,12 +23,11 @@ block content
               tbody
                 tr
                   th.name #{cname} (
-                    a(href="javascript:ret=getTop().copyToClipboard('#{cname}');if(ret){getTop().showInfo('已复制到剪贴板')}else{getTop().showInfo('复制失败');};")
+                    a(href="#",onclick="copyToClipboard('#{cname}')")
                       | 复制
                     | )
                   th.ip_address #{cnamePointTo} (
-                    a(href="javascript:;", 
-                      onclick="ret=getTop().copyToClipboard('#{cnamePointTo}');if(ret){getTop().showInfo('已复制到剪贴板')}else{getTop().showInfo('复制失败');}")
+                    a(href="#",onclick="copyToClipboard('#{cnamePointTo}')")
                       | 复制
                     | )
                   th.domain_type CNAME(Alias)
@@ -50,8 +49,7 @@ block content
                   tr
                     th.name @
                     th.ip_address #{mailServer} (
-                      a(href="javascript:;", 
-                        onclick="ret=getTop().copyToClipboard('#{mailServer}');if(ret){getTop().showInfo('已复制到剪贴板')}else{getTop().showInfo('复制失败');}")
+                      a(href="#",onclick="copyToClipboard('#{mailServer}')")
                         | 复制
                       | )
                     th.domain_type MX

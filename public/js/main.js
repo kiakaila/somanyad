@@ -77,5 +77,8 @@ $(document).ready(function () {
     multiTooltipTemplate: "<%= datasetLabel %> - <%= value %>"
   }
   var myNewChart = new Chart(ctx).Line(data, opt);
-
 })
+
+function copyToClipboard(text) {
+  window.prompt("请按下组合键: ctrl + c, 接着回车", text);
+}
