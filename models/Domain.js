@@ -34,7 +34,7 @@ var domainSchema = new mongoose.Schema({
     // 当用户cname 别名通过时, 会把这个字段cnameVerifyStatus 设置成 true
   , cnameVerifyStatus  : { type: Boolean, default: false }
     // 用户mx 记录是否设置正确
-  , mxVerifyStatus: { type: Boolean, default: false}
+  , mxVerifyStatus: { type: Boolean, default: false }
   , user 		: ObjectId
   // 转发邮箱 emailVerifySchema
   , forward_email: ObjectId
@@ -68,49 +68,8 @@ var blackReceiveListSchema = new Schema({
 })
 blackReceiveListSchema.plugin(findOrCreate);
 
-// 转发记录 --  用于统计用户额度
-var forwardRecordSchema = new Schema({
-    user: ObjectId,
-    // 发件人是谁
-    from: String,
-    // toUser + '@' + domain ===> emailAddress
-    // 收件域名
-    toDomain: String,
-    // 收件地址栏
-    toUser: String
-});
-// 转发日期
-forwardRecordSchema.plugin(stampIt);
-// cb(err, totalCount, [each,])
-forwardRecordSchema.statics.fn_totalsForwardCount = function (uid, cb) {
-  var d_start = moment().date(1).toDate();
-  var d_end = moment().date(31).toDate();
-  return this.model("ForwardRecord").aggregate([
-    {
-      $match: {
-        user: uid,
-        createAt: {
-          $lte: d_end,
-          $gte: d_start
-        }
-      }
-    },
-    {
-      $group: {
-        _id: "$domain",
-        count: { $sum: 1}
-      }
-    }
-  ], function (err, results) {
-    var count = results.reduce(function (previous, elem) {
-      return previous.count + elem.count;
-    }, 0);
-    cb(err, count, results);
-  });
-}
 
 
 module.exports.EmailVerify = mongoose.model("EmailVerifyq", emailVerifySchema);
 module.exports.Domain = mongoose.model('Domain', domainSchema);
 module.exports.BlackReceiveList = mongoose.model("BlackList", blackReceiveListSchema);
-module.exports.ForwardRecords = mongoose.model("ForwardRecord", forwardRecordSchema);

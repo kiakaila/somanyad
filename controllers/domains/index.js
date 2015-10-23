@@ -4,7 +4,6 @@ var async = require("async");
 
 var domains = require("./domains");
 var domains_api = require("./api_domains");
-var fee_plan = require("./fee_plan");
 var blacklist = require("./blacklist");
 
 // models
@@ -55,10 +54,5 @@ router.post("/edit/addBlackList", m.userOwnerDomain, blacklist.addBlackList_post
 router.post("/edit/changeBlackItemReplyinfo", m.userOwnerDomain, blacklist.changeBlackItemReplyinfo_post);
 // 删除某条黑名单
 router.get("/edit/removeBlackItem", m.userOwnerDomain, blacklist.removeBlackItem);
-
-
-// 获取,已用额度
-router.get("/fee_plan/use", fee_plan.used);
-
 
 exports.router = router;

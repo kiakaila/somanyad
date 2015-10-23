@@ -7,6 +7,7 @@ var mongoose = require('mongoose')
 var findOrCreate = require("mongoose-findorcreate")
 var moment = require("moment");
 
+// 付费记录
 var feePlanSchema = new Schema({
   // 用户 id
   user: ObjectId,
@@ -16,10 +17,6 @@ var feePlanSchema = new Schema({
   startAt: { type: Date, default: Date.now },
   // 到期于
   expireAt: Date,
-  // 可用数
-  availCount: Number,
-  // 已用数
-  usedCount: { type: Number, default: 0 },
 
   // 付费id
   pay_id: String,

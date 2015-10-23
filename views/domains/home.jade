@@ -8,10 +8,6 @@ block domains-content
         h3 
           | 我的域名邮箱 &nbsp;
           a.btn.btn-success(href="/domains/addNewDomain") 添加
-          span.pull-right 
-            | 当期剩余可用流量: &nbsp;
-            a(href="/members/") #{nowCanUseCount == -1 ? "不限": nowCanUseCount}
-            | &nbsp;
           
         
       thead
@@ -40,7 +36,7 @@ block domains-content
                 a(href="/domains/newDomainSetup?domain=" + domain.domain) 如何设置
             th.forward_email #{domain.email}
               if domain.email_hadVerify
-                | &nbsp;&nbsp;&nbsp; (#{domain.forwardCount})
+                | &nbsp;&nbsp;&nbsp;
               else
                 a(href="/domains/newDomainSetup?domain=" + domain.domain) 再次发送验证邮件
             th.operation 

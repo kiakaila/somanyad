@@ -2,6 +2,7 @@ var async = require("async");
 var feePlan = require("./FeePlan").feePlan;
 var moment = require("moment");
 var _ = require('underscore');
+var ForwardRecords = require("../../models/ForwardRecord").ForwardRecords;
 
 // 显示所有域名相关信息
 exports.index = function (req, res) {
@@ -17,7 +18,6 @@ exports.free_post = function (req, res) {
   var plan = new feePlan({
     user: req.user._id,
     feeType: "免费",
-    availCount: 3000,
     startAt: moment(),
     expireAt: moment().subtract(-7, "days"),   // 往后七天
 
@@ -54,7 +54,6 @@ exports.pay_post = function (req, res) {
   var plan = new feePlan({
     user: req.user._id,
     feeType: "收费",
-    availCount: -1,
     startAt: moment(),
     expireAt: moment().subtract(-count, "years"),
     //
@@ -75,30 +74,61 @@ exports.pay_post = function (req, res) {
   });
 }
 
-exports.getAvailableCount = function (uid, cb) {
+// 显示最近两周的转发记录
+exports.forwardCount = function (req, res) {
 
-  var obj = {
-    user: uid,
-    expireAt: {
-      $gte: moment()
-    }
-  }
-  feePlan.find(obj, function (err, plans) {
-    var pay = false;
-    var count = 0;
-
-    plans = plans || [];
-    for (idx in plans) {
-      var plan = plans[idx];
-      if (plan.availCount == -1) {
-        pay = true;
-        continue;
+  var match = {
+    $match: {
+      user: req.user._id,
+      createdAt: {
+        $gte: moment().date(14).toDate()
       }
-      count += plan.availCount - plan.usedCount;
     }
-    if (pay) {
-      count = -1;
+  };
+  var project = {
+    $project: {
+      _id: 0,
+      date: {
+        $dateToString: {
+          format: "%Y-%m-%d",
+          date: "$createdAt"
+        }
+      },
+      createdAt: 1
     }
-    cb(count);
+  };
+  var group = {
+    $group: {
+      // _id: "$date",
+      _id: {
+        $dateToString: {
+          format: "%Y-%m-%d",
+          date: "$createdAt"
+        }
+      },
+      createdAt: {
+        $first: 1
+      },
+      count: { $sum: 1}
+    }
+  };
+  var sort = {
+    $sort: {
+      createdAt: 1
+    }
+  };
+  var aggregate = [
+      match
+    , project
+    , group
+    , sort
+  ]
+  ForwardRecords.aggregate(aggregate, function (err, results) {
+    if (err) {
+      console.log(err);
+      req.flash('errors', { msg: "获取数据失败, 请联系管理员"})
+    }
+
+    res.send(results);
   });
 }

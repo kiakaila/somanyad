@@ -11,7 +11,6 @@ block domains-content
             tr
               th.cnameOwner 验证所有权
               th.mxVerify mx记录
-              th.usedInfo 当期可用额度
               th.forward_email 转发到
           .tbody
             tr
@@ -30,9 +29,6 @@ block domains-content
                 th.mx
                   | 未设置或暂未生效
                   a(href="/domains/newDomainSetup?domain=" + domain.domain) 如何设置
-              
-              // 已用额度
-              th.status #{nowCanUseCount == -1 ? "不限": nowCanUseCount}
               
               // 转发到
               th.forward_email #{domain.email}
