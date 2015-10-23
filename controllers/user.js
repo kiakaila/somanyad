@@ -60,7 +60,11 @@ exports.logout = function(req, res) {
  * Signup page.
  */
 exports.getSignup = function(req, res) {
-  if (req.user) return res.redirect('/');
+  if (req.user) {
+    req.flash('success', { msg: "你已登录成功"})
+    return res.redirect(secrets.loginSuccessRedirectUrl)
+  }
+
   res.render('account/signup', {
     title: 'Create Account'
   });
