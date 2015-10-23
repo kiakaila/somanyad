@@ -96,3 +96,9 @@ $(document).ready(function () {
 function copyToClipboard(text) {
   window.prompt("请按下组合键: ctrl + c, 接着回车", text);
 }
+
+$(document).ready(function () {
+  $("#wait-for-alipay").click(function () {
+    window.alert("等待支付宝接入...正在开发中")
+  })
+})
