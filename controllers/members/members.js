@@ -3,7 +3,7 @@ var feePlan = require("./FeePlan").feePlan;
 var moment = require("moment");
 var _ = require('underscore');
 var ForwardRecords = require("../../models/ForwardRecord").ForwardRecords;
-
+var pay_order_url_fn = require('./alipayLib').pay_order_url;
 // 显示所有域名相关信息
 exports.index = function (req, res) {
   // 找到当前付费类型
@@ -43,34 +43,40 @@ exports.free_post = function (req, res) {
 exports.pay_post = function (req, res) {
   var passCondiction = false;
   var count = parseInt(req.body.count);
-  passCondiction = true;
-  if (!passCondiction) {
+  if (count < 1) {
     var err = new Error("购买流量包失败, 请发邮件给管理员, 稍后,管理员会进行处理")
-    console.log(err);
-    req.flash("error", {msg: err.message})
+    req.flash("errors", {msg: err.message})
     return res.redirect("/members/");
   }
 
+  var startAt = moment()
+  var expireAt = moment().subtract(-count, "years")
   var plan = new feePlan({
     user: req.user._id,
     feeType: "收费",
-    startAt: moment(),
-    expireAt: moment().subtract(-count, "years"),
+    startAt: startAt,
+    expireAt: expireAt,
     //
-    pay_id: "xxxx-xxxxx-xxxx-xxxx",
     pay_type: "支付宝",
-    pay_money: "" + count,
     pay_count: count,
-    pay_finish: true
+    pay_finish: false
   })
   plan.save(function (err) {
     if (err) {
       console.log(err);
       req.flash("error", {msg: err.message});
+      return res.redirect("/members/");
     }
 
-    req.flash("success", {msg: "购买成功"});
-    return res.redirect("/members/");
+    // 让用户跳转到 支付宝页面
+    var order_id_str = plan._id;
+    var order_name_str = "购买 somanyad.com 会员服务: " +
+                          startAt.format("YYYY-MM-DD") + "---" +
+                          expireAt.format("YYYY-MM-DD")
+    var order_money_str = "" + count * 10
+    var order_about_str = "感谢您的购买,如有任何疑问,请联系我们";
+    var url = pay_order_url_fn(order_id_str, order_name_str, order_money_str, order_about_str)
+    return res.redirect(url);
   });
 }
 
