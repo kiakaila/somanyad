@@ -18,7 +18,7 @@ exports.pay_order_url = function (order_id_str, order_name_str, order_money_str,
   var seller_email = secrets.alipay.seller_email;
 
   var kvs = [
-    ["service", "create_direct_pay_by_user"],
+    ["service", "create_partner_trade_by_buyer"],
     ["partner", partner],
     ["_input_charset", "utf-8"],
     ["notify_url", notify_url],
