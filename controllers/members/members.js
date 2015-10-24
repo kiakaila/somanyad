@@ -76,6 +76,7 @@ exports.pay_post = function (req, res) {
     var order_money_str = "" + count * 10
     var order_about_str = "感谢您的购买,如有任何疑问,请联系我们";
     var url = pay_order_url_fn(order_id_str, order_name_str, order_money_str, order_about_str)
+    console.log(url);
     return res.redirect(url);
   });
 }

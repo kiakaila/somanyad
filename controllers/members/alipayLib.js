@@ -1,5 +1,6 @@
 var secrets = require("../../config/secrets");
 var crypto = require('crypto');
+var utf8 = require("utf8");
 
 // order_id_str 订单id
 // order_name_str 订单名称
@@ -35,8 +36,11 @@ exports.pay_order_url = function (order_id_str, order_name_str, order_money_str,
   ].sort();
 
   var url = kvs.reduce(function (previous, elem) {
-    return previous + "&" + elem.join("=")
-  });
+    if (previous != "") {
+      return previous + "&" + elem.join("=")
+    }
+    return elem.join("=")
+  }, "");
 
   var shasum = crypto.createHash('md5');
   shasum.update(url + key);
@@ -44,5 +48,5 @@ exports.pay_order_url = function (order_id_str, order_name_str, order_money_str,
   var sign_type = "MD5";
   url += "&sign=" + sign + "&sign_type=" + sign_type;
   url = gateway + "?" + url
-  return url;
+  return utf8.encode(url);
 }
