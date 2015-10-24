@@ -35,10 +35,7 @@ exports.pay_order_url = function (order_id_str, order_name_str, order_money_str,
   ].sort();
 
   var url = kvs.reduce(function (previous, elem) {
-    if (previous != "") {
-      return previous + "&" + elem.join("=")
-    }
-    return elem.join("=")
+    return previous + "&" + elem.join("=")
   });
 
   var shasum = crypto.createHash('md5');
