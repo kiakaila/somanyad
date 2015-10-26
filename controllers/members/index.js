@@ -2,7 +2,7 @@
 var router = require("express").Router();
 var async = require("async");
 var dnslookup = require("../../lib/dnslookup");
-var feePlan = require("./FeePlan").feePlan;
+var feePlan = require("../../models/FeePlan").feePlan;
 var m = require("moment");
 
 var members = require("./members");
@@ -38,7 +38,6 @@ router.use(function (req, res, next) {
 router.get('/', members.index);
 router.post('/free', members.free_post);
 router.post('/pay', members.pay_post);
-
 // 显示最近两周的转发记录
 router.get('/forwardCount', members.forwardCount);
 

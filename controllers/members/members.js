@@ -1,9 +1,10 @@
 var async = require("async");
-var feePlan = require("./FeePlan").feePlan;
+var feePlan = require("../../models/FeePlan").feePlan;
 var moment = require("moment");
 var _ = require('underscore');
 var ForwardRecords = require("../../models/ForwardRecord").ForwardRecords;
-var pay_order_url_fn = require('./alipayLib').pay_order_url;
+var alipay = require("../../config/secrets").alipay;
+
 // 显示所有域名相关信息
 exports.index = function (req, res) {
   // 找到当前付费类型
@@ -73,11 +74,20 @@ exports.pay_post = function (req, res) {
     var order_name_str = "购买 somanyad.com 会员服务: " +
                           startAt.format("YYYY-MM-DD") + "---" +
                           expireAt.format("YYYY-MM-DD")
-    var order_money_str = "" + count * 10
-    var order_about_str = "感谢您的购买,如有任何疑问,请联系我们";
-    var url = pay_order_url_fn(order_id_str, order_name_str, order_money_str, order_about_str)
-    console.log(url);
-    return res.redirect(url);
+    var order_money_str = "" + count * 10;
+
+    var data = {
+     out_trade_no	: order_id_str,
+     subject	: order_name_str,
+     price	: order_money_str,
+     quantity	: "1",
+     logistics_fee	: "0",
+     logistics_type	: "EXPRESS",
+     logistics_payment	: "SELLER_PAY",
+     show_url: "/"
+    };
+
+   alipay.create_partner_trade_by_buyer(data, res);
   });
 }
 

@@ -28,5 +28,8 @@ var forwardRecordSchema = new Schema({
 // 转发日期
 forwardRecordSchema.plugin(stampIt);
 
-
-module.exports.ForwardRecords = mongoose.model("ForwardRecord", forwardRecordSchema);
+try {
+  module.exports.ForwardRecords = mongoose.model("ForwardRecord");
+} catch (err) {
+  module.exports.ForwardRecords = mongoose.model("ForwardRecord", forwardRecordSchema);
+}

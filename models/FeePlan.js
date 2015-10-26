@@ -32,4 +32,9 @@ var feePlanSchema = new Schema({
 feePlanSchema.plugin(findOrCreate);
 
 // 付费计划
-module.exports.feePlan = mongoose.model("feePlan", feePlanSchema);
+
+try {
+  module.exports.feePlan = mongoose.model("feePlan");
+} catch (err) {
+  module.exports.feePlan = mongoose.model("feePlan", feePlanSchema);
+}

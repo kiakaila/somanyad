@@ -10,6 +10,7 @@
     "test": "mocha"
   },
   "dependencies": {
+    "alipay": "0.0.4",
     "async": "^1.4.2",
     "bcrypt-nodejs": "^0.0.3",
     "bitcore": "^0.13.3",

@@ -69,7 +69,12 @@ var blackReceiveListSchema = new Schema({
 blackReceiveListSchema.plugin(findOrCreate);
 
 
-
-module.exports.EmailVerify = mongoose.model("EmailVerifyq", emailVerifySchema);
-module.exports.Domain = mongoose.model('Domain', domainSchema);
-module.exports.BlackReceiveList = mongoose.model("BlackList", blackReceiveListSchema);
+try {
+  module.exports.EmailVerify = mongoose.model("EmailVerifyq");
+  module.exports.Domain = mongoose.model('Domain');
+  module.exports.BlackReceiveList = mongoose.model("BlackList");
+} catch (err) {
+  module.exports.EmailVerify = mongoose.model("EmailVerifyq", emailVerifySchema);
+  module.exports.Domain = mongoose.model('Domain', domainSchema);
+  module.exports.BlackReceiveList = mongoose.model("BlackList", blackReceiveListSchema);
+}
