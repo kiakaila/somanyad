@@ -18,20 +18,13 @@ var feePlanSchema = new Schema({
   // 到期于
   expireAt: Date,
 
-  // 付费id
-  pay_id: String,
-  // 付费类型 如 alipay, paypal
-  pay_type: String,
-  // 用户付费日期
-  pay_date: { type: Date, default: Date.now },
-  // 付了多少钱
-  pay_money: { type: String, default: "0" },
+  pay_obj: Schema.Types.Mixed,
+
   // 是否已经付款, 可能要先跳转到支付宝, 然后在跳转回来
   pay_finish: { type: Boolean, default: false }
 });
 feePlanSchema.plugin(findOrCreate);
 
-// 付费计划
 
 try {
   module.exports.feePlan = mongoose.model("feePlan");

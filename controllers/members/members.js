@@ -75,6 +75,7 @@ exports.pay_post = function (req, res) {
                           startAt.format("YYYY-MM-DD") + "---" +
                           expireAt.format("YYYY-MM-DD")
     var order_money_str = "" + count * 10;
+    order_money_str = "0.01"
 
     var data = {
      out_trade_no	: order_id_str,
@@ -148,4 +149,48 @@ exports.forwardCount = function (req, res) {
 
     res.send(results);
   });
+}
+
+exports.pay_notify = function (req, res) {
+  console.log(req.paramas);
+  return res.send({pay_notify: "ok"})
+}
+exports.pay_return_url = function (req, res) {
+  // test url
+  console.log(req.query);
+  // { body: 'undefined',
+  // buyer_email: '237009522@qq.com',
+  // buyer_id: '2088012501703670',
+  // discount: '0.00',
+  // gmt_create: '2015-10-26 19:28:05',
+  // gmt_logistics_modify: '2015-10-26 19:28:05',
+  // gmt_payment: '2015-10-26 19:28:29',
+  // is_success: 'T',
+  // is_total_fee_adjust: 'N',
+  // logistics_fee: '0.00',
+  // logistics_payment: 'SELLER_PAY',
+  // logistics_type: 'EXPRESS',
+  // notify_id: 'RqPnCoPT3K9%2Fvwbh3InVa46BL2SnjetFOQQRk7A8LvEqrwBKCINGJgnGsUkDpkJzeKv7',
+  // notify_time: '2015-10-26 19:28:34',
+  // notify_type: 'trade_status_sync',
+  // out_trade_no: '562e0e11024b2b2110507c05',
+  // payment_type: '1',
+  // price: '0.01',
+  // quantity: '1',
+  // receive_address: 'undefined',
+  // receive_mobile: 'undefined',
+  // receive_name: 'undefined',
+  // receive_phone: 'undefined',
+  // receive_zip: 'undefined',
+  // seller_actions: 'SEND_GOODS',
+  // seller_email: 'ljy080829@gmail.com',
+  // seller_id: '2088102062322622',
+  // subject: '购买 somanyad.com 会员服务: 2015-10-26---2016-10-26',
+  // total_fee: '0.01',
+  // trade_no: '2015102600001000670062629977',
+  // trade_status: 'WAIT_SELLER_SEND_GOODS',
+  // use_coupon: 'N',
+  // sign: '3a42af9d11cc95e05dfa9d50c86a7b0f',
+  // sign_type: 'MD5' }
+  return res.send({pay_return: 'ok'});
 }

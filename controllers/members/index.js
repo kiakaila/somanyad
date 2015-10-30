@@ -40,5 +40,7 @@ router.post('/free', members.free_post);
 router.post('/pay', members.pay_post);
 // 显示最近两周的转发记录
 router.get('/forwardCount', members.forwardCount);
+router.get('/aplipay/create_partner_trade_by_buyer/notify_url', members.pay_notify);
+router.get('/aplipay/create_partner_trade_by_buyer/return_url', members.pay_return_url);
 
 exports.router = router;

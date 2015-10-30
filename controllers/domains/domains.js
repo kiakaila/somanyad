@@ -12,14 +12,14 @@ var sendMail = require('../../lib/swaks').sendMail;
 exports.home = function (req, res) {
 
   req.flash('success', { msg: "目前处于试运行期间...正式发布后,会发邮件通知您"})
-  return res.render('domains/home', {
+  return res.render('somanyad/domains/home', {
         active_item: "home",
       });
 }
 
 // 编辑某域名
 exports.edit = function (req, res) {
-  var domainStr = req.query.domain;
+  var domain_str = req.query.domain;
 
   async.waterfall([
     function (done) {
@@ -34,7 +34,7 @@ exports.edit = function (req, res) {
 
     return res.render('domains/edit', {
           title: "Domains",
-          active_item: domainStr,
+          active_item: domain_str,
           BlackList: blackList || []
         });
   });
@@ -43,7 +43,7 @@ exports.edit = function (req, res) {
 // 将某个域名的转发邮件修改为另一个邮件地址
 // 要先验证新的地址是否允许转发
 exports.change_forward_email_post = function (req, res) {
-  var domainStr = req.query.domain;
+  var domain_str = req.query.domain;
   var forward_email = req.body.forward_email;
 
   async.waterfall([
@@ -95,7 +95,7 @@ exports.change_forward_email_post = function (req, res) {
     if (emailVerify.passVerify) {
       req.flash('success', { msg: "邮件修改成功" })
     }
-    return res.redirect("/domains/edit?domain=" + domainStr);
+    return res.redirect("/domains/edit?domain=" + domain_str);
   })
 }
 
@@ -144,11 +144,11 @@ exports.addNewDomain_post = function (req, res) {
 // 添加新域名 -- 步骤1, 告诉用户怎么设置
 // 如果需要, 则发送邮件所有权验证邮件
 exports.newDomainSetup = function (req, res) {
-  var domainStr = req.query.domain;
+  var domain_str = req.query.domain;
   async.waterfall([
     // 查找该域名
     function (done) {
-      Domain.findOne({domain: domainStr, user: req.user._id}, function (err, domain) {
+      Domain.findOne({domain: domain_str, user: req.user._id}, function (err, domain) {
         done(err, domain)
       })
     },
@@ -187,14 +187,14 @@ exports.newDomainSetup = function (req, res) {
     }],
     // 渲染
     function (err, domain, emailV) {
-      var cname = dnslookup.cnameFun(domainStr, req.user._id);
+      var cname = dnslookup.cnameFun(domain_str, req.user._id);
       var mailServers = secrets.mailServers
 
       if (err) {
         // res.locals.message = err.message
         req.flash('errors', { msg: err.message })
         return res.render("domains/newDomainSetup", {
-          domain: domain || { domain: domainStr },
+          domain: domain || { domain: domain_str },
           err: err,
           cname: cname,
           mailServers: mailServers,
@@ -217,13 +217,13 @@ exports.newDomainSetup = function (req, res) {
 
 // 添加新域名 -- 完成
 exports.newDomainSetup2 = function (req, res) {
-  var domainStr = req.query.domain;
+  var domain_str = req.query.domain;
   var emails = [];
 
   async.waterfall([
     // 查找相关域名记录
     function (done) {
-      Domain.findOne({domain: domainStr, user: req.user._id}, function (err, domain) {
+      Domain.findOne({domain: domain_str, user: req.user._id}, function (err, domain) {
         done(err, domain);
       });
     },
@@ -301,20 +301,20 @@ exports.newDomainSetup2 = function (req, res) {
 
 // 域名删除
 exports.deleteDomain = function (req, res) {
-  var domainStr = req.query.domain;
+  var domain_str = req.query.domain;
 
   return res.render("domains/deleteDomain", {
-    domain: domainStr
+    domain: domain_str
   });
 }
 
 // 域名删除
 // middleware.userOwnerDomain
 exports.deleteDomain_post = function (req, res) {
-  var domainStr = req.query.domain;
-  Domain.remove({domain: domainStr, user: req.user._id}, function (err, domains) {
+  var domain_str = req.query.domain;
+  Domain.remove({domain: domain_str, user: req.user._id}, function (err, domains) {
     if (err || domains == null) {
-      err = err || new Error("not found domain: " + domainStr);
+      err = err || new Error("not found domain: " + domain_str);
       req.flash('errors', { msg: err.message });
     }
     return res.render("domains/deleteDomain2", {
