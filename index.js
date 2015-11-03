@@ -6,5 +6,6 @@ exports.Forward = require("./models/Domain").Forward;
 exports.ForwardRecords = require("./models/ForwardRecord").ForwardRecords;
 exports.BlackReceiveList = require("./models/Domain").BlackReceiveList;
 exports.EmailVerify = require("./models/Domain").EmailVerify;
-exports.feePlan = require("./members/models").feePlan;
+exports.freePlan = require("./controllers/members/models").freePlan;
+exports.alipayPlan = require("./controllers/members/models").alipayPlan;
 exports.secrets = require("./config/secrets");
