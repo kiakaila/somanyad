@@ -1,6 +1,7 @@
 // connect to database
 require("./db");
 
+
 exports.Domain = require("./models/Domain").Domain;
 exports.Forward = require("./models/Domain").Forward;
 exports.ForwardRecords = require("./models/ForwardRecord").ForwardRecords;
