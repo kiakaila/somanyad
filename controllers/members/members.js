@@ -196,7 +196,7 @@ exports.forwardCount = function (req, res) {
 }
 
 exports.pay_notify = function (req, res) {
-  console.log(req.body);
+  console.log(req);
   var out_trade_no = req.body.out_trade_no;
   if (!out_trade_no) {
     console.log("not out_trade_no");
@@ -214,6 +214,17 @@ exports.pay_notify = function (req, res) {
         console.log(err);
         return res.send("failure")
       }
+      try {
+        res.locals.plan_id = plan._id;
+        res.locals.trade_no = req.body.trade_no;
+        // 自动发货
+        auto_send_goods(req, res);
+      } catch (e) {
+        console.log(e);
+      } finally {
+
+      }
+
       res.send("success");
     });
   });
@@ -243,15 +254,16 @@ exports.pay_return_url = function (req, res) {
         return res.redirect( req.baseUrl )
       }
       req.flash('success', { msg: "支付宝已经收到你的付款了"})
-      res.locals.out_trade_plan = plan;
+      res.locals.plan_id = plan._id;
+      res.locals.trade_no = plan.pay_obj.pay_to_alipay.trade_no;
       auto_send_goods(req, res)
+      res.redirect( req.baseUrl );
     })
   })
 }
 var auto_send_goods = exports.auto_send_goods = function (req, res) {
-  var plan = res.locals.out_trade_plan;
-  var plan_id = plan._id;
-  var trade_no = plan.pay_obj.pay_to_alipay.trade_no;
+  var plan_id = res.locals.plan_id;
+  var trade_no = res.locals.trade_no;
 
   var data = {
      trade_no: trade_no
@@ -261,7 +273,6 @@ var auto_send_goods = exports.auto_send_goods = function (req, res) {
    };
   req.flash('success', { msg: "系统已经开始自动发货了"});
   alipay.send_goods_confirm_by_platform(data, res);
-  res.redirect( req.baseUrl );
 }
 
 exports.order_detail = function (req, res) {
