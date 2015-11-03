@@ -203,19 +203,19 @@ exports.pay_notify = function (req, res) {
   var out_trade_no = req.body.out_trade_no;
   if (!out_trade_no) {
     console.log("not out_trade_no");
-    return res.send("");
+    return res.send("success");
   }
   alipayPlan.findOne({_id: out_trade_no}, function (err, plan) {
     if (err) {
       console.log(err);
-      return res.send("failure")
+      return res.send("success")
     }
     plan.pay_obj.notify_from_alipay = req.body
     plan.pay_finish = true;
     plan.save(function (err) {
       if (err) {
         console.log(err);
-        return res.send("failure")
+        return res.send("success")
       }
       function sendGoods(pid, trade_no) {
         setTimeout(function () {
