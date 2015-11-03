@@ -196,7 +196,10 @@ exports.forwardCount = function (req, res) {
 }
 
 exports.pay_notify = function (req, res) {
-  console.log(req.body);
+  console.log("body: ", req.body);
+  console.log("query: ", req.query);
+  console.log("params: ", req.params);
+  console.log("param: ", req.param("out_trade_no"));
   var out_trade_no = req.body.out_trade_no;
   if (!out_trade_no) {
     console.log("not out_trade_no");
@@ -214,17 +217,21 @@ exports.pay_notify = function (req, res) {
         console.log(err);
         return res.send("failure")
       }
-      try {
-        res.locals.plan_id = plan._id;
-        res.locals.trade_no = req.body.trade_no;
-        // 自动发货
-        auto_send_goods(req, res);
-      } catch (e) {
-        console.log(e);
-      } finally {
+      function sendGoods(pid, trade_no) {
+        setTimeout(function () {
+          try {
+            res.locals.plan_id = pid;
+            res.locals.trade_no = trade_no;
+            // 自动发货
+            auto_send_goods(req, res);
+          } catch (e) {
+            console.log(e);
+          } finally {
 
+          }
+        }, 0.5 * 1000);
       }
-
+      sendGoods(plan._id, plan.pay_obj.notify_from_alipay.trade_no);
       res.send("success");
     });
   });
