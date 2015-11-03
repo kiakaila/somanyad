@@ -196,8 +196,8 @@ exports.forwardCount = function (req, res) {
 }
 
 exports.pay_notify = function (req, res) {
-  console.log(req.paramas);
-  var out_trade_no = req.paramas.out_trade_no;
+  console.log(req.body);
+  var out_trade_no = req.body.out_trade_no;
   if (!out_trade_no) {
     console.log("not out_trade_no");
     return res.send("failure");
@@ -207,7 +207,7 @@ exports.pay_notify = function (req, res) {
       console.log(err);
       return res.send("failure")
     }
-    plan.pay_obj.notify_from_alipay = req.paramas
+    plan.pay_obj.notify_from_alipay = req.body
     plan.pay_finish = true;
     plan.save(function (err) {
       if (err) {
