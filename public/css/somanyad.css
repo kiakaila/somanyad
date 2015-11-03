@@ -1,0 +1,19 @@
+
+
+.gray {
+  color: #868686;
+}
+
+section {
+  min-height: 50vh;
+  position: relative;
+  padding-top: 60px;
+}
+
+#myChart {
+  // border-color: red;
+  // border-style: dashed;
+  // border-width: thin;
+  height: 400;
+  width: 100%;
+}

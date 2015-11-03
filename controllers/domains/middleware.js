@@ -8,12 +8,12 @@ var ForwardRecords = require("../../models/ForwardRecord").ForwardRecords;
 // 要求, 经过 locals_domains 中间件
 exports.userOwnerDomain = function (req, res, next) {
 
-  var domainStr = req.query.domain || req.body.domain;
-  if (domainStr != null) {
+  var domain_str = req.query.domain || req.body.domain;
+  if (domain_str != null) {
     var domains = res.locals.domains;
     for (domainIdx in domains) {
       var domain = domains[domainIdx];
-      if (domain.domain == domainStr) {
+      if (domain.domain == domain_str) {
         res.locals.domain = domain;
         return next();
       }

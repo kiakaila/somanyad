@@ -26,8 +26,11 @@ $(document).ready(function() {
     $(sel).removeClass("hidden");
   });
 
-  var now = moment();
-  var nextD = moment().subtract(-1, "years");
+  var currentPlan_expireAt = parseInt($("#currentPlan_expireAt").text()) || (new Date()).getTime()
+  var now = moment.utc(currentPlan_expireAt);
+  var nextD = moment.utc(currentPlan_expireAt).subtract(-1, "years");
+
+  console.log(now, "JJJJJJ");
 
   [$("#free .duration"), $("#pay .duration")].forEach(function ($elem) {
 
@@ -39,7 +42,7 @@ $(document).ready(function() {
     var price = count * 10;
     $("#pay .shouldPay").text( price + "元(每年10元)")
 
-    var nextD = moment().subtract(-count, "years");
+    var nextD = moment.utc(currentPlan_expireAt).subtract(-count, "years");
     $("#pay .duration").text( "" + now.format("YYYY-MM-DD") + "  ----  " + nextD.format("YYYY-MM-DD"));
   });
 
