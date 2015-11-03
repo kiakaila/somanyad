@@ -10,7 +10,8 @@ var members = require("./members");
 
 router.use(function (req, res, next) {
   res.locals.title = "Members";
-  res.locals.accountId = dnslookup.calSuffix(req.user._id.toHexString(), 5);
+  if (req.user) 
+    res.locals.accountId = dnslookup.calSuffix(req.user._id.toHexString(), 5);
   next();
 })
 
