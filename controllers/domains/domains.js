@@ -11,7 +11,6 @@ var sendMail = require('../../lib/swaks').sendMail;
 // 显示所有域名相关信息
 exports.home = function (req, res) {
 
-  req.flash('success', { msg: "目前处于试运行期间...正式发布后,会发邮件通知您"})
   return res.render('domains/home', {
         active_item: "home",
       });
