@@ -257,3 +257,41 @@ exports.order_detail = function (req, res) {
     });
   });
 }
+
+exports.user_had_pay = function (uid, cb) {
+
+  async.waterfall([
+    function (done) {
+      // 找到免费的记录
+      var q = {user: uid}
+      console.log(q);
+      freePlan.find(q, function (err, plans) {
+        done(err, plans)
+      });
+    },
+    function (freePlans, done) {
+      // 找到付费的记录
+      var q = { user: uid}
+      alipayPlan.find(q, function (err, plans) {
+        done(err, freePlans, plans)
+      })
+    }
+  ], function (err, freePlans, alipayPlans) {
+    if (err) {
+      console.log(err);
+      return cb(new Error("没有找到续费记录, 请联系管理员"))
+    }
+    var plans = _.union(freePlans, alipayPlans).sort(function (plan1, plan2) {
+      return plan1.expireAt.getTime() < plan2.expireAt.getTime()
+    })
+
+    var now = new Date();
+    for (plan of plans) {
+      if (plan.pay_finish && plan.expireAt.getTime() > now.getTime()) {
+        cb(null)
+        break;
+      }
+    }
+    cb(new Error("没有找到购买记录,请联系管理员"))
+  });
+}
