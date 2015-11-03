@@ -6,7 +6,7 @@ Hackathon Starter [![Dependency Status](https://david-dm.org/sahat/hackathon-sta
 
 **Live Demo**: http://hackathonstarter.herokuapp.com
 
-Jump to [What's new in 3.1.0?](#changelog)
+Jump to [What's new in 3.2.0?](#changelog)
 
 A boilerplate for **Node.js** web applications.
 
@@ -131,7 +131,7 @@ restart the server each time you make a small change in code. To install, run
 Generator
 ---------
 
-Hackathon Starter Generator is tighly coupled to the project code. As soon as you
+Hackathon Starter Generator is tightly coupled to the project code. As soon as you
 start changing and moving things around, it will probably no longer work as
 expected. That is why it's best to use when you first download the project.
 
@@ -210,7 +210,7 @@ The same goes for other providers.
 
 <hr>
 
-<img src="https://g.twimg.com/Twitter_logo_blue.png" width="90">
+<img src="https://cdn3.iconfinder.com/data/icons/social-icons-5/607/Twitterbird.png" width="90">
 - Sign in at [https://apps.twitter.com/](https://apps.twitter.com/)
 - Click **Create a new application**
 - Enter your application name, website and description
@@ -259,7 +259,7 @@ The same goes for other providers.
 - Copy the **Secret Key**. and add this into `config/secrets.js`
 <hr>
 
-<img src="https://www.paypalobjects.com/webstatic/developer/logo_paypal-developer_beta.png" width="200">
+<img src="https://yenniferallulli.com/wp-content/uploads/2015/01/Paypal-Logo-Transparent-png-format-large-size.png" width="200">
 - Visit [PayPal Developer](https://developer.paypal.com/)
 - Log in to your PayPal account
 - Click **Applications > Create App** in the navigation bar
@@ -270,7 +270,7 @@ The same goes for other providers.
 
 <hr>
 
-<img src="https://playfoursquare.s3.amazonaws.com/press/2014/foursquare-logomark.png" width="200">
+<img src="http://33.media.tumblr.com/ffaf0075be879b3ab0b87f0b8bcc6814/tumblr_inline_n965bkOymr1qzxhga.png" width="200">
 - Go to [foursquare for Developers](https://developer.foursquare.com/)
 - Click on **My Apps** in the top menu
 - Click the **Create A New App** button
@@ -360,6 +360,7 @@ Project Structure
 | **views/partials**/footer.jade     | Footer partial template.                                     |
 | **views**/layout.jade              | Base template.                                               |
 | **views**/home.jade                | Home page template.                                          |
+| .travis.yml                        | [Travis CI](https://travis-ci.org/) integration.                                       |
 | app.js                             | Main application file.                                       |
 | setup.js                           | Tool for removing authentication providers and other things. |
 
@@ -401,12 +402,12 @@ List of Packages
 | jade                            | Template engine for Express.                                          |
 | lastfm                          | Last.fm API library.                                                  |
 | instagram-node                  | Instagram API library.                                                |
-| less                            | LESS compiler. Used implicitly by connect-assets.                     |
 | lob                             | Lob API library                                                       |
 | lusca                           | CSRF middleware.                                                      |
 | mongoose                        | MongoDB ODM.                                                          |
 | node-foursquare                 | Foursquare API library.                                               |
 | node-linkedin                   | LinkedIn API library.                                                 |
+| node-sass-middleware            | Sass middleware compiler.                                                 |
 | nodemailer                      | Node.js library for sending emails.                                   |
 | passport                        | Simple and elegant authentication library for node.js                 |
 | passport-facebook               | Sign-in with Facebook plugin.                                         |
@@ -1233,6 +1234,19 @@ Also, be sure to check out the [Jump-start your hackathon efforts with DevOps Se
 
 Changelog
 ---------
+
+### 3.2.0 (October 19, 2015)
+- Added Google Analytics script.
+- Split *api.js* `require` intro declaration and initialization for better performance. (See <a href="https://github.com/sahat/hackathon-starter/issues/247">#247</a>)
+- Removed [ionicons](http://ionicons.com).
+- Removed [connect-assets](https://github.com/adunkman/connect-assets). (Replaced by [node-sass-middleware](https://github.com/sass/node-sass-middleware))
+- Fixed alignment styling on /login, /profile and /account
+- Fixed Stripe API `POST` request.
+- Converted LESS to Sass stylesheets.
+- Set `node_js` version to "stable" in *.travis.yml*.
+- Removed `mocha.opts` file, pass options directly to package.json
+- README cleanup and fixes.
+- Updated Font Awesome to 4.4.0
 
 ### 3.1.0 (August 25, 2015)
 - Added Bitcore example.

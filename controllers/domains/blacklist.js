@@ -20,7 +20,7 @@ exports.addBlackList_post = function (req, res) {
       err = err || new Error("create blackItem failure!");
       req.flash('errors', { msg: err.message });
     }
-    return res.redirect("/domains/edit?domain=" + domain_str);
+    return res.redirect( req.baseUrl + "/edit?domain=" + domain_str);
   });
 }
 
@@ -37,7 +37,7 @@ exports.changeBlackItemReplyinfo_post = function (req, res) {
     if (err) {
       req.flash('errors', { msg: err.message })
     }
-    return res.redirect("/domains/edit?domain=" + domain_str);
+    return res.redirect( req.baseUrl + "/edit?domain=" + domain_str);
   });
 }
 // 删除某条黑名单
@@ -54,6 +54,6 @@ exports.removeBlackItem = function (req, res) {
     if (err) {
       req.flash('errors', { msg: err.message })
     }
-    return res.redirect("/domains/edit?domain=" + domain_str);
+    return res.redirect( req.baseUrl + "/edit?domain=" + domain_str);
   });
 }

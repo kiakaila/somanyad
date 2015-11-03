@@ -21,7 +21,7 @@ exports.addForwardEmail = function (req, res) {
       });
     }
 
-    sendEmail("/domains/emailVerify?key=" + sendEmail.id + "&email=" + email, function (err) {
+    sendEmail( req.baseUrl + "/emailVerify?key=" + sendEmail.id + "&email=" + email, function (err) {
       if (err) {
         return res.send({
           status: "Failure",

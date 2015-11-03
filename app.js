@@ -18,7 +18,8 @@ var flash = require('express-flash');
 var path = require('path');
 var passport = require('passport');
 var expressValidator = require('express-validator');
-var assets = require('connect-assets');
+var sass = require('node-sass-middleware');
+
 
 var i18n = require("i18n");
 
@@ -58,6 +59,12 @@ i18n.configure({
   directory: __dirname + '/locales'
 });
 
+mongoose.connect(secrets.db);
+mongoose.connection.on('error', function() {
+  console.log('MongoDB Connection Error. Please make sure that MongoDB is running.');
+  process.exit(1);
+});
+
 /**
  * Express configuration.
  */
@@ -65,11 +72,14 @@ app.set('port', process.env.PORT || 3000);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 app.use(compress());
-app.use(assets({
-  paths: ['public/css', 'public/js', 'public/bowerlib']
+app.use(sass({
+  src: path.join(__dirname, 'public'),
+  dest: path.join(__dirname, 'public'),
+  debug: true,
+  outputStyle: 'expanded'
 }));
 app.use(logger('dev'));
-app.use(favicon(path.join(__dirname, 'public/favicon.ico')));
+app.use(favicon(path.join(__dirname, 'public', 'favicon.png')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressValidator());
@@ -217,4 +227,5 @@ app.use(errorHandler());
 app.listen(app.get('port'), function() {
   console.log('Express server listening on port %d in %s mode', app.get('port'), app.get('env'));
 });
+
 module.exports = app;

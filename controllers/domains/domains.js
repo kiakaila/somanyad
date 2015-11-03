@@ -12,7 +12,7 @@ var sendMail = require('../../lib/swaks').sendMail;
 exports.home = function (req, res) {
 
   req.flash('success', { msg: "目前处于试运行期间...正式发布后,会发邮件通知您"})
-  return res.render('somanyad/domains/home', {
+  return res.render('domains/home', {
         active_item: "home",
       });
 }
@@ -66,7 +66,7 @@ exports.change_forward_email_post = function (req, res) {
         from: secrets.verifyEmailSender,
         subject: '验证邮箱所有权',
         text: '你是否允许用户: '  + req.user.email + '转发邮件给你, 如果允许请点击下面的链接, 或者将下面的链接复制到浏览器地址栏\n\n' +
-          'http://' + req.headers.host + '/domains/emailVerify?id=' + emailVerify._id + '&email=' + emailVerify.email + '\n\n' +
+          'http://' + req.headers.host +  req.baseUrl + '/emailVerify?id=' + emailVerify._id + '&email=' + emailVerify.email + '\n\n' +
           ' 如果不允许, 则无需进行操作.\n'
       };
       sendMail(mailOptions, function(err) {
@@ -95,7 +95,7 @@ exports.change_forward_email_post = function (req, res) {
     if (emailVerify.passVerify) {
       req.flash('success', { msg: "邮件修改成功" })
     }
-    return res.redirect("/domains/edit?domain=" + domain_str);
+    return res.redirect( req.baseUrl + "/edit?domain=" + domain_str);
   })
 }
 
@@ -107,14 +107,14 @@ exports.addNewDomain = function (req, res) {
 }
 // 添加新域名 -- 提交表单, 如果需要, 则发送邮件所有权验证邮件
 exports.addNewDomain_post = function (req, res) {
-  var domain = req.body.domain;
+  var domain_str = req.body.domain;
   var user = req.user;
   var forward_email = req.body.forward_email;
 
   async.waterfall([
     // 查找或者创建一条域名记录
     function (done) {
-      Domain.findOrCreate({domain: domain, user: user._id}, function (err, domain) {
+      Domain.findOrCreate({domain: domain_str, user: user._id}, function (err, domain) {
         done(err, domain)
       })
     },
@@ -134,10 +134,13 @@ exports.addNewDomain_post = function (req, res) {
     // 渲染请求
     function (err, domain) {
       if (err) {
+        if (err.code == 11000) {
+          err = new Error("该域名( " + domain_str + " )已经被绑定了, 请联系管理员进行操作")
+        }
         req.flash('errors', { msg: (err || new Error("create domain failure, please contact adminster!")).message });
-        return res.redirect('/domains/addNewDomain');
+        return res.redirect( req.baseUrl + '/addNewDomain');
       }
-      return res.redirect("/domains/newDomainSetup?domain=" + domain.domain)
+      return res.redirect( req.baseUrl + "/newDomainSetup?domain=" + domain_str)
     }
   );
 }
@@ -171,7 +174,7 @@ exports.newDomainSetup = function (req, res) {
         from: secrets.verifyEmailSender,
         subject: '验证邮箱所有权',
         text: '你是否允许用户: '  + req.user.email + '转发邮件给你, 如果允许请点击下面的链接, 或者将下面的链接复制到浏览器地址栏\n\n' +
-          'http://' + req.headers.host + '/domains/emailVerify?id=' + emailVerify._id + '&email=' + emailVerify.email + '\n\n' +
+          'http://' + req.headers.host +  req.baseUrl + '/emailVerify?id=' + emailVerify._id + '&email=' + emailVerify.email + '\n\n' +
           ' 如果不允许, 则无需进行操作.\n'
       };
       sendMail(mailOptions, function(err) {
