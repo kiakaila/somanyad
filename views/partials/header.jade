@@ -21,13 +21,13 @@
         //-   a(href='/api') API Examples
         li(class=title=='Contact'?'active':undefined).page-scroll
           a(href=title=='Home'?'#contact':'/#contact') #{__('联系我们')}
-          
+
       ul.nav.navbar-nav.navbar-right
         if user
           li(class=title=='Members'?'active':undefined)
-            a(href='/members') #{__('转发记录')}      
+            a(href='/members') #{__('费用')}
           li(class=title=='Domains'?'active':undefined)
-            a(href='/domains') #{__('我的域名')}      
+            a(href='/domains') #{__('我的域名')}
         if !user
           li(class=title=='Login'?'active':undefined)
             a(href='/login') #{__('登录')}

@@ -1,7 +1,3 @@
-@import "vendor/bootstrap/bootstrap";
-@import "vendor/font-awesome/font-awesome";
-@import "vendor/bootstrap-social";
-@import "themes/flatly";
 
 
 .gray {
@@ -12,10 +8,6 @@ section {
   min-height: 50vh;
   position: relative;
   padding-top: 60px;
-}
-
-.panel-qingtong {
-  .panel-variant(#A67D3D; #A67D3D; #A67D3D; #A67D3D);
 }
 
 #myChart {

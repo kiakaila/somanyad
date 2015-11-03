@@ -59,12 +59,6 @@ i18n.configure({
   directory: __dirname + '/locales'
 });
 
-mongoose.connect(secrets.db);
-mongoose.connection.on('error', function() {
-  console.log('MongoDB Connection Error. Please make sure that MongoDB is running.');
-  process.exit(1);
-});
-
 /**
  * Express configuration.
  */
@@ -79,7 +73,7 @@ app.use(sass({
   outputStyle: 'expanded'
 }));
 app.use(logger('dev'));
-app.use(favicon(path.join(__dirname, 'public', 'favicon.png')));
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressValidator());
@@ -133,8 +127,8 @@ app.post('/account/password', passportConf.isAuthenticated, userController.postU
 app.post('/account/delete', passportConf.isAuthenticated, userController.postDeleteAccount);
 app.get('/account/unlink/:provider', passportConf.isAuthenticated, userController.getOauthUnlink);
 
-app.use("/domains", passportConf.isAuthenticated, domainsController.router);
-app.use("/members", passportConf.isAuthenticated, membersController.router);
+app.use("/domains", domainsController.router);
+app.use("/members", membersController.router);
 
 /**
  * API examples routes.

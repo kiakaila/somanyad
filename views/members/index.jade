@@ -2,7 +2,7 @@ extends ../layout
 
 block content
   .container.feePlan
-    
+
     br
     .row
       .col-md-offset-1.col-md-10
@@ -10,8 +10,9 @@ block content
           .panel-heading
             //- a(href="#").btn.btn-default.pull-right.text-right 对比
             .row
-              .col-md-4
-                p.pull-right 账号: #{accountId} &nbsp;&nbsp;&nbsp; (#{user.email && user.email})
+              .col-md-8
+                p 账号: #{accountId} &nbsp;&nbsp;&nbsp; (#{user.email && user.email}) &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 有效期到: #{ plan && plan.member_expireAt}
+                p.hidden#currentPlan_expireAt #{ plan && plan.expireAt.getTime()}
           .panel-body
             block members-content
               .row
@@ -21,10 +22,10 @@ block content
                   li(huiyuantype="pay")
                     a(href="#") 付费
               br
-              
+
               .row.feeContent
                 include free
-                include pay             
+                include pay
 
   include availRecord
 

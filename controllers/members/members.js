@@ -1,10 +1,58 @@
 var async = require("async");
-var feePlan = require("../../models/FeePlan").feePlan;
 var moment = require("moment");
 var _ = require('underscore');
+var mongoose = require('mongoose')
+  , ObjectId = mongoose.Types.ObjectId;
+
+var freePlan = require("./models").freePlan;
+var alipayPlan = require("./models").alipayPlan;
+
 var ForwardRecords = require("../../models/ForwardRecord").ForwardRecords;
 var alipay = require("../../config/secrets").alipay;
 
+// 当前用户的购买记录(免费+ 支付宝的)
+exports.middleware_plans = function (req, res, next) {
+
+  async.waterfall([
+    function (done) {
+      // 找到免费的记录
+      var q = {user: req.user._id}
+      console.log(q);
+      freePlan.find(q, function (err, plans) {
+        done(err, plans)
+      });
+    },
+    function (freePlans, done) {
+      // 找到付费的记录
+      var q = { user: req.user._id}
+      alipayPlan.find(q, function (err, plans) {
+        done(err, freePlans, plans)
+      })
+    }
+  ], function (err, freePlans, alipayPlans) {
+    if (err) {
+      console.log(err);
+      req.flash('errors', { msg: "查找购买记录失败,请联系管理员"})
+      return next(err)
+    }
+    var plans = _.union(freePlans, alipayPlans).sort(function (plan1, plan2) {
+      return plan1.expireAt.getTime() < plan2.expireAt.getTime()
+    })
+    plans.forEach(function (plan) {
+      console.log(plan.feeType, plan.pay_finish);
+      plan.member_expireAt = moment(plan.expireAt).format("YYYY-MM-DD");
+      plan.member_startAt = moment(plan.startAt).format("YYYY-MM-DD");
+    })
+    res.locals.plans = plans;
+    for (plan of plans) {
+      if (plan.pay_finish) {
+        res.locals.plan = plan;
+        break;
+      }
+    }
+    next();
+  })
+}
 // 显示所有域名相关信息
 exports.index = function (req, res) {
   // 找到当前付费类型
@@ -16,17 +64,10 @@ exports.index = function (req, res) {
 
 // 购买免费包
 exports.free_post = function (req, res) {
-  var plan = new feePlan({
+  var plan = new freePlan({
     user: req.user._id,
-    feeType: "免费",
     startAt: moment(),
     expireAt: moment().subtract(-7, "days"),   // 往后七天
-
-    pay_id: null,
-    pay_type: "免费",
-    pay_money: 0,
-    pay_count: 0,
-    pay_finish: true
   })
   plan.save(function (err) {
     if (err) {
@@ -35,58 +76,59 @@ exports.free_post = function (req, res) {
     }
 
     req.flash("success", {msg: "购买成功"})
-    return res.redirect("/members/")
+    return res.redirect( req.baseUrl )
   });
 }
 
 // 付费
 // 这个应该是给支付宝调用的接口, 应该确保调用者是支付宝
-exports.pay_post = function (req, res) {
+exports.alipay_post = function (req, res) {
   var passCondiction = false;
   var count = parseInt(req.body.count);
   if (count < 1) {
     var err = new Error("购买流量包失败, 请发邮件给管理员, 稍后,管理员会进行处理")
     req.flash("errors", {msg: err.message})
-    return res.redirect("/members/");
+    return res.redirect( req.baseUrl );
   }
 
-  var startAt = moment()
-  var expireAt = moment().subtract(-count, "years")
-  var plan = new feePlan({
+  var startAt = res.locals.plan.expireAt || new Date();
+  startAt = moment(startAt);
+  var expireAt = moment(startAt).subtract(-count, "years")
+  var plan_id = ObjectId();
+  // 让用户跳转到 支付宝页面
+  var order_id_str = plan_id;
+  var order_name_str = "购买 somanyad.com 会员服务: " + startAt.format("YYYY-MM-DD") + "---" + expireAt.format("YYYY-MM-DD")
+  var order_money_str = "" + count * 10;
+  order_money_str = "0.01"
+
+  var data = {
+   out_trade_no	: order_id_str,
+   subject	: order_name_str,
+   price	: order_money_str,
+   quantity	: "1",
+   logistics_fee	: "0",
+   logistics_type	: "EXPRESS",
+   logistics_payment	: "SELLER_PAY",
+   show_url: req.headers.origin + req.baseUrl + "/order?id=" + order_id_str
+  };
+
+  var plan = new alipayPlan({
+    _id: plan_id,
     user: req.user._id,
-    feeType: "收费",
     startAt: startAt,
     expireAt: expireAt,
-    //
-    pay_type: "支付宝",
-    pay_count: count,
-    pay_finish: false
+    pay_finish: false,
+    pay_obj: {
+      register_to_pay: data,
+      had_send_goods: false
+    }
   })
   plan.save(function (err) {
     if (err) {
       console.log(err);
       req.flash("error", {msg: err.message});
-      return res.redirect("/members/");
+      return res.redirect( req.baseUrl );
     }
-
-    // 让用户跳转到 支付宝页面
-    var order_id_str = plan._id;
-    var order_name_str = "购买 somanyad.com 会员服务: " +
-                          startAt.format("YYYY-MM-DD") + "---" +
-                          expireAt.format("YYYY-MM-DD")
-    var order_money_str = "" + count * 10;
-    order_money_str = "0.01"
-
-    var data = {
-     out_trade_no	: order_id_str,
-     subject	: order_name_str,
-     price	: order_money_str,
-     quantity	: "1",
-     logistics_fee	: "0",
-     logistics_type	: "EXPRESS",
-     logistics_payment	: "SELLER_PAY",
-     show_url: "/"
-    };
 
    alipay.create_partner_trade_by_buyer(data, res);
   });
@@ -153,44 +195,65 @@ exports.forwardCount = function (req, res) {
 
 exports.pay_notify = function (req, res) {
   console.log(req.paramas);
-  return res.send({pay_notify: "ok"})
+  return res.send({pay_notify: "ok"});
 }
+
 exports.pay_return_url = function (req, res) {
   // test url
-  console.log(req.query);
-  // { body: 'undefined',
-  // buyer_email: '237009522@qq.com',
-  // buyer_id: '2088012501703670',
-  // discount: '0.00',
-  // gmt_create: '2015-10-26 19:28:05',
-  // gmt_logistics_modify: '2015-10-26 19:28:05',
-  // gmt_payment: '2015-10-26 19:28:29',
-  // is_success: 'T',
-  // is_total_fee_adjust: 'N',
-  // logistics_fee: '0.00',
-  // logistics_payment: 'SELLER_PAY',
-  // logistics_type: 'EXPRESS',
-  // notify_id: 'RqPnCoPT3K9%2Fvwbh3InVa46BL2SnjetFOQQRk7A8LvEqrwBKCINGJgnGsUkDpkJzeKv7',
-  // notify_time: '2015-10-26 19:28:34',
-  // notify_type: 'trade_status_sync',
-  // out_trade_no: '562e0e11024b2b2110507c05',
-  // payment_type: '1',
-  // price: '0.01',
-  // quantity: '1',
-  // receive_address: 'undefined',
-  // receive_mobile: 'undefined',
-  // receive_name: 'undefined',
-  // receive_phone: 'undefined',
-  // receive_zip: 'undefined',
-  // seller_actions: 'SEND_GOODS',
-  // seller_email: 'ljy080829@gmail.com',
-  // seller_id: '2088102062322622',
-  // subject: '购买 somanyad.com 会员服务: 2015-10-26---2016-10-26',
-  // total_fee: '0.01',
-  // trade_no: '2015102600001000670062629977',
-  // trade_status: 'WAIT_SELLER_SEND_GOODS',
-  // use_coupon: 'N',
-  // sign: '3a42af9d11cc95e05dfa9d50c86a7b0f',
-  // sign_type: 'MD5' }
-  return res.send({pay_return: 'ok'});
+  var out_trade_no = req.query.out_trade_no;
+  if (out_trade_no == null) {
+    console.log("支付宝跳转失败", req.query);
+    req.flash('errors', { msg: "购买未成功, 请联系管理员"})
+    return res.redirect( req.baseUrl )
+  }
+  alipayPlan.findOne({_id: out_trade_no}, function (err, plan) {
+    if (err || plan == null) {
+      console.log(err || new Error("plan was null for out_trade_no:", out_trade_no));
+      req.flash("errors", { msg: "找不到订单,请联系管理员"});
+      return res.redirect( req.baseUrl )
+    }
+
+    plan.pay_obj.pay_to_alipay = req.query;
+    plan.pay_finish = true;
+    plan.save(function (err) {
+      if (err) {
+        console.log(err);
+        req.flash('errors', { msg: "订单更新失败, 请联系管理员"})
+        return res.redirect( req.baseUrl )
+      }
+      req.flash('success', { msg: "支付宝已经收到你的付款了"})
+      res.locals.out_trade_plan = plan;
+      auto_send_goods(req, res)
+    })
+  })
+}
+var auto_send_goods = exports.auto_send_goods = function (req, res) {
+  var plan = res.locals.out_trade_plan;
+  var plan_id = plan._id;
+  var trade_no = plan.pay_obj.pay_to_alipay.trade_no;
+
+  var data = {
+     trade_no: trade_no
+    ,logistics_name: "好多广告网自动发货部"
+    ,invoice_no: plan_id
+    ,transport_type: "EXPRESS"
+   };
+  req.flash('success', { msg: "系统已经开始自动发货了"});
+  alipay.send_goods_confirm_by_platform(data, res);
+  res.redirect( req.baseUrl );
+}
+
+exports.order_detail = function (req, res) {
+  var id = req.query.id
+  alipayPlan.findOne({_id: id, user: req.user._id}, function (err, plan) {
+
+    if (err) {
+      console.log(err);
+      req.flash('errors', { msg: "查询订单" + id + "出错, 请联系管理员"})
+      return res.redirect( req.baseUrl )
+    }
+    return res.render('members/order', {
+      order: plan
+    });
+  });
 }
