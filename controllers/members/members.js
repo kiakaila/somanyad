@@ -12,7 +12,9 @@ var alipay = require("../../config/secrets").alipay;
 
 // 当前用户的购买记录(免费+ 支付宝的)
 exports.middleware_plans = function (req, res, next) {
-
+  if (!req.user) {
+    return next();
+  }
   async.waterfall([
     function (done) {
       // 找到免费的记录
