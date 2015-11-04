@@ -9,6 +9,7 @@ var alipayPlan = require("./models").alipayPlan;
 
 var ForwardRecords = require("../../models/ForwardRecord").ForwardRecords;
 var alipay = require("../../config/secrets").alipay;
+var router = require('./router');
 
 // 当前用户的购买记录(免费+ 支付宝的)
 exports.middleware_plans = function (req, res, next) {
@@ -70,6 +71,7 @@ exports.free_post = function (req, res) {
     startAt: moment(),
     expireAt: moment().subtract(-7, "days"),   // 往后七天
   })
+
   plan.save(function (err) {
     if (err) {
       console.log(err);
@@ -104,14 +106,15 @@ exports.alipay_post = function (req, res) {
   order_money_str = "0.01"
 
   var data = {
-   out_trade_no	: order_id_str,
-   subject	: order_name_str,
-   price	: order_money_str,
-   quantity	: "1",
-   logistics_fee	: "0",
-   logistics_type	: "EXPRESS",
-   logistics_payment	: "SELLER_PAY",
-   show_url: req.headers.origin + req.baseUrl + "/order?id=" + order_id_str
+    out_trade_no	: order_id_str,
+    subject	: order_name_str,
+    price	: order_money_str,
+    quantity	: "1",
+    logistics_fee	: "0",
+    logistics_type	: "EXPRESS",
+    logistics_payment	: "SELLER_PAY",
+    create_partner_trade_by_buyer_notify_url: router.notify_url(req.baseUrl, plan_id),
+    show_url: req.headers.origin + req.baseUrl + "/order?id=" + order_id_str
   };
 
   var plan = new alipayPlan({
@@ -196,21 +199,20 @@ exports.forwardCount = function (req, res) {
 }
 
 exports.pay_notify = function (req, res) {
-  console.log("notify_url2");
-  console.log("body: ", req.body);
-  console.log("query: ", req.query);
-  var out_trade_no = req.body.out_trade_no;
-  if (!out_trade_no) {
-    console.log("not out_trade_no");
+  var plan_id = req.params.plan_id
+  if (!plan_id) {
     return res.send("failure");
   }
-  alipayPlan.findOne({_id: out_trade_no}, function (err, plan) {
+  alipayPlan.findOne({_id: plan_id}, function (err, plan) {
     if (err) {
       console.log(err);
       return res.send("failure")
     }
-    plan.pay_obj.notify_from_alipay = req.body
-    plan.pay_finish = true;
+    plan.pay_obj.notify_from_alipay = _.extends( plan.pay_obj.notify_from_alipay  || {}, req.body, req.query);
+    plan.pay_obj.notify_from_alipay_count += 1;
+    if (plan.pay_obj.notify_from_alipay_count >= 2) {
+      plan.pay_finish = true;
+    }
     plan.save(function (err) {
       if (err) {
         console.log(err);

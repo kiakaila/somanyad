@@ -24,10 +24,16 @@ router.post('/free', passportConf.isAuthenticated, members.free_post);
 router.post('/pay', passportConf.isAuthenticated, members.alipay_post);
 // 显示最近两周的转发记录
 router.get('/forwardCount', passportConf.isAuthenticated, members.forwardCount);
-router.all('/aplipay/create_partner_trade_by_buyer/notify_url2', members.pay_notify);
+router.all(notify_url(), members.pay_notify);
 // router.get('/auto_send_goods', members.auto_send_goods);
 router.get('/aplipay/create_partner_trade_by_buyer/return_url', members.pay_return_url);
 // 订单详情
 router.get('/order', passportConf.isAuthenticated, members.order_detail)
 
 exports.router = router;
+
+var notify_url = exports.notify_url = function (baseUrl, plan_id) {
+  var baseUrl = baseUrl || ""
+  plan_id = plan_id || ":plan_id";
+  return  baseUrl + '/aplipay/create_partner_trade_by_buyer/' + plan_id +'/notify_url'
+}

@@ -90,7 +90,7 @@ app.use(passport.session());
 app.use(flash());
 app.use(function (req, res, next) {
   if (req.path.indexOf("notify_url") != -1) {
-    console.log("notify_url: ", req.body);
+    console.log("notify_url: ", req.body, req.query);
     next();
   } else {
     lusca({
