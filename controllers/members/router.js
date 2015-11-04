@@ -30,10 +30,12 @@ router.get('/aplipay/create_partner_trade_by_buyer/return_url', members.pay_retu
 // 订单详情
 router.get('/order', passportConf.isAuthenticated, members.order_detail)
 
-exports.router = router;
-
-var notify_url = exports.notify_url = function (baseUrl, plan_id) {
+function notify_url(baseUrl, plan_id) {
   var baseUrl = baseUrl || ""
   plan_id = plan_id || ":plan_id";
   return  baseUrl + '/aplipay/create_partner_trade_by_buyer/' + plan_id +'/notify_url'
 }
+
+exports.router = router;
+
+exports.notify_url = notify_url;
