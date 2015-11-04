@@ -98,7 +98,8 @@ exports.alipay_post = function (req, res) {
   var plan_id = ObjectId();
   // 让用户跳转到 支付宝页面
   var order_id_str = plan_id;
-  var order_name_str = "购买 somanyad.com 会员服务: " + startAt.format("YYYY-MM-DD") + "---" + expireAt.format("YYYY-MM-DD")
+  // var order_name_str = "购买 somanyad.com 会员服务: " + startAt.format("YYYY-MM-DD") + "---" + expireAt.format("YYYY-MM-DD")
+  var order_name_str = "buy"
   var order_money_str = "" + count * 10;
   order_money_str = "0.01"
 
@@ -201,19 +202,19 @@ exports.pay_notify = function (req, res) {
   var out_trade_no = req.body.out_trade_no;
   if (!out_trade_no) {
     console.log("not out_trade_no");
-    return res.send(200,"success");
+    return res.send("failure");
   }
   alipayPlan.findOne({_id: out_trade_no}, function (err, plan) {
     if (err) {
       console.log(err);
-      return res.send("success")
+      return res.send("failure")
     }
     plan.pay_obj.notify_from_alipay = req.body
     plan.pay_finish = true;
     plan.save(function (err) {
       if (err) {
         console.log(err);
-        return res.send("success")
+        return res.send("failure")
       }
       function sendGoods(pid, trade_no) {
         setTimeout(function () {
@@ -222,6 +223,7 @@ exports.pay_notify = function (req, res) {
             res.locals.trade_no = trade_no;
             // 自动发货
             auto_send_goods(req, res);
+            console.log("auto_send_goods success");
           } catch (e) {
             console.log(e);
           } finally {
