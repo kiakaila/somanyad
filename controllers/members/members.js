@@ -69,7 +69,6 @@ exports.middleware_plans = function (req, res, next) {
       return plan1.expireAt.getTime() < plan2.expireAt.getTime()
     })
     plans.forEach(function (plan) {
-      console.log(plan.feeType, plan.pay_finish);
       plan.member_expireAt = moment(plan.expireAt).format("YYYY-MM-DD");
       plan.member_startAt = moment(plan.startAt).format("YYYY-MM-DD");
     })
