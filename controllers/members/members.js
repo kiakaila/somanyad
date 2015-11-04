@@ -134,9 +134,9 @@ exports.alipay_post = function (req, res) {
   order_money_str = "0.01"
 
   var data = {
-    out_trade_no	: "" + order_id_str,
-    subject	: "" + order_name_str,
-    price	: "" + order_money_str,
+    out_trade_no	: order_id_str,
+    subject	: order_name_str,
+    price	: order_money_str,
     quantity	: "1",
     logistics_fee	: "0",
     logistics_type	: "EXPRESS",
@@ -294,9 +294,9 @@ function auto_send_goods(req, res, plan, trade_no) {
 
         var plan_id = plan._id;
         var data = {
-           trade_no: "" + trade_no
+           trade_no: trade_no
           ,logistics_name: "好多广告网自动发货部"
-          ,invoice_no: "" + plan_id
+          ,invoice_no: plan_id
           ,transport_type: "EXPRESS"
          };
         alipay.send_goods_confirm_by_platform(data, res);
