@@ -9,7 +9,6 @@ var alipayPlan = require("./models").alipayPlan;
 
 var ForwardRecords = require("../../models/ForwardRecord").ForwardRecords;
 var alipay = require("../../config/secrets").alipay;
-var router = require('./router');
 
 // 当前用户的购买记录(免费+ 支付宝的)
 exports.middleware_plans = function (req, res, next) {
@@ -113,7 +112,6 @@ exports.alipay_post = function (req, res) {
     logistics_fee	: "0",
     logistics_type	: "EXPRESS",
     logistics_payment	: "SELLER_PAY",
-    create_partner_trade_by_buyer_notify_url: router.notify_url(req.baseUrl, plan_id),
     show_url: req.headers.origin + req.baseUrl + "/order?id=" + order_id_str
   };
 
@@ -134,8 +132,7 @@ exports.alipay_post = function (req, res) {
       req.flash("error", {msg: err.message});
       return res.redirect( req.baseUrl );
     }
-
-   alipay.create_partner_trade_by_buyer(data, res);
+    alipay.create_partner_trade_by_buyer(data, res);
   });
 }
 
@@ -199,20 +196,20 @@ exports.forwardCount = function (req, res) {
 }
 
 exports.pay_notify = function (req, res) {
-  var plan_id = req.params.plan_id
-  if (!plan_id) {
+  console.log(req.query, req.body);
+  var out_trade_no = req.query.out_trade_no || req.body.out_trade_no;
+  if (!out_trade_no) {
+    console.log('not out_trade_no', req.query, req.body, req.originalUrl);
     return res.send("failure");
   }
-  alipayPlan.findOne({_id: plan_id}, function (err, plan) {
+  alipayPlan.findOne({_id: out_trade_no}, function (err, plan) {
     if (err) {
       console.log(err);
       return res.send("failure")
     }
     plan.pay_obj.notify_from_alipay = _.extends( plan.pay_obj.notify_from_alipay  || {}, req.body, req.query);
-    plan.pay_obj.notify_from_alipay_count += 1;
-    if (plan.pay_obj.notify_from_alipay_count >= 2) {
-      plan.pay_finish = true;
-    }
+    plan.pay_finish = true;
+    var trade_no = plan.pay_obj.notify_from_alipay.trade_no;
     plan.save(function (err) {
       if (err) {
         console.log(err);
@@ -257,29 +254,30 @@ exports.pay_return_url = function (req, res) {
 }
 
 function auto_send_goods(req, res, plan, trade_no) {
-  console.log('开始自动发货', plan._id);
-  try {
-    plan.pay_obj.had_send_goods = true;
-    plan.save(function (err) {
-      if (err) {
-        console.log(err);
-      }
+  setTimeout(function () {
+    console.log('开始自动发货', plan._id);
+    try {
+      plan.pay_obj.had_send_goods = true;
+      plan.save(function (err) {
+        if (err) {
+          console.log(err);
+        }
 
-      var plan_id = plan._id;
-      var data = {
-         trade_no: trade_no
-        ,logistics_name: "好多广告网自动发货部"
-        ,invoice_no: plan_id
-        ,transport_type: "EXPRESS"
-       };
-      req.flash('success', { msg: "系统已经开始自动发货了"});
-      alipay.send_goods_confirm_by_platform(data, res);
-    })
-    console.log('自动发货成功', plan._id);
-  } catch (e) {
-    console.log("自动发货失败", plan._id, e);
-  } finally {
-  }
+        var plan_id = plan._id;
+        var data = {
+           trade_no: trade_no
+          ,logistics_name: "好多广告网自动发货部"
+          ,invoice_no: plan_id
+          ,transport_type: "EXPRESS"
+         };
+        alipay.send_goods_confirm_by_platform(data, res);
+      })
+      console.log('自动发货成功', plan._id);
+    } catch (e) {
+      console.log("自动发货失败", plan._id, e);
+    } finally {
+    }
+  }, 0.5 * 1000);
 }
 
 exports.order_detail = function (req, res) {

@@ -28,7 +28,6 @@ var alipayPlanSchema = new Schema({
   pay_obj: {
     register_to_pay: Schema.Types.Mixed,
     notify_from_alipay: Schema.Types.Mixed,
-    notify_from_alipay_count: { type: Number, default: 0 },
     pay_to_alipay: Schema.Types.Mixed,
     had_send_goods: { type: Boolean, default: false }
   }

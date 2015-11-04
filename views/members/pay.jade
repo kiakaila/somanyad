@@ -1,5 +1,5 @@
 .col-md-12#pay.hidden
-  form(action="/members/pay", method="post")
+  form(action="/members/pay", method="post", target='_blank')
     input(type='hidden', name='_csrf', value=_csrf)
     input(type="hidden", name="feeType", value="baijin")
     br
@@ -32,17 +32,17 @@
                   .input-group-addon
                     label 年
           .col-md-5
-            p.duration 
-    
+            p.duration
+
     br
     .row
       .col-md-offset-1.col-md-2
         p.pull-right 支付:
       .col-md-9
-        .row 
+        .row
           .col-md-5
             button(type="submit").btn.btn-default 支付宝
-              
+
           .col-md-offset-1.col-md-5.hidden
             .btn-group.btn-group-justified
               a(href="#").btn.btn-success.has-error Paypal
