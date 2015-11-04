@@ -19,7 +19,6 @@ exports.middleware_plans = function (req, res, next) {
     function (done) {
       // 找到免费的记录
       var q = {user: req.user._id}
-      console.log(q);
       freePlan.find(q, function (err, plans) {
         done(err, plans)
       });
@@ -196,6 +195,7 @@ exports.forwardCount = function (req, res) {
 }
 
 exports.pay_notify = function (req, res) {
+  console.log("notify_url2");
   console.log("body: ", req.body);
   console.log("query: ", req.query);
   console.log("params: ", req.params);

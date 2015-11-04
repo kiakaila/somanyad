@@ -10,7 +10,7 @@ var members = require("./members");
 
 router.use(function (req, res, next) {
   res.locals.title = "Members";
-  if (req.user) 
+  if (req.user)
     res.locals.accountId = dnslookup.calSuffix(req.user._id.toHexString(), 5);
   next();
 })
@@ -24,7 +24,7 @@ router.post('/free', passportConf.isAuthenticated, members.free_post);
 router.post('/pay', passportConf.isAuthenticated, members.alipay_post);
 // 显示最近两周的转发记录
 router.get('/forwardCount', passportConf.isAuthenticated, members.forwardCount);
-router.post('/aplipay/create_partner_trade_by_buyer/notify_url', members.pay_notify);
+router.post('/aplipay/create_partner_trade_by_buyer/notify_url2', members.pay_notify);
 // router.get('/auto_send_goods', members.auto_send_goods);
 router.get('/aplipay/create_partner_trade_by_buyer/return_url', members.pay_return_url);
 // 订单详情
