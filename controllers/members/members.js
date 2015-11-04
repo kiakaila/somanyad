@@ -10,6 +10,35 @@ var alipayPlan = require("./models").alipayPlan;
 var ForwardRecords = require("../../models/ForwardRecord").ForwardRecords;
 var alipay = require("../../config/secrets").alipay;
 
+alipay.on('verify_fail', function(){console.log('emit verify_fail')})
+	// .on('create_direct_pay_by_user_trade_finished', function(out_trade_no, trade_no){})
+	// .on('create_direct_pay_by_user_trade_success', function(out_trade_no, trade_no){})
+	// .on('refund_fastpay_by_platform_pwd_success', function(batch_no, success_num, result_details){})
+	.on('create_partner_trade_by_buyer_wait_buyer_pay', function(out_trade_no, trade_no){
+    console.log("alipay notify(create_partner_trade_by_buyer_wait_buyer_pay)", arguments);
+  })
+	.on('create_partner_trade_by_buyer_wait_seller_send_goods', function(out_trade_no, trade_no){
+    console.log('create_partner_trade_by_buyer_wait_seller_send_goods', arguments);
+  })
+	.on('create_partner_trade_by_buyer_wait_buyer_confirm_goods', function(out_trade_no, trade_no){
+    console.log('create_partner_trade_by_buyer_wait_buyer_confirm_goods', arguments);
+  })
+	.on('create_partner_trade_by_buyer_trade_finished', function(out_trade_no, trade_no){
+    console.log('create_partner_trade_by_buyer_trade_finished', arguments);
+  })
+	.on('send_goods_confirm_by_platform_fail', function(error){
+    console.log('send_goods_confirm_by_platform_fail', arguments);
+  })
+	.on('send_goods_confirm_by_platform_success', function(out_trade_no, trade_no, xml){
+    console.log('send_goods_confirm_by_platform_success', arguments);
+  })
+	// .on('trade_create_by_buyer_wait_buyer_pay', function(out_trade_no, trade_no){})
+	// .on('trade_create_by_buyer_wait_seller_send_goods', function(out_trade_no, trade_no){})
+	// .on('trade_create_by_buyer_wait_buyer_confirm_goods', function(out_trade_no, trade_no){})
+	// .on('trade_create_by_buyer_trade_finished', function(out_trade_no, trade_no){});
+
+
+
 // 当前用户的购买记录(免费+ 支付宝的)
 exports.middleware_plans = function (req, res, next) {
   if (!req.user) {
