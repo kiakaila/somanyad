@@ -29,9 +29,7 @@ alipay.on('verify_fail', function(){console.log('emit verify_fail')})
 	.on('send_goods_confirm_by_platform_fail', function(error){
     console.log('send_goods_confirm_by_platform_fail', arguments);
   })
-	.on('send_goods_confirm_by_platform_success', function(out_trade_no, trade_no, xml){
-    console.log('send_goods_confirm_by_platform_success', arguments);
-  })
+	.on('send_goods_confirm_by_platform_success', function(out_trade_no, trade_no, xml){})
 	// .on('trade_create_by_buyer_wait_buyer_pay', function(out_trade_no, trade_no){})
 	// .on('trade_create_by_buyer_wait_seller_send_goods', function(out_trade_no, trade_no){})
 	// .on('trade_create_by_buyer_wait_buyer_confirm_goods', function(out_trade_no, trade_no){})
