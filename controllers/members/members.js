@@ -257,21 +257,29 @@ exports.pay_return_url = function (req, res) {
 }
 
 function auto_send_goods(req, res, plan, trade_no) {
-  plan.pay_obj.had_send_goods = true;
-  plan.save(function (err) {
-    if (err) {
-      console.log(err);
-    }
-    var plan_id = plan._id;
-    var data = {
-       trade_no: trade_no
-      ,logistics_name: "好多广告网自动发货部"
-      ,invoice_no: plan_id
-      ,transport_type: "EXPRESS"
-     };
-    req.flash('success', { msg: "系统已经开始自动发货了"});
-    alipay.send_goods_confirm_by_platform(data, res);
-  })
+  console.log('开始自动发货', plan._id);
+  try {
+    plan.pay_obj.had_send_goods = true;
+    plan.save(function (err) {
+      if (err) {
+        console.log(err);
+      }
+
+      var plan_id = plan._id;
+      var data = {
+         trade_no: trade_no
+        ,logistics_name: "好多广告网自动发货部"
+        ,invoice_no: plan_id
+        ,transport_type: "EXPRESS"
+       };
+      req.flash('success', { msg: "系统已经开始自动发货了"});
+      alipay.send_goods_confirm_by_platform(data, res);
+    })
+    console.log('自动发货成功', plan._id);
+  } catch (e) {
+    console.log("自动发货失败", plan._id, e);
+  } finally {
+  }
 }
 
 exports.order_detail = function (req, res) {
