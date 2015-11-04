@@ -198,12 +198,10 @@ exports.pay_notify = function (req, res) {
   console.log("notify_url2");
   console.log("body: ", req.body);
   console.log("query: ", req.query);
-  console.log("params: ", req.params);
-  console.log("param: ", req.param("out_trade_no"));
   var out_trade_no = req.body.out_trade_no;
   if (!out_trade_no) {
     console.log("not out_trade_no");
-    return res.send("success");
+    return res.send(200,"success");
   }
   alipayPlan.findOne({_id: out_trade_no}, function (err, plan) {
     if (err) {
