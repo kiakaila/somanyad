@@ -6,6 +6,7 @@ var mongoose = require('mongoose')
   , ObjectId = Schema.ObjectId;
 var findOrCreate = require("mongoose-findorcreate")
 var moment = require("moment");
+var stampIt = require("mongoose-stamp");
 
 // 免费计划
 var freePlanSchema = new Schema({
@@ -17,6 +18,7 @@ var freePlanSchema = new Schema({
   pay_finish: { type: Boolean, default: true }
 });
 freePlanSchema.plugin(findOrCreate);
+freePlanSchema.plugin(stampIt);
 // 支付宝付费
 var alipayPlanSchema = new Schema({
   user: ObjectId,
@@ -37,6 +39,7 @@ var alipayPlanSchema = new Schema({
 alipayPlanSchema.virtual("pay_money").get(function () {
   return this.pay_obj.register_to_pay.price;
 })
+alipayPlanSchema.plugin(stampIt);
 
 module.exports.freePlan = mongoose.model("FreePlan", freePlanSchema);
 module.exports.alipayPlan = mongoose.model("AlipayPlan", alipayPlanSchema);

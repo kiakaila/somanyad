@@ -14,7 +14,7 @@ alipay.on('verify_fail', function(){console.log('emit verify_fail')})
 	// .on('create_direct_pay_by_user_trade_finished', function(out_trade_no, trade_no){})
 	// .on('create_direct_pay_by_user_trade_success', function(out_trade_no, trade_no){})
 	// .on('refund_fastpay_by_platform_pwd_success', function(batch_no, success_num, result_details){})
-	.on('create_partner_trade_by_buyer_wait_buyer_pay', function(out_trade_no, trade_no){
+	.on('create_partner_trade_by_buyer_wait_buyer_pay', function(out_trade_no, trade_no, args){
     // 等待用户付钱到支付宝
     alipayPlan.findOne({_id: out_trade_no}, function (err, plan) {
       plan.status.push("等待用户付款")
@@ -26,7 +26,7 @@ alipay.on('verify_fail', function(){console.log('emit verify_fail')})
       });
     })
   })
-	.on('create_partner_trade_by_buyer_wait_seller_send_goods', function(out_trade_no, trade_no){
+	.on('create_partner_trade_by_buyer_wait_seller_send_goods', function(out_trade_no, trade_no, args){
     // 需要发货
     alipayPlan.findOne({_id: out_trade_no}, function (err, plan) {
       if (err || plan == null) {
@@ -35,6 +35,7 @@ alipay.on('verify_fail', function(){console.log('emit verify_fail')})
       }
       plan.had_send_goods += 1;
       plan.status.push("发货尝试" + plan.had_send_goods )
+      plan.pay_obj.notify_from_alipay = args;
       plan.save(function (err) {
         if (err) {
           console.log(out_trade_no, trade_no, "发货尝试状态保存失败", err);
@@ -50,7 +51,7 @@ alipay.on('verify_fail', function(){console.log('emit verify_fail')})
       });
     })
   })
-	.on('create_partner_trade_by_buyer_wait_buyer_confirm_goods', function(out_trade_no, trade_no){
+	.on('create_partner_trade_by_buyer_wait_buyer_confirm_goods', function(out_trade_no, trade_no, args){
     // 等待用户确认收货
     alipayPlan.findOne({_id: out_trade_no}, function (err, plan) {
       if (err || plan == null) {
@@ -66,7 +67,7 @@ alipay.on('verify_fail', function(){console.log('emit verify_fail')})
       });
     })
   })
-	.on('create_partner_trade_by_buyer_trade_finished', function(out_trade_no, trade_no){
+	.on('create_partner_trade_by_buyer_trade_finished', function(out_trade_no, trade_no, args){
     // 交易完成
     alipayPlan.findOne({_id: out_trade_no}, function (err, plan) {
       if (err || plan == null) {
@@ -139,7 +140,6 @@ alipay.on('verify_fail', function(){console.log('emit verify_fail')})
 	// .on('trade_create_by_buyer_trade_finished', function(out_trade_no, trade_no){});
 
 
-
 // 当前用户的购买记录(免费+ 支付宝的)
 exports.middleware_plans = function (req, res, next) {
   if (!req.user) {
@@ -173,13 +173,16 @@ exports.middleware_plans = function (req, res, next) {
       plan.member_expireAt = moment(plan.expireAt).format("YYYY-MM-DD");
       plan.member_startAt = moment(plan.startAt).format("YYYY-MM-DD");
     })
-    res.locals.plans = plans;
     for (plan of plans) {
       if (plan.pay_finish) {
         res.locals.plan = plan;
         break;
       }
     }
+    plans.sort(function (plan1, plan2) {
+      return plan1.createdAt.getTime() < plan2.createdAt.getTime()
+    })
+    res.locals.plans = plans;
     next();
   })
 }
@@ -252,6 +255,7 @@ exports.alipay_post = function (req, res) {
     startAt: startAt,
     expireAt: expireAt,
     pay_finish: false,
+    status: ["已创建"],
     pay_obj: {
       register_to_pay: data,
     }
@@ -341,7 +345,6 @@ exports.pay_return_url = function (req, res) {
     }
 
     plan.pay_obj.pay_to_alipay = req.query;
-    plan.pay_finish = true;
     plan.save(function (err) {
       if (err) {
         console.log(err);

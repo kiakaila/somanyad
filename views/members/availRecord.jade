@@ -12,8 +12,10 @@
           p  类型: #{plan.feeType} &nbsp;&nbsp;&nbsp; 付费: #{plan.pay_money} 元
         .col-md-4
           p 有效期: #{plan.member_startAt} --- #{plan.member_expireAt}
-        .col-md-3
-          if plan.feeType == "免费"
+        if plan.feeType == '免费'
+          .col-md-3
             p 支付情况: 免费
-          else if plan.pay_finish
+        else
+          .col-md-3
             p 支付情况: #{plan.status[plan.status.length-1]}
+              a(href="/members/order?id=#{plan._id}") 详情

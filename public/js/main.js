@@ -44,63 +44,64 @@ $(document).ready(function() {
     var nextD = moment.utc(currentPlan_expireAt).subtract(-count, "years");
     $("#pay .duration").text( "" + now.format("YYYY-MM-DD") + "  ----  " + nextD.format("YYYY-MM-DD"));
   });
-
 });
 
-$(document).ready(function () {
-  // Get the context of the canvas element we want to select
-  var ctx = document.getElementById("myChart").getContext("2d");
 
-  var path = window.location.pathname;
-  if (path != "/members") {
-    return;
-  }
-
-  // 请求json 数据
-  // 显示json 数据
-  var url = window.location.href + "/forwardCount";
-  $.getJSON(url, function (results) {
-
-    if (results.length == 0) {
-      $("#record").text("暂无记录")
-      return;
-    }
-    var labels = results.map(function (elem) {
-      return elem._id
-    })
-    var datas = results.map(function (elem) {
-      return elem.count
-    })
-    var data = {
-      // labels: ["January", "February", "March", "April", "May", "June", "July"],
-      labels: labels,
-      datasets: [
-          {
-              label: "My Second dataset",
-              fillColor: "rgba(151,187,205,0.2)",
-              strokeColor: "rgba(151,187,205,1)",
-              pointColor: "rgba(151,187,205,1)",
-              pointStrokeColor: "#fff",
-              pointHighlightFill: "#fff",
-              pointHighlightStroke: "rgba(151,187,205,1)",
-              // data: [28, 48, 40, 19, 86, 27, 90]
-              data: datas
-          }
-      ]
-    };
-    var opt = {
-      multiTooltipTemplate: "<%= datasetLabel %> - <%= value %>"
-    }
-    var myNewChart = new Chart(ctx).Line(data, opt);
-  })
-})
-
-function copyToClipboard(text) {
-  window.prompt("请按下组合键: ctrl + c, 接着回车", text);
-}
-
-$(document).ready(function () {
-  $("#wait-for-alipay").click(function () {
-    window.alert("等待支付宝接入...正在开发中")
-  })
-})
+// 
+// $(document).ready(function () {
+//   // Get the context of the canvas element we want to select
+//   var ctx = document.getElementById("myChart").getContext("2d");
+//
+//   var path = window.location.pathname;
+//   if (path != "/members") {
+//     return;
+//   }
+//
+//   // 请求json 数据
+//   // 显示json 数据
+//   var url = window.location.href + "/forwardCount";
+//   $.getJSON(url, function (results) {
+//
+//     if (results.length == 0) {
+//       $("#record").text("暂无记录")
+//       return;
+//     }
+//     var labels = results.map(function (elem) {
+//       return elem._id
+//     })
+//     var datas = results.map(function (elem) {
+//       return elem.count
+//     })
+//     var data = {
+//       // labels: ["January", "February", "March", "April", "May", "June", "July"],
+//       labels: labels,
+//       datasets: [
+//           {
+//               label: "My Second dataset",
+//               fillColor: "rgba(151,187,205,0.2)",
+//               strokeColor: "rgba(151,187,205,1)",
+//               pointColor: "rgba(151,187,205,1)",
+//               pointStrokeColor: "#fff",
+//               pointHighlightFill: "#fff",
+//               pointHighlightStroke: "rgba(151,187,205,1)",
+//               // data: [28, 48, 40, 19, 86, 27, 90]
+//               data: datas
+//           }
+//       ]
+//     };
+//     var opt = {
+//       multiTooltipTemplate: "<%= datasetLabel %> - <%= value %>"
+//     }
+//     var myNewChart = new Chart(ctx).Line(data, opt);
+//   })
+// })
+//
+// function copyToClipboard(text) {
+//   window.prompt("请按下组合键: ctrl + c, 接着回车", text);
+// }
+//
+// $(document).ready(function () {
+//   $("#wait-for-alipay").click(function () {
+//     window.alert("等待支付宝接入...正在开发中")
+//   })
+// })
