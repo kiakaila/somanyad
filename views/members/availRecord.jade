@@ -34,9 +34,10 @@
                   th  #{plan.member_startAt}
                   th  #{plan.member_expireAt}
                   th  #{plan.duration}
-                  th  #{plan.status}  
-                    if plan.pay_finish
-                    else
+                  if plan.pay_finish
+                    th 订单已生效
+                  else
+                    th  #{plan.status}  
                       if plan.status != '订单已生效'
                         if plan.status[plan.status.length - 1] == '已创建'
                           | &nbsp;&nbsp;&nbsp;
