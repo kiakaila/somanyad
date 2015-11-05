@@ -7,25 +7,25 @@
       .row
         .col-md-5
           p 免费流量包 (不限量转发)
-  br          
+  br
   .row
     .col-md-offset-1.col-md-2
       p.pull-right 应付金额:
     .col-md-9
-      p 0元                        
+      p 0元
   br
   .row
     .col-md-offset-1.col-md-2
       p.pull-right 开通时长:
     .col-md-9
-      p 7天
-  
+      p 10天
+
   br
   .row
     .col-md-offset-1.col-md-2
       p.pull-right 支付:
     .col-md-9
-      .row 
+      .row
         .col-md-5
           form(action="/members/free", method="post")
             input(type='hidden', name='_csrf', value=_csrf)

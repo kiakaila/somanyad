@@ -15,21 +15,124 @@ alipay.on('verify_fail', function(){console.log('emit verify_fail')})
 	// .on('create_direct_pay_by_user_trade_success', function(out_trade_no, trade_no){})
 	// .on('refund_fastpay_by_platform_pwd_success', function(batch_no, success_num, result_details){})
 	.on('create_partner_trade_by_buyer_wait_buyer_pay', function(out_trade_no, trade_no){
-    console.log("alipay notify(create_partner_trade_by_buyer_wait_buyer_pay)", arguments);
+    // 等待用户付钱到支付宝
+    alipayPlan.findOne({_id: out_trade_no}, function (err, plan) {
+      plan.pay_obj.status.push("等待用户付款")
+      plan.trade_no = trade_no;
+      plan.save(function (err) {
+        if (err) {
+          console.log(out_trade_no, trade_no, "等待用户付款 更新出错", err);
+        }
+      });
+    })
   })
 	.on('create_partner_trade_by_buyer_wait_seller_send_goods', function(out_trade_no, trade_no){
-    console.log('create_partner_trade_by_buyer_wait_seller_send_goods', arguments);
+    // 需要发货
+    alipayPlan.findOne({_id: out_trade_no}, function (err, plan) {
+      if (err || plan == null) {
+        console.log("需要发货,查询订单失败", err);
+        return;
+      }
+      plan.had_send_goods += 1;
+      plan.pay_obj.status.push("发货尝试" + plan.had_send_goods )
+      plan.save(function (err) {
+        if (err) {
+          console.log(out_trade_no, trade_no, "发货尝试状态保存失败", err);
+          return;
+        }
+        var data = {
+           trade_no: trade_no
+          ,logistics_name: "好多广告网自动发货部"
+          ,invoice_no: plan._id
+          ,transport_type: "EXPRESS"
+         };
+        alipay.send_goods_confirm_by_platform(data);
+      });
+    })
   })
 	.on('create_partner_trade_by_buyer_wait_buyer_confirm_goods', function(out_trade_no, trade_no){
-    console.log('create_partner_trade_by_buyer_wait_buyer_confirm_goods', arguments);
+    // 等待用户确认收货
+    alipayPlan.findOne({_id: out_trade_no}, function (err, plan) {
+      if (err || plan == null) {
+        console.log("等待用户确认收货,查询订单失败", err);
+        return;
+      }
+      plan.pay_obj.status.push("等待用户确认收货")
+      plan.save(function (err) {
+        if (err) {
+          console.log(out_trade_no, trade_no, "等待用户确认收货", err);
+          return;
+        }
+      });
+    })
   })
 	.on('create_partner_trade_by_buyer_trade_finished', function(out_trade_no, trade_no){
-    console.log('create_partner_trade_by_buyer_trade_finished', arguments);
+    // 交易完成
+    alipayPlan.findOne({_id: out_trade_no}, function (err, plan) {
+      if (err || plan == null) {
+        console.log("交易完成,查询订单失败", err);
+        return;
+      }
+      plan.pay_obj.status.push("交易完成")
+      plan.pay_finish = true;
+      plan.save(function (err) {
+        if (err) {
+          console.log(out_trade_no, trade_no, "交易完成", err);
+          return;
+        }
+      });
+    })
   })
-	.on('send_goods_confirm_by_platform_fail', function(error){
-    console.log('send_goods_confirm_by_platform_fail', arguments);
+	.on('send_goods_confirm_by_platform_fail', function(error, out_trade_no, trade_no){
+    // 发货失败需要再次发货
+    alipayPlan.findOne({_id: out_trade_no}, function (err, plan) {
+      if (err || plan == null) {
+        console.log("需要发货,查询订单失败", err);
+        return;
+      }
+      var need_send = false;
+      if (plan.had_send_goods >= 5) {
+        console.log("已经尝试发货超过5次, 不在尝试发货");
+        plan.pay_obj.status.push("已经尝试发货超过5次, 不在尝试发货")
+      } else {
+        need_send = true;
+        plan.had_send_goods += 1;
+        plan.pay_obj.status.push("发货尝试" + plan.had_send_goods )
+      }
+
+      plan.save(function (err) {
+        if (err) {
+          console.log(out_trade_no, trade_no, "发货尝试状态保存失败", err);
+          return;
+        }
+        if (need_send) {
+          var data = {
+             trade_no: trade_no
+            ,logistics_name: "好多广告网自动发货部"
+            ,invoice_no: plan._id
+            ,transport_type: "EXPRESS"
+           };
+          alipay.send_goods_confirm_by_platform(data);
+        }
+      });
+    })
   })
-	.on('send_goods_confirm_by_platform_success', function(out_trade_no, trade_no, xml){})
+	.on('send_goods_confirm_by_platform_success', function(out_trade_no, trade_no, xml){
+    // 发货成功
+    alipayPlan.findOne({_id: out_trade_no}, function (err, plan) {
+      if (err || plan == null) {
+        console.log("交易完成,查询订单失败", err);
+        return;
+      }
+      plan.pay_obj.status.push("发货成功")
+      plan.save(function (err) {
+        if (err) {
+          console.log(out_trade_no, trade_no, "交易完成", err);
+          return;
+        }
+      });
+    })
+  })
 	// .on('trade_create_by_buyer_wait_buyer_pay', function(out_trade_no, trade_no){})
 	// .on('trade_create_by_buyer_wait_seller_send_goods', function(out_trade_no, trade_no){})
 	// .on('trade_create_by_buyer_wait_buyer_confirm_goods', function(out_trade_no, trade_no){})
@@ -94,7 +197,7 @@ exports.free_post = function (req, res) {
   var plan = new freePlan({
     user: req.user._id,
     startAt: moment(),
-    expireAt: moment().subtract(-7, "days"),   // 往后七天
+    expireAt: moment().subtract(-10, "days"),   // 往后七天
   })
 
   plan.save(function (err) {
@@ -128,7 +231,10 @@ exports.alipay_post = function (req, res) {
   // var order_name_str = "购买 somanyad.com 会员服务: " + startAt.format("YYYY-MM-DD") + "---" + expireAt.format("YYYY-MM-DD")
   var order_name_str = "buy"
   var order_money_str = "" + count * 10;
-  order_money_str = "0.01"
+  if (req.user && req.user.email == "ljy080829@gmail.com") {
+    order_money_str = "0.01"
+  }
+  
 
   var data = {
     out_trade_no	: order_id_str,
@@ -149,7 +255,6 @@ exports.alipay_post = function (req, res) {
     pay_finish: false,
     pay_obj: {
       register_to_pay: data,
-      had_send_goods: false
     }
   })
   plan.save(function (err) {
@@ -221,33 +326,6 @@ exports.forwardCount = function (req, res) {
   });
 }
 
-exports.pay_notify = function (req, res) {
-  alipay.create_partner_trade_by_buyer_notify(req, res);
-  return;
-  var out_trade_no = req.query.out_trade_no || req.body.out_trade_no;
-  if (!out_trade_no) {
-    console.log('not out_trade_no', req.query, req.body, req.originalUrl);
-    return res.send("failure");
-  }
-  alipayPlan.findOne({_id: out_trade_no}, function (err, plan) {
-    if (err) {
-      console.log(err);
-      return res.send("failure")
-    }
-    plan.pay_obj.notify_from_alipay = _.extends( plan.pay_obj.notify_from_alipay  || {}, req.body, req.query);
-    plan.pay_finish = true;
-    var trade_no = plan.pay_obj.notify_from_alipay.trade_no;
-    plan.save(function (err) {
-      if (err) {
-        console.log(err);
-        return res.send("failure")
-      }
-      auto_send_goods(req, res, plan, trade_no);
-      res.send("success");
-    });
-  });
-}
-
 exports.pay_return_url = function (req, res) {
   // test url
   var out_trade_no = req.query.out_trade_no;
@@ -273,39 +351,11 @@ exports.pay_return_url = function (req, res) {
       }
       req.flash('success', { msg: "支付宝已经收到你的付款了"})
       res.locals.plan = plan;
-      var trade_no = plan.pay_obj.pay_to_alipay.trade_no;
-      auto_send_goods(req, res, plan, trade_no)
       res.redirect( req.baseUrl );
     })
   })
 }
 
-function auto_send_goods(req, res, plan, trade_no) {
-  setTimeout(function () {
-    console.log('开始自动发货', plan._id);
-    try {
-      plan.pay_obj.had_send_goods = true;
-      plan.save(function (err) {
-        if (err) {
-          console.log(err);
-        }
-
-        var plan_id = plan._id;
-        var data = {
-           trade_no: trade_no
-          ,logistics_name: "好多广告网自动发货部"
-          ,invoice_no: plan_id
-          ,transport_type: "EXPRESS"
-         };
-        alipay.send_goods_confirm_by_platform(data, res);
-      })
-      console.log('自动发货成功', plan._id);
-    } catch (e) {
-      console.log("自动发货失败", plan._id, e);
-    } finally {
-    }
-  }, 0.5 * 1000);
-}
 
 exports.order_detail = function (req, res) {
   var id = req.query.id

@@ -25,11 +25,13 @@ var alipayPlanSchema = new Schema({
   expireAt: Date,
   pay_finish: { type: Boolean, default: false },
   // pay_money: type: String,
+  trade_no: String,
   pay_obj: {
+    status: [String],
     register_to_pay: Schema.Types.Mixed,
     notify_from_alipay: Schema.Types.Mixed,
     pay_to_alipay: Schema.Types.Mixed,
-    had_send_goods: { type: Boolean, default: false }
+    had_send_goods: { type: Number, default: 0 }
   }
 })
 alipayPlanSchema.virtual("pay_money").get(function () {
