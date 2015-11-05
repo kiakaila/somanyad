@@ -17,7 +17,7 @@ alipay.on('verify_fail', function(){console.log('emit verify_fail')})
 	.on('create_partner_trade_by_buyer_wait_buyer_pay', function(out_trade_no, trade_no){
     // 等待用户付钱到支付宝
     alipayPlan.findOne({_id: out_trade_no}, function (err, plan) {
-      plan.pay_obj.status.push("等待用户付款")
+      plan.status.push("等待用户付款")
       plan.trade_no = trade_no;
       plan.save(function (err) {
         if (err) {
@@ -34,7 +34,7 @@ alipay.on('verify_fail', function(){console.log('emit verify_fail')})
         return;
       }
       plan.had_send_goods += 1;
-      plan.pay_obj.status.push("发货尝试" + plan.had_send_goods )
+      plan.status.push("发货尝试" + plan.had_send_goods )
       plan.save(function (err) {
         if (err) {
           console.log(out_trade_no, trade_no, "发货尝试状态保存失败", err);
@@ -57,7 +57,7 @@ alipay.on('verify_fail', function(){console.log('emit verify_fail')})
         console.log("等待用户确认收货,查询订单失败", err);
         return;
       }
-      plan.pay_obj.status.push("等待用户确认收货")
+      plan.status.push("等待用户确认收货")
       plan.save(function (err) {
         if (err) {
           console.log(out_trade_no, trade_no, "等待用户确认收货", err);
@@ -73,7 +73,7 @@ alipay.on('verify_fail', function(){console.log('emit verify_fail')})
         console.log("交易完成,查询订单失败", err);
         return;
       }
-      plan.pay_obj.status.push("交易完成")
+      plan.status.push("交易完成")
       plan.pay_finish = true;
       plan.save(function (err) {
         if (err) {
@@ -93,11 +93,11 @@ alipay.on('verify_fail', function(){console.log('emit verify_fail')})
       var need_send = false;
       if (plan.had_send_goods >= 5) {
         console.log("已经尝试发货超过5次, 不在尝试发货");
-        plan.pay_obj.status.push("已经尝试发货超过5次, 不在尝试发货")
+        plan.status.push("已经尝试发货超过5次, 不在尝试发货")
       } else {
         need_send = true;
         plan.had_send_goods += 1;
-        plan.pay_obj.status.push("发货尝试" + plan.had_send_goods )
+        plan.status.push("发货尝试" + plan.had_send_goods )
       }
 
       plan.save(function (err) {
@@ -124,7 +124,7 @@ alipay.on('verify_fail', function(){console.log('emit verify_fail')})
         console.log("交易完成,查询订单失败", err);
         return;
       }
-      plan.pay_obj.status.push("发货成功")
+      plan.status.push("发货成功")
       plan.save(function (err) {
         if (err) {
           console.log(out_trade_no, trade_no, "交易完成", err);
@@ -234,7 +234,7 @@ exports.alipay_post = function (req, res) {
   if (req.user && req.user.email == "ljy080829@gmail.com") {
     order_money_str = "0.01"
   }
-  
+
 
   var data = {
     out_trade_no	: order_id_str,

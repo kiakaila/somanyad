@@ -26,8 +26,8 @@ var alipayPlanSchema = new Schema({
   pay_finish: { type: Boolean, default: false },
   // pay_money: type: String,
   trade_no: String,
+  status: [String],
   pay_obj: {
-    status: [String],
     register_to_pay: Schema.Types.Mixed,
     notify_from_alipay: Schema.Types.Mixed,
     pay_to_alipay: Schema.Types.Mixed,
