@@ -136,7 +136,6 @@ app.post('/account/password', passportConf.isAuthenticated, userController.postU
 app.post('/account/delete', passportConf.isAuthenticated, userController.postDeleteAccount);
 app.get('/account/unlink/:provider', passportConf.isAuthenticated, userController.getOauthUnlink);
 
-app.post('/alipay_notify', membersController.notify_handler)
 app.use("/domains", domainsController.router);
 app.use("/members", membersController.router);
 

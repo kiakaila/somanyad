@@ -222,6 +222,8 @@ exports.forwardCount = function (req, res) {
 }
 
 exports.pay_notify = function (req, res) {
+  alipay.create_partner_trade_by_buyer_notify(req, res);
+  return;
   var out_trade_no = req.query.out_trade_no || req.body.out_trade_no;
   if (!out_trade_no) {
     console.log('not out_trade_no', req.query, req.body, req.originalUrl);
