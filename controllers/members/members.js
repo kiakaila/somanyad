@@ -287,6 +287,7 @@ exports.gotopay = function (req, res) {
     alipay.create_partner_trade_by_buyer(data, res);
   });
 }
+exports.create_partner_trade_by_buyer_notify = alipay.create_partner_trade_by_buyer_notify;
 // 显示最近两周的转发记录
 exports.forwardCount = function (req, res) {
 

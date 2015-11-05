@@ -5,7 +5,6 @@ var async = require("async");
 var dnslookup = require("../../lib/dnslookup");
 var feePlan = require("./models").feePlan;
 var m = require("moment");
-var alipay = require("../../config/secrets").alipay;
 
 var members = require("./members");
 
@@ -26,7 +25,7 @@ router.post('/pay', passportConf.isAuthenticated, members.alipay_post);
 router.get('/gotopay', passportConf.isAuthenticated, members.gotopay);
 // 显示最近两周的转发记录
 router.get('/forwardCount', passportConf.isAuthenticated, members.forwardCount);
-router.all('/aplipay/create_partner_trade_by_buyer/notify_url', alipay.create_partner_trade_by_buyer_notify);
+router.all('/aplipay/create_partner_trade_by_buyer/notify_url', members.create_partner_trade_by_buyer_notify);
 // router.get('/auto_send_goods', members.auto_send_goods);
 router.get('/aplipay/create_partner_trade_by_buyer/return_url', members.pay_return_url);
 // // 订单详情
