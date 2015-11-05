@@ -30,6 +30,7 @@ var alipayPlanSchema = new Schema({
   pay_finish: { type: Boolean, default: false },
   // pay_money: type: String,
   trade_no: String,
+  notify_url_count: { type: Number, default: 0},
   status: [String], // 等待用户付款, 发货尝试n, 等待用户确认收货, 订单已生效, 发货成功
   pay_obj: {
     register_to_pay: Schema.Types.Mixed,

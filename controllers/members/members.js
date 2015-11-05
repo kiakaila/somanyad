@@ -240,6 +240,7 @@ exports.alipay_post = function (req, res) {
     order_money_str = "0.01"
   }
 
+  var create_partner_trade_by_buyer_notify_url = 'http://somanyad.com/members/aplipay/create_partner_trade_by_buyer/'+ order_id_str +'/notify_url';
 
   var data = {
     out_trade_no	: order_id_str,
@@ -249,6 +250,7 @@ exports.alipay_post = function (req, res) {
     logistics_fee	: "0",
     logistics_type	: "EXPRESS",
     logistics_payment	: "SELLER_PAY",
+    create_partner_trade_by_buyer_notify_url: create_partner_trade_by_buyer_notify_url,
     show_url: req.headers.origin + req.baseUrl
   };
 
@@ -287,8 +289,24 @@ exports.gotopay = function (req, res) {
     alipay.create_partner_trade_by_buyer(data, res);
   });
 }
+exports.easy_pay = function (req, res) {
+  var id = req.params.pid;
+  alipayPlan.findOne({_id: id}, function (err, plan) {
+    plan.notify_url_count += 1;
+    if (plan.notify_url_count >= 2) {
+      plan.pay_finish = true;
+    }
+    plan.save(function (err) {
+      if (err) {
+        console.log("easy_pay err", err);
+        return res.send("fail");
+      }
+      return res.send('success');
+    })
+  })
+}
 exports.create_partner_trade_by_buyer_notify = function (req, res) {
-  alipay.create_partner_trade_by_buyer_notify(req, res);  
+  alipay.create_partner_trade_by_buyer_notify(req, res);
 }
 
 // 显示最近两周的转发记录
