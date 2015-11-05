@@ -102,6 +102,7 @@ app.use(function (req, res, next) {
 });
 
 app.use(function(req, res, next) {
+  req.flash('errors', { msg: '目前正处于测试阶段, 请勿使用, 如果需要, 可以发邮件至 ljy080829@gmail.com ,当我们正式运营,我们会通知你的'})
   res.locals.user = req.user;
   next();
 });
