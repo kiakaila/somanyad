@@ -71,14 +71,14 @@ alipay.on('verify_fail', function(){console.log('emit verify_fail')})
     // 交易完成
     alipayPlan.findOne({_id: out_trade_no}, function (err, plan) {
       if (err || plan == null) {
-        console.log("交易完成,查询订单失败", err);
+        console.log("订单已生效,查询订单失败", err);
         return;
       }
-      plan.status.push("交易完成")
+      plan.status.push("订单已生效")
       plan.pay_finish = true;
       plan.save(function (err) {
         if (err) {
-          console.log(out_trade_no, trade_no, "交易完成", err);
+          console.log(out_trade_no, trade_no, "订单已生效", err);
           return;
         }
       });
@@ -166,10 +166,12 @@ exports.middleware_plans = function (req, res, next) {
       req.flash('errors', { msg: "查找购买记录失败,请联系管理员"})
       return next(err)
     }
-    var plans = _.union(freePlans, alipayPlans).sort(function (plan1, plan2) {
+    var plans = _.union(freePlans, alipayPlans)
+    plans.sort(function (plan1, plan2) {
       return plan1.expireAt.getTime() < plan2.expireAt.getTime()
     })
     plans.forEach(function (plan) {
+      plan.member_createdAt = moment(plan.createdAt).format("YYYY-MM-DD")
       plan.member_expireAt = moment(plan.expireAt).format("YYYY-MM-DD");
       plan.member_startAt = moment(plan.startAt).format("YYYY-MM-DD");
     })
@@ -200,7 +202,8 @@ exports.free_post = function (req, res) {
   var plan = new freePlan({
     user: req.user._id,
     startAt: moment(),
-    expireAt: moment().subtract(-10, "days"),   // 往后七天
+    expireAt: moment().subtract(-10, "days"),
+    duration: "10天",
   })
 
   plan.save(function (err) {
@@ -233,9 +236,9 @@ exports.alipay_post = function (req, res) {
   var order_id_str = plan_id;
   var order_name_str = "购买 somanyad.com 会员服务: " + startAt.format("YYYY-MM-DD") + "---" + expireAt.format("YYYY-MM-DD")
   var order_money_str = "" + count * 10;
-  if (req.user && req.user.email == "ljy080829@gmail.com") {
-    order_money_str = "0.01"
-  }
+  // if (req.user && req.user.email == "ljy080829@gmail.com") {
+  //   order_money_str = "0.01"
+  // }
 
 
   var data = {
@@ -246,7 +249,7 @@ exports.alipay_post = function (req, res) {
     logistics_fee	: "0",
     logistics_type	: "EXPRESS",
     logistics_payment	: "SELLER_PAY",
-    show_url: req.headers.origin + req.baseUrl + "/order?id=" + order_id_str
+    show_url: req.headers.origin + req.baseUrl
   };
 
   var plan = new alipayPlan({
@@ -254,6 +257,7 @@ exports.alipay_post = function (req, res) {
     user: req.user._id,
     startAt: startAt,
     expireAt: expireAt,
+    duration: "" + count + "年",
     pay_finish: false,
     status: ["已创建"],
     pay_obj: {
@@ -269,7 +273,20 @@ exports.alipay_post = function (req, res) {
     alipay.create_partner_trade_by_buyer(data, res);
   });
 }
-
+exports.gotopay = function (req, res) {
+  var id = req.query.id;
+  var uid = req.user._id;
+  alipayPlan.findOne({_id: id, user: uid}, function (err, plan) {
+    if (err || plan == null) {
+      err = err || new Error("找不到订单:", id)
+      console.log(err);
+      req.flash('errors', { msg: '网络出错, 请联系管理员'})
+      return res.redirect( req.baseUrl )
+    }
+    var data = plan.pay_obj.register_to_pay;
+    alipay.create_partner_trade_by_buyer(data, res);
+  });
+}
 // 显示最近两周的转发记录
 exports.forwardCount = function (req, res) {
 
@@ -356,22 +373,6 @@ exports.pay_return_url = function (req, res) {
       res.redirect( req.baseUrl );
     })
   })
-}
-
-
-exports.order_detail = function (req, res) {
-  var id = req.query.id
-  alipayPlan.findOne({_id: id, user: req.user._id}, function (err, plan) {
-
-    if (err) {
-      console.log(err);
-      req.flash('errors', { msg: "查询订单" + id + "出错, 请联系管理员"})
-      return res.redirect( req.baseUrl )
-    }
-    return res.render('members/order', {
-      order: plan
-    });
-  });
 }
 
 exports.user_had_pay = function (uid, cb) {

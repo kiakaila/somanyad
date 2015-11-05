@@ -1,28 +1,16 @@
 extends ../layout
 
 block content
-
-  .panel.panel-default
-    .panel-heading
-      //- a(href="#").btn.btn-default.pull-right.text-right 对比
-      .row
-        .col-md-8
-          p 账号: #{accountId} &nbsp;&nbsp;&nbsp; (#{user.email && user.email}) &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 有效期到: #{ plan && plan.member_expireAt}
-          p.hidden#currentPlan_expireAt #{ plan && plan.expireAt.getTime()}
-    .panel-body
-      block members-content
-        .row#huiyuan
-          .col-md-5.col-md-offset-1
-            .panel.panel-default
-              .panel-heading 免费 (十天一续)
-              .panel-body
-                include free
-          .col-md-5
-            .panel.panel-success
-              .panel-heading 收费 (&nbsp;10&nbsp;RMB/年)
-              .panel-body
-                include pay
-
-        br
+  .row#huiyuan
+    .col-md-5.col-md-offset-1
+      .panel.panel-default
+        .panel-heading 免费 (十天一续)
+        .panel-body
+          include free
+    .col-md-5
+      .panel.panel-success
+        .panel-heading 收费 (&nbsp;10&nbsp;RMB/年)
+        .panel-body
+          include pay
 
   include availRecord

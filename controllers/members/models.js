@@ -15,9 +15,10 @@ var freePlanSchema = new Schema({
   pay_money: { type: String, default: "0.0"},
   startAt: { type: Date, default: Date.now },
   expireAt: Date,
+  duration: { type: String, default: "10天" },
+  status: { type: String, default: "订单已生效" },
   pay_finish: { type: Boolean, default: true }
 });
-freePlanSchema.plugin(findOrCreate);
 freePlanSchema.plugin(stampIt);
 // 支付宝付费
 var alipayPlanSchema = new Schema({
@@ -25,10 +26,11 @@ var alipayPlanSchema = new Schema({
   feeType: { type: String, default: "支付宝"},
   startAt: { type: Date, default: Date.now },
   expireAt: Date,
+  duration: { type: String, default: "1年" },
   pay_finish: { type: Boolean, default: false },
   // pay_money: type: String,
   trade_no: String,
-  status: [String],
+  status: [String], // 等待用户付款, 发货尝试n, 等待用户确认收货, 订单已生效, 发货成功
   pay_obj: {
     register_to_pay: Schema.Types.Mixed,
     notify_from_alipay: Schema.Types.Mixed,

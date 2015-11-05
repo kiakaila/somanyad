@@ -1,21 +1,48 @@
 .panel.panel-default
   .panel-heading
-    .panel-title 当前购买记录:
+    .panel-title
+      .row
+        .col-md-8
+          p 账号: #{accountId} &nbsp;&nbsp;&nbsp; (#{user.email && user.email}) &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 有效期到: #{ plan && plan.member_expireAt}
+          p.hidden#currentPlan_expireAt #{ plan && plan.expireAt.getTime()}
   .panel-body
     if plans.length == 0
       .row
         .col-md-12
           p 无购买记录
-    for plan in plans
+    else
       .row
-        .col-md-3
-          p  类型: #{plan.feeType} &nbsp;&nbsp;&nbsp; 付费: #{plan.pay_money} 元
-        .col-md-4
-          p 有效期: #{plan.member_startAt} --- #{plan.member_expireAt}
-        if plan.feeType == '免费'
-          .col-md-3
-            p 支付情况: 免费
-        else
-          .col-md-3
-            p 支付情况: #{plan.status[plan.status.length-1]}
-              a(href="/members/order?id=#{plan._id}") 详情
+        .col-md-offset-1.col-md-10
+          table.table.table-striped.table-hover
+            thead
+              tr
+                th  #
+                th  下单日期
+                th  支付类型
+                th  金额
+                th  会员开始日期
+                th  会员结束日期
+                th  时长
+                th  当前订单状态
+            tbody
+              each plan,idx in plans
+                tr
+                  th(scope='row') #{idx}
+                  th  #{plan.member_createdAt}
+                  th  #{plan.feeType}
+                  th  #{plan.pay_money}
+                  th  #{plan.member_startAt}
+                  th  #{plan.member_expireAt}
+                  th  #{plan.duration}
+                  th  #{plan.status}  
+                    if plan.status != '订单已生效'
+                      if plan.status[plan.status.length - 1] == '已创建'
+                        | &nbsp;&nbsp;&nbsp;
+                        a(href="/members/gotopay?id=#{plan._id}", target='_blank') 去付款
+                      else if plan.status[plan.status.length - 1] == '等待用户付款'
+                        | &nbsp;&nbsp;&nbsp;
+                        a(href="/members/gotopay?id=#{plan._id}", target='_blank') 去付款
+                      else if plan.status[plan.status.length - 1] == '等待用户确认收货'
+                        | &nbsp;&nbsp;&nbsp;
+                        a(href='https://alipay.com', target='_blank') 去支付宝付款
+                      
