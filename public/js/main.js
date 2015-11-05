@@ -31,11 +31,10 @@ $(document).ready(function() {
   var nextD = moment.utc(currentPlan_expireAt).subtract(-1, "years");
 
   console.log(now, "JJJJJJ");
-
-  [$("#free .duration"), $("#pay .duration")].forEach(function ($elem) {
-
-    $elem.text( "" + now.format("YYYY-MM-DD") + "  ----  " + nextD.format("YYYY-MM-DD"));
-  });
+  var fee_text = "" + moment().format("YYYY-MM-DD") + "  ----  " + moment().subtract(-10, "days").format("YYYY-MM-DD")
+  var pay_text = "" + now.format("YYYY-MM-DD") + "  ----  " + nextD.format("YYYY-MM-DD")
+  $("#free .duration").text( fee_text )
+  $("#pay .duration").text( pay_text );
 
   $("#pay input").on("input", function () {
     var count = $(this).val() || 1;

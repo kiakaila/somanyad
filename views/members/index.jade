@@ -1,35 +1,28 @@
 extends ../layout
 
 block content
-  .container.feePlan
 
-    br
-    .row
-      .col-md-offset-1.col-md-10
-        .panel.panel-default
-          .panel-heading
-            //- a(href="#").btn.btn-default.pull-right.text-right 对比
-            .row
-              .col-md-8
-                p 账号: #{accountId} &nbsp;&nbsp;&nbsp; (#{user.email && user.email}) &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 有效期到: #{ plan && plan.member_expireAt}
-                p.hidden#currentPlan_expireAt #{ plan && plan.expireAt.getTime()}
-          .panel-body
-            block members-content
-              .row
-                ul.nav.nav-tabs.nav-justified#huiyuan
-                  li(huiyuantype="free").active
-                    a(href="#") 免费
-                  li(huiyuantype="pay")
-                    a(href="#") 付费
-              br
-
-              .row.feeContent
+  .panel.panel-default
+    .panel-heading
+      //- a(href="#").btn.btn-default.pull-right.text-right 对比
+      .row
+        .col-md-8
+          p 账号: #{accountId} &nbsp;&nbsp;&nbsp; (#{user.email && user.email}) &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 有效期到: #{ plan && plan.member_expireAt}
+          p.hidden#currentPlan_expireAt #{ plan && plan.expireAt.getTime()}
+    .panel-body
+      block members-content
+        .row#huiyuan
+          .col-md-5.col-md-offset-1
+            .panel.panel-default
+              .panel-heading 免费 (十天一续)
+              .panel-body
                 include free
+          .col-md-5
+            .panel.panel-success
+              .panel-heading 收费 (&nbsp;10&nbsp;RMB/年)
+              .panel-body
                 include pay
 
-  include availRecord
+        br
 
-  br
-  br
-  br
-  br
+  include availRecord

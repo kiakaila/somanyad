@@ -1,31 +1,19 @@
-.container.feePlan
-  .row
-    .col-md-offset-1.col-md-10
-      .panel.panel-default
-        .panel-heading
-          .panel-title 当前购买记录:
-        .panel-body
-          if plans.length == 0
-            .row
-              .col-md-12
-                p 无购买记录
-          for plan in plans
-            .row
-              .col-md-3
-                p  类型: #{plan.feeType} &nbsp;&nbsp;&nbsp; 付费: #{plan.pay_money} 元
-              .col-md-4
-                p 有效期: #{plan.member_startAt} --- #{plan.member_expireAt}
-              .col-md-3
-                if plan.feeType == "免费"
-                  p 支付情况: 免费
-                else if plan.pay_finish
-                  p 支付情况: #{plan.status[plan.status.length-1]}
-
-          //- hr
-          //- .row
-          //-   .col-md-5
-          //-     p 转发记录(最近两周):
-          //-     p#record
-          //-
-          //-   .col-md-12
-          //-     canvas#myChart
+.panel.panel-default
+  .panel-heading
+    .panel-title 当前购买记录:
+  .panel-body
+    if plans.length == 0
+      .row
+        .col-md-12
+          p 无购买记录
+    for plan in plans
+      .row
+        .col-md-3
+          p  类型: #{plan.feeType} &nbsp;&nbsp;&nbsp; 付费: #{plan.pay_money} 元
+        .col-md-4
+          p 有效期: #{plan.member_startAt} --- #{plan.member_expireAt}
+        .col-md-3
+          if plan.feeType == "免费"
+            p 支付情况: 免费
+          else if plan.pay_finish
+            p 支付情况: #{plan.status[plan.status.length-1]}

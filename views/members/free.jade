@@ -1,33 +1,31 @@
 .col-md-12#free
   br
   .row
-    .col-md-offset-1.col-md-2
+    .col-md-4
       p.pull-right 购买流量包类型:
-    .col-md-9
-      .row
-        .col-md-5
-          p 免费流量包 (不限量转发)
+    .col-md-8
+      p 免费流量包 (不限量转发)
   br
   .row
-    .col-md-offset-1.col-md-2
+    .col-md-4
       p.pull-right 应付金额:
-    .col-md-9
+    .col-md-8
       p 0元
+      p.duration
+
   br
   .row
-    .col-md-offset-1.col-md-2
+    .col-md-4
       p.pull-right 开通时长:
-    .col-md-9
+    .col-md-8
       p 10天
 
   br
   .row
-    .col-md-offset-1.col-md-2
+    .col-md-4
       p.pull-right 支付:
-    .col-md-9
-      .row
-        .col-md-5
-          form(action="/members/free", method="post")
-            input(type='hidden', name='_csrf', value=_csrf)
-            //- .btn-group.btn-group-justified
-            button(type="submit").btn.btn-default 购买
+    .col-md-8
+      form(action="/members/free", method="post")
+        input(type='hidden', name='_csrf', value=_csrf)
+        //- .btn-group.btn-group-justified
+        button(type="submit").btn.btn-default 购买
