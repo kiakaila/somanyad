@@ -236,9 +236,9 @@ exports.alipay_post = function (req, res) {
   var order_id_str = plan_id;
   var order_name_str = "购买 somanyad.com 会员服务: " + startAt.format("YYYY-MM-DD") + "---" + expireAt.format("YYYY-MM-DD")
   var order_money_str = "" + count * 10;
-  // if (req.user && req.user.email == "ljy080829@gmail.com") {
-  //   order_money_str = "0.01"
-  // }
+  if (req.user && req.user.email == "ljy080829@gmail.com") {
+    order_money_str = "0.01"
+  }
 
 
   var data = {
