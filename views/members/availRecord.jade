@@ -35,18 +35,17 @@
                   th  #{plan.member_startAt}
                   th  #{plan.member_expireAt}
                   th  #{plan.duration}
-                  if plan.pay_finish
+                  if plan.pay_finish || plan.status == '订单已生效'
                     th 订单已生效
                   else
-                    th  #{plan.status}  
-                      if plan.status != '订单已生效'
-                        if plan.status[plan.status.length - 1] == '已创建'
-                          | &nbsp;&nbsp;&nbsp;
-                          a(href="/members/gotopay?id=#{plan._id}", target='_blank') 去付款
-                        else if plan.status[plan.status.length - 1] == '等待用户付款'
-                          | &nbsp;&nbsp;&nbsp;
-                          a(href="/members/gotopay?id=#{plan._id}", target='_blank') 去付款
-                        else if plan.status[plan.status.length - 1] == '等待用户确认收货'
-                          | &nbsp;&nbsp;&nbsp;
-                          a(href='https://alipay.com', target='_blank') 去支付宝确认收货
+                    th  #{plan.status[plan.status.length - 1]} 
+                      if plan.status[plan.status.length - 1] == '已创建'
+                        | &nbsp;&nbsp;&nbsp;
+                        a(href="/members/gotopay?id=#{plan._id}", target='_blank') 去付款
+                      else if plan.status[plan.status.length - 1] == '等待用户付款'
+                        | &nbsp;&nbsp;&nbsp;
+                        a(href="/members/gotopay?id=#{plan._id}", target='_blank') 去付款
+                      else if plan.status[plan.status.length - 1] == '等待用户确认收货'
+                        | &nbsp;&nbsp;&nbsp;
+                        a(href='https://alipay.com', target='_blank') 去支付宝确认收货
                       
