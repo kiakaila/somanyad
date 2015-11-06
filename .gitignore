@@ -19,4 +19,4 @@ node_modules
 *.iml
 .DS_Store
 Thumbs.db
-somanyad/conf.js
+somanyad/config.js
