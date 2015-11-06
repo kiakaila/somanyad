@@ -33,15 +33,15 @@ var homeController = require('./controllers/home');
 var userController = require('./controllers/user');
 var apiController = require('./controllers/api');
 var contactController = require('./controllers/contact');
-var domainsController = require("./controllers/domains");
-var membersController = require("./controllers/members");
+var domainsController = require("./somanyad/domains");
+var membersController = require("./somanyad/members");
 
-var domainsMiddleware = require("./controllers/domains/middleware");
+var domainsMiddleware = require("./somanyad/domains/middleware");
 
 /**
  * API keys and Passport configuration.
  */
-var secrets = require('./config/secrets');
+var secrets = require('./somanyad/config');
 var passportConf = require('./config/passport');
 
 /**

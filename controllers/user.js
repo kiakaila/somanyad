@@ -3,7 +3,7 @@ var async = require('async');
 var crypto = require('crypto');
 var passport = require('passport');
 var User = require('../models/User');
-var secrets = require('../config/secrets');
+var secrets = require('../somanyad/config');
 var sendMail = require('../lib/swaks').sendMail;
 
 /**

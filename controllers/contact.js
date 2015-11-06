@@ -1,4 +1,4 @@
-var secrets = require('../config/secrets');
+var secrets = require('../somanyad/config');
 var nodemailer = require("nodemailer");
 var sendMail = require('../lib/swaks').sendMail;
 

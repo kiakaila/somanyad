@@ -1,11 +1,11 @@
 
-var Domain = require("../../models/Domain").Domain;
-var Forward = require("../../models/Domain").Forward;
-var EmailVerify = require("../../models/Domain").EmailVerify;
-var SendEmailVerify = require("../../models/Domain").SendEmailVerify;
+var Domain = require("../models/Domain").Domain;
+var Forward = require("../models/Domain").Forward;
+var EmailVerify = require("../models/Domain").EmailVerify;
+var SendEmailVerify = require("../models/Domain").SendEmailVerify;
 
 var dnslookup = require("../../lib/dnslookup");
-var settings = require("../../config/secrets")
+var settings = require("../../somanyad/config")
 
 exports.addForwardEmail = function (req, res) {
   var email = req.query.email;

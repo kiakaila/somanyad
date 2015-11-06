@@ -1,7 +1,7 @@
 var async = require('async');
-var Domain = require("../../models/Domain").Domain;
-var EmailVerify = require("../../models/Domain").EmailVerify;
-var ForwardRecords = require("../../models/ForwardRecord").ForwardRecords;
+var Domain = require("../models/Domain").Domain;
+var EmailVerify = require("../models/Domain").EmailVerify;
+var ForwardRecords = require("../models/ForwardRecord").ForwardRecords;
 
 
 // 确保用户拥有某个域名

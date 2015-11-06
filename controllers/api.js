@@ -28,7 +28,7 @@ var async = require('async');
 var querystring = require('querystring');
 
 
-var secrets = require('../config/secrets');
+var secrets = require('../somanyad/config');
 
 
 

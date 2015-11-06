@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var secrets = require('./config/secrets');
+var secrets = require('./somanyad/config');
 
 /**
  * Connect to MongoDB.

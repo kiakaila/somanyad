@@ -7,8 +7,8 @@ var mongoose = require('mongoose')
 var freePlan = require("./models").freePlan;
 var alipayPlan = require("./models").alipayPlan;
 
-var ForwardRecords = require("../../models/ForwardRecord").ForwardRecords;
-var alipay = require("../../config/secrets").alipay;
+var ForwardRecords = require("../models/ForwardRecord").ForwardRecords;
+var alipay = require("../../somanyad/config").alipay;
 
 alipay.on('verify_fail', function(){console.log('emit verify_fail')})
 	// .on('create_direct_pay_by_user_trade_finished', function(out_trade_no, trade_no){})
@@ -192,7 +192,7 @@ exports.middleware_plans = function (req, res, next) {
 exports.index = function (req, res) {
   // 找到当前付费类型
   // 如果当前没有付费类型,则显示到青铜页面
-  return res.render('members/index', {
+  return res.render('somanyad/members/index', {
         active_item: "index"
       });
 }

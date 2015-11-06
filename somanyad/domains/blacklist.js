@@ -1,4 +1,4 @@
-var BlackReceiveList = require("../../models/Domain").BlackReceiveList;
+var BlackReceiveList = require("../models/Domain").BlackReceiveList;
 
 // 为某域名添加黑名单
 // middleware.userOwnerDomain

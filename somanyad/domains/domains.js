@@ -1,17 +1,17 @@
 
-var Domain = require("../../models/Domain").Domain;
-var Forward = require("../../models/Domain").Forward;
-var EmailVerify = require("../../models/Domain").EmailVerify;
-var BlackReceiveList = require("../../models/Domain").BlackReceiveList;
+var Domain = require("../models/Domain").Domain;
+var Forward = require("../models/Domain").Forward;
+var EmailVerify = require("../models/Domain").EmailVerify;
+var BlackReceiveList = require("../models/Domain").BlackReceiveList;
 var dnslookup = require("../../lib/dnslookup");
-var secrets = require("../../config/secrets");
+var secrets = require("../../somanyad/config");
 var async = require("async");
 var sendMail = require('../../lib/swaks').sendMail;
 
 // 显示所有域名相关信息
 exports.home = function (req, res) {
 
-  return res.render('domains/home', {
+  return res.render('somanyad/domains/home', {
         active_item: "home",
       });
 }
@@ -31,7 +31,7 @@ exports.edit = function (req, res) {
       req.flash('errors', { msg: err.message });
     }
 
-    return res.render('domains/edit', {
+    return res.render('somanyad/domains/edit', {
           title: "Domains",
           active_item: domain_str,
           BlackList: blackList || []
@@ -100,7 +100,7 @@ exports.change_forward_email_post = function (req, res) {
 
 // 添加新域名
 exports.addNewDomain = function (req, res) {
-  res.render("domains/addNewDomain", {
+  res.render("somanyad/domains/addNewDomain", {
     active_item: "domains"
   })
 }
@@ -195,7 +195,7 @@ exports.newDomainSetup = function (req, res) {
       if (err) {
         // res.locals.message = err.message
         req.flash('errors', { msg: err.message })
-        return res.render("domains/newDomainSetup", {
+        return res.render("somanyad/domains/newDomainSetup", {
           domain: domain || { domain: domain_str },
           err: err,
           cname: cname,
@@ -207,7 +207,7 @@ exports.newDomainSetup = function (req, res) {
 
       domain.email = emailV.email;
       domain.email_hadVerify = emailV.passVerify;
-      return res.render("domains/newDomainSetup", {
+      return res.render("somanyad/domains/newDomainSetup", {
         domain: domain,
         cname: cname,
         mailServers: mailServers,
@@ -288,14 +288,14 @@ exports.newDomainSetup2 = function (req, res) {
   ], function (err, domain, emailV) {
     if (err) {
       req.flash('errors', { msg: err.message });
-      return res.render("domains/newDomainSetup2", {
+      return res.render("somanyad/domains/newDomainSetup2", {
         domain: domain
       });
     }
 
     domain.email = emailV.email;
     domain.email_hadVerify = emailV.passVerify;
-    return res.render("domains/newDomainSetup2", {
+    return res.render("somanyad/domains/newDomainSetup2", {
       domain: domain
     });
   });
@@ -305,7 +305,7 @@ exports.newDomainSetup2 = function (req, res) {
 exports.deleteDomain = function (req, res) {
   var domain_str = req.query.domain;
 
-  return res.render("domains/deleteDomain", {
+  return res.render("somanyad/domains/deleteDomain", {
     domain: domain_str
   });
 }
@@ -319,7 +319,7 @@ exports.deleteDomain_post = function (req, res) {
       err = err || new Error("not found domain: " + domain_str);
       req.flash('errors', { msg: err.message });
     }
-    return res.render("domains/deleteDomain2", {
+    return res.render("somanyad/domains/deleteDomain2", {
       msg: err == null ?  "删除成功" : "删除失败, 请联系管理员"
     });
   })
@@ -335,7 +335,7 @@ exports.emailVerify = function (req, res) {
     if (err || emailV == null) {
       req.flash('errors', (err || new Error("email verify record not found!")));
       console.log(err, emailV);
-      return res.render("domains/emailVerify");
+      return res.render("somanyad/domains/emailVerify");
     } else {
       emailV.passVerify = true;
       emailV.save(function (err) {
@@ -344,7 +344,7 @@ exports.emailVerify = function (req, res) {
         }
         console.log(err, emailV);
         res.locals.emailV = emailV;
-        return res.render("domains/emailVerify");
+        return res.render("somanyad/domains/emailVerify");
       });
     }
   });
