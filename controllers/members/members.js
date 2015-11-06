@@ -250,7 +250,7 @@ exports.alipay_post = function (req, res) {
     logistics_fee	: "0",
     logistics_type	: "EXPRESS",
     logistics_payment	: "SELLER_PAY",
-    // create_partner_trade_by_buyer_notify_url: create_partner_trade_by_buyer_notify_url,
+    create_partner_trade_by_buyer_notify_url: create_partner_trade_by_buyer_notify_url,
     show_url: req.headers.origin + req.baseUrl
   };
 
@@ -285,8 +285,16 @@ exports.gotopay = function (req, res) {
       req.flash('errors', { msg: '网络出错, 请联系管理员'})
       return res.redirect( req.baseUrl )
     }
-    var data = plan.pay_obj.register_to_pay;
-    alipay.create_partner_trade_by_buyer(data, res);
+    plan.notify_url_count = 0;
+    plan.save(function (err) {
+      if (err) {
+        console.log(err);
+        req.flash('errors', { msg: '网络出错,请联系管理员'})
+        return res.redirect( req.baseUrl )
+      }
+      var data = plan.pay_obj.register_to_pay;
+      alipay.create_partner_trade_by_buyer(data, res);
+    })
   });
 }
 exports.easy_pay = function (req, res) {
