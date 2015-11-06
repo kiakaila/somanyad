@@ -3,23 +3,23 @@ extends ../layout
 block content
   .container
     .page-header
-      h3 登录
+      h3 #{__('登陆')}
     form.form-horizontal(method='POST')
       input(type='hidden', name='_csrf', value=_csrf)
       .form-group
-        label.col-sm-3.control-label(for='email') Email
+        label.col-sm-3.control-label(for='email') #{__('邮箱')}
         .col-sm-7
-          input.form-control(type='email', name='email', id='email', placeholder='Email', autofocus=true)
+          input.form-control(type='email', name='email', id='email', placeholder='#{__("邮箱")}', autofocus=true)
       .form-group
-        label.col-sm-3.control-label(for='password') Password
+        label.col-sm-3.control-label(for='password') #{__('密码')}
         .col-sm-7
-          input.form-control(type='password', name='password', id='password', placeholder='Password')
+          input.form-control(type='password', name='password', id='password', placeholder='#{__("密码")}')
       .form-group
         .col-sm-offset-3.col-sm-7
           button.col-sm-3.btn.btn-primary(type='submit')
             i.fa.fa-user
-            | Login
-          a.btn.btn-link(href='/forgot') Forgot your password?
+            | #{__('登陆')}
+          a.btn.btn-link(href='/forgot') #{__('忘记密码')}?
       .form-group
         .col-sm-offset-3.col-sm-7
           hr
@@ -27,19 +27,19 @@ block content
         .col-sm-offset-3.col-sm-7
           a.btn.btn-block.btn-facebook.btn-social(href='/auth/facebook')
             i.fa.fa-facebook
-            | Sign in with Facebook
+            | #{__('使用 Facebook 登陆')}
           //- a.btn.btn-block.btn-twitter.btn-social(href='/auth/twitter')
           //-   i.fa.fa-twitter
           //-   | Sign in with Twitter
           a.btn.btn-block.btn-google-plus.btn-social(href='/auth/google')
             i.fa.fa-google-plus
-            | Sign in with Google
+            | #{__('使用谷歌登陆')}
           a.btn.btn-block.btn-github.btn-social(href='/auth/github')
             i.fa.fa-github
-            | Sign in with GitHub
+            | #{__('使用 GitHub 登陆')}
           a.btn.btn-block.btn-linkedin.btn-social(href='/auth/linkedin')
             i.fa.fa-linkedin
-            | Sign in with LinkedIn
+            | #{__('使用 LinkedIn 登陆')}
           a.btn.btn-block.btn-instagram.btn-social(href='/auth/instagram')
             i.fa.fa-instagram
-            | Sign in with Instagram
+            | #{__('使用 Instagram 登陆')}

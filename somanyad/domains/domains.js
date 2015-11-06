@@ -71,7 +71,7 @@ exports.change_forward_email_post = function (req, res) {
       sendMail(mailOptions, function(err) {
         if (err) {
           console.log(err);
-          err = new Error("发送邮件失败, 请联系管理员")
+          err = new Error(res.__("发送邮件失败, 请联系管理员"))
           req.flash('errors', { msg: err.message });
         } else {
           req.flash('info', { msg: res.__('An e-mail has been sent to ') + forward_email + res.__(' with further instructions.') });
@@ -179,7 +179,7 @@ exports.newDomainSetup = function (req, res) {
       sendMail(mailOptions, function(err) {
         if (err) {
           console.log(err);
-          err = new Error("发送邮件失败, 请联系管理员");
+          err = new Error(res.__("发送邮件失败, 请联系管理员"));
           req.flash('errors', { msg: err.message });
         } else {
           req.flash('info', { msg: 'An e-mail has been sent to ' + emailVerify.email + ' with further instructions.' });
@@ -190,11 +190,14 @@ exports.newDomainSetup = function (req, res) {
     // 渲染
     function (err, domain, emailV) {
       var cname = dnslookup.cnameFun(domain_str, req.user._id);
-      var mailServers = secrets.mailServers
+      var mailServers = secrets.mailServers;
+      if (domain && emailV) {
+        domain.email = emailV.email;
+        domain.email_hadVerify = emailV.passVerify;
+      }
 
       if (err) {
         // res.locals.message = err.message
-        req.flash('errors', { msg: err.message })
         return res.render("somanyad/domains/newDomainSetup", {
           domain: domain || { domain: domain_str },
           err: err,
@@ -204,9 +207,6 @@ exports.newDomainSetup = function (req, res) {
         });
       }
 
-
-      domain.email = emailV.email;
-      domain.email_hadVerify = emailV.passVerify;
       return res.render("somanyad/domains/newDomainSetup", {
         domain: domain,
         cname: cname,

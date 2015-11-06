@@ -9,33 +9,33 @@ block domains-content
         table.table.table-bordered
           .thead
             tr
-              th.cnameOwner 验证所有权
-              th.mxVerify mx记录
-              th.forward_email 转发到
+              th.cnameOwner #{__("验证所有权")}
+              th.mxVerify #{__("mx记录")}
+              th.forward_email #{__("转发到")}
           .tbody
             tr
               // 验证所有权
               if domain.cnameVerifyStatus
-                th.cnameVerifyStatus 已通过
+                th.cnameVerifyStatus #{__("已通过")}
               else
                 th.cnameVerifyStatus 
-                  | 尚未通过
-                  a(href="/domains/newDomainSetup?domain=" + domain.domain) 手动验证
+                  | #{__("尚未通过")}
+                  a(href="/domains/newDomainSetup?domain=" + domain.domain) #{__("手动验证")}
                   
               // mx记录
               if domain.mxVerifyStatus
-                th.mx 已生效
+                th.mx #{__("已生效")}
               else
                 th.mx
-                  | 未设置或暂未生效
-                  a(href="/domains/newDomainSetup?domain=" + domain.domain) 如何设置
+                  | #{__("未设置或暂未生效")}
+                  a(href="/domains/newDomainSetup?domain=" + domain.domain) #{__("如何设置")}
               
               // 转发到
               th.forward_email #{domain.email}
                 if domain.email_hadVerify
                   | &nbsp;&nbsp;&nbsp;
                 else
-                  a(href="/domains/newDomainSetup?domain=" + domain.domain) 再次发送验证邮件
+                  a(href="/domains/newDomainSetup?domain=" + domain.domain) #{__("再次发送验证邮件")}
               
       .col-md-12
         form(action="/domains/edit/forward_email?domain=" + active_item, method="post")
@@ -43,10 +43,10 @@ block domains-content
           .row
             .col-md-8
               .input-group
-                span.input-group-addon 将发送到xxx@#{active_item}的邮件转发到
+                span.input-group-addon #{__("将发送到xxx@%s的邮件转发到", active_item)}
                 input.form-control(type="text", value=domain.email || "xxxx@example.com", name="forward_email")
             .col-md-3
-              button(type="submit").btn.btn-success 修改
+              button(type="submit").btn.btn-success #{__("修改")}
           
     hr
     .row
@@ -55,10 +55,10 @@ block domains-content
           caption
             .row
               .col-md-4
-                h3.pull-left 废弃地址
+                h3.pull-left #{__('废弃地址')}
               .col-md-4                
                 small
-                  | 凡是发送到废弃地址的邮件都退回去
+                  | #{__('凡是发送到废弃地址的邮件都退回去')}
             .row
               
               .col-md-12
@@ -67,18 +67,18 @@ block domains-content
                   .row
                     .col-md-4
                       .input-group
-                        input.form-control(type="text", placeholder="地址", name="blockAddress")
+                        input.form-control(type="text", placeholder="#{__('地址')}", name="blockAddress")
                         span.input-group-addon @#{active_item}
                     .col-md-6
                       input.form-control(type="text", name="replyInfo", 
-                                          placeholder="退回信息, 添加退回信息,如果是用户发的邮件,则可以提示他发到别的邮箱里")
+                                          placeholder="#{__('退回信息, 添加退回信息,如果是用户发的邮件,则可以提示他发到别的邮箱里')}")
                     .col-md-2
-                      button.btn.btn-success(type="submit") 添加
+                      button.btn.btn-success(type="submit") #{__('添加')}
           thead
             tr
-              th.address 地址
-              th.replyInfo 退回去信息
-              th.operation 操作
+              th.address #{__('地址')}
+              th.replyInfo #{__('退回去信息')}
+              th.operation #{__('操作')}
           tbody
             for email in BlackList
               tr
@@ -93,8 +93,8 @@ block domains-content
                             input.form-control(type="text", value=email.replyInfo, name="replyInfo")
                               
                           .col-md-2
-                            button(type="submit").btn.btn-default 修改
+                            button(type="submit").btn.btn-default #{__('修改')}
                 th.operation
                   a(href="/domains/edit/removeBlackItem?domain=" + active_item + "&blockAddress=" + email.blockAddress)
-                    | 删除
+                    | #{__('删除')}
                 

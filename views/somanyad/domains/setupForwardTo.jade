@@ -7,13 +7,13 @@ block domains-content
   form(action="addForwardEmail", method="post")
     input(type='hidden', name='_csrf', value=_csrf)    
     .form-group
-      label(for="emailInput") Email Address
+      label(for="emailInput") #{__("邮箱地址")}
       input(type="email", placeholder="Email")#emailInput.form-control
-    button.btn.btn-default.pull-right(type="submit") Submit
+    button.btn.btn-default.pull-right(type="submit") #{__("提交")}
   
   .dropdown
     button#dropdownEmail.btn.btn-default.dropdown-toggle(type="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="true")
-      | Email
+      | #{__("邮箱地址")}
       span.caret
     ul.dropdown-menu(aria-labelledby="dropdownEmail")
       for email in emails

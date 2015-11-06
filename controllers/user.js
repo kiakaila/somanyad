@@ -75,9 +75,9 @@ exports.getSignup = function(req, res) {
  * Create a new local account.
  */
 exports.postSignup = function(req, res, next) {
-  req.assert('email', 'Email is not valid').isEmail();
-  req.assert('password', 'Password must be at least 4 characters long').len(4);
-  req.assert('confirmPassword', 'Passwords do not match').equals(req.body.password);
+  req.assert('email', res.__('该邮箱无效')).isEmail();
+  req.assert('password', res.__('密码长度必须超过4位数')).len(4);
+  req.assert('confirmPassword', res.__('密码不匹配')).equals(req.body.password);
 
   var errors = req.validationErrors();
 
@@ -93,7 +93,7 @@ exports.postSignup = function(req, res, next) {
 
   User.findOne({ email: req.body.email }, function(err, existingUser) {
     if (existingUser) {
-      req.flash('errors', { msg: 'Account with that email address already exists.' });
+      req.flash('errors', { msg: res.__('该邮箱地址已经注册') });
       return res.redirect('/signup');
     }
     user.save(function(err) {
@@ -112,7 +112,7 @@ exports.postSignup = function(req, res, next) {
  */
 exports.getAccount = function(req, res) {
   res.render('account/profile', {
-    title: 'Account Management'
+    title: res.__('账号管理')
   });
 };
 
@@ -131,7 +131,7 @@ exports.postUpdateProfile = function(req, res, next) {
 
     user.save(function(err) {
       if (err) return next(err);
-      req.flash('success', { msg: 'Profile information updated.' });
+      req.flash('success', { msg: res.__('个人资料已经更新.') });
       res.redirect('/account');
     });
   });
@@ -142,8 +142,8 @@ exports.postUpdateProfile = function(req, res, next) {
  * Update current password.
  */
 exports.postUpdatePassword = function(req, res, next) {
-  req.assert('password', 'Password must be at least 4 characters long').len(4);
-  req.assert('confirmPassword', 'Passwords do not match').equals(req.body.password);
+  req.assert('password', res.__('密码长度必须超过4位数')).len(4);
+  req.assert('confirmPassword', res.__('密码不匹配')).equals(req.body.password);
 
   var errors = req.validationErrors();
 
@@ -159,7 +159,7 @@ exports.postUpdatePassword = function(req, res, next) {
 
     user.save(function(err) {
       if (err) return next(err);
-      req.flash('success', { msg: 'Password has been changed.' });
+      req.flash('success', { msg: res.__('密码修改成功') });
       res.redirect('/account');
     });
   });
@@ -173,7 +173,7 @@ exports.postDeleteAccount = function(req, res, next) {
   User.remove({ _id: req.user.id }, function(err) {
     if (err) return next(err);
     req.logout();
-    req.flash('info', { msg: 'Your account has been deleted.' });
+    req.flash('info', { msg: res.__('你的账号已经删除') });
     res.redirect('/');
   });
 };
@@ -192,7 +192,7 @@ exports.getOauthUnlink = function(req, res, next) {
 
     user.save(function(err) {
       if (err) return next(err);
-      req.flash('info', { msg: provider + ' account has been unlinked.' });
+      req.flash('info', { msg: provider + res.__('账号已经解绑') });
       res.redirect('/account');
     });
   });
@@ -211,7 +211,7 @@ exports.getReset = function(req, res) {
     .where('resetPasswordExpires').gt(Date.now())
     .exec(function(err, user) {
       if (!user) {
-        req.flash('errors', { msg: 'Password reset token is invalid or has expired.' });
+        req.flash('errors', { msg: res.__('密码重置token已经失效或者过期') });
         return res.redirect('/forgot');
       }
       res.render('account/reset', {
@@ -225,8 +225,8 @@ exports.getReset = function(req, res) {
  * Process the reset password request.
  */
 exports.postReset = function(req, res, next) {
-  req.assert('password', 'Password must be at least 4 characters long.').len(4);
-  req.assert('confirm', 'Passwords must match.').equals(req.body.password);
+  req.assert('password', res.__('密码长度必须超过4位数')).len(4);
+  req.assert('confirm', res.__('密码不匹配')).equals(req.body.password);
 
   var errors = req.validationErrors();
 
@@ -242,7 +242,7 @@ exports.postReset = function(req, res, next) {
         .where('resetPasswordExpires').gt(Date.now())
         .exec(function(err, user) {
           if (!user) {
-            req.flash('errors', { msg: 'Password reset token is invalid or has expired.' });
+            req.flash('errors', { msg: res.__('密码重置token已经失效或者过期') });
             return res.redirect('back');
           }
 
@@ -263,17 +263,17 @@ exports.postReset = function(req, res, next) {
       var mailOptions = {
         to: user.email,
         from: secrets.no_reply_passwordHasBeenChanged,
-        subject: 'Your Hackathon Starter password has been changed',
-        text: 'Hello,\n\n' +
-          'This is a confirmation that the password for your account ' + user.email + ' has just been changed.\n'
+        subject: res.__('你的SoManyAd密码已经修改'),
+        text: res.__('你好,') + '\n\n' +
+          res.__('你的密码已经修改成功')
       };
       sendMail(mailOptions, function(err) {
         if (err) {
           console.log(err);
-          err = new Error("发送邮件失败, 请联系管理员")
+          err = new Error(res.__("发送邮件失败, 请联系管理员"))
           req.flash('errors', { msg: err.message })
         } else {
-          req.flash('success', { msg: 'Success! Your password has been changed.' });
+          req.flash('success', { msg: res.__("密码修改成功") });
         }
 
         done(err);
@@ -322,7 +322,7 @@ exports.postForgot = function(req, res, next) {
     function(token, done) {
       User.findOne({ email: req.body.email.toLowerCase() }, function(err, user) {
         if (!user) {
-          req.flash('errors', { msg: 'No account with that email address exists.' });
+          req.flash('errors', { msg: res.__("找不到相关账号") });
           return res.redirect('/forgot');
         }
 
@@ -338,19 +338,16 @@ exports.postForgot = function(req, res, next) {
       var mailOptions = {
         to: user.email,
         from: secrets.verifyEmailSender,
-        subject: 'Reset your password on Hackathon Starter',
-        text: 'You are receiving this email because you (or someone else) have requested the reset of the password for your account.\n\n' +
-          'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
-          'http://' + req.headers.host + '/reset/' + token + '\n\n' +
-          'If you did not request this, please ignore this email and your password will remain unchanged.\n'
+        subject: res.__("重置你在SoManyAd.com的密码"),
+        text: res.__("密码重置链接:") + '\n\n' +  'http://' + req.headers.host + '/reset/' + token + '\n\n'
       };
       sendMail(mailOptions, function(err) {
         if (err) {
           console.log(err);
-          err = new Error("发送邮件失败, 请联系管理员")
+          err = new Error(res.__("发送邮件失败, 请联系管理员"))
           req.flash('errors', { msg: err.message })
         } else {
-          req.flash('info', { msg: 'An e-mail has been sent to ' + user.email + ' with further instructions.' });
+          req.flash('info', { msg: res.__("已经发送密码重置邮件到您的邮箱:") + user.email  });
         }
 
         done(err, 'done');

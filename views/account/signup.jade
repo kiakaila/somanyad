@@ -3,23 +3,23 @@ extends ../layout
 block content
   .container
     .page-header
-      h3 注册
+      h3 #{__("注册")}
     form.form-horizontal(id='signup-form', method='POST')
       input(type='hidden', name='_csrf', value=_csrf)
       .form-group
-        label.col-sm-3.control-label(for='email') Email
+        label.col-sm-3.control-label(for='email') #{__("邮箱")}
         .col-sm-7
-          input.form-control(type='email', name='email', id='email', placeholder='Email', autofocus)
+          input.form-control(type='email', name='email', id='email', placeholder='#{__("邮箱")}', autofocus)
       .form-group
-        label.col-sm-3.control-label(for='password') Password
+        label.col-sm-3.control-label(for='password') #{__("密码")}
         .col-sm-7
-          input.form-control(type='password', name='password', id='password', placeholder='Password')
+          input.form-control(type='password', name='password', id='password', placeholder='#{__("密码")}')
       .form-group
-        label.col-sm-3.control-label(for='confirmPassword') Confirm Password
+        label.col-sm-3.control-label(for='confirmPassword') #{__("确认密码")}
         .col-sm-7
-          input.form-control(type='password', name='confirmPassword', id='confirmPassword', placeholder='Confirm Password')
+          input.form-control(type='password', name='confirmPassword', id='confirmPassword', placeholder='#{__("确认密码")}')
       .form-group
         .col-sm-offset-3.col-sm-7
           button.btn.btn-success(type='submit')
             i.fa.fa-user-plus
-            | Signup
+            | #{__("注册")}

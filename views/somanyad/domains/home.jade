@@ -6,60 +6,37 @@ block domains-content
     table.table.table-striped.table-bordered
       caption
         h3 
-          | 我的域名邮箱 &nbsp;
-          a.btn.btn-success(href="/domains/addNewDomain") 添加
-          
-        
+          | #{__("我的域名邮箱  ")}
+          a.btn.btn-success(href="/domains/addNewDomain") #{__("添加")}
+
       thead
         tr
-          th.name.text-center 域名
-          th.cnameVerifyStatus 验证所有权
-          th.mx MX记录
-          th.forward_email 转发到
-          th.operation 操作
+          th.name.text-center #{__("域名")}
+          th.cnameVerifyStatus #{__("验证所有权")}
+          th.mx #{__("MX记录")}
+          th.forward_email #{__("转发到")}
+          th.operation #{__("操作")}
       tbody
         for domain in domains
           tr
             th.name.text-center
               a(href="/domains/edit?domain=#{domain.domain}") #{domain.domain}
             if domain.cnameVerifyStatus
-              th.cnameVerifyStatus 已通过
+              th.cnameVerifyStatus #{__("已通过")}
             else
               th.cnameVerifyStatus 
-                | 尚未通过
-                a(href="/domains/newDomainSetup?domain=" + domain.domain) 手动验证
+                | #{__("尚未通过")}
+                a(href="/domains/newDomainSetup?domain=" + domain.domain) #{__("手动验证")}
             if domain.mxVerifyStatus
-              th.mx 已生效
+              th.mx #{__("已生效")}
             else
               th.mx
-                | 未设置或暂未生效
-                a(href="/domains/newDomainSetup?domain=" + domain.domain) 如何设置
+                | #{__("未设置或暂未生效")}
+                a(href="/domains/newDomainSetup?domain=" + domain.domain) #{__("如何设置")}
             th.forward_email #{domain.email}
               if domain.email_hadVerify
                 | &nbsp;&nbsp;&nbsp;
               else
-                a(href="/domains/newDomainSetup?domain=" + domain.domain) 再次发送验证邮件
+                a(href="/domains/newDomainSetup?domain=" + domain.domain) #{__("再次发送验证邮件")}
             th.operation 
-              a(href="/domains/deleteDomain?domain=" + domain.domain) 删除
-                
-            
-            
-  
-  //- table.table.table-striped.table-hover
-  //-   thead
-  //-     tr
-  //-       th #
-  //-       th 域名
-  //-       th 转发策略
-  //-       th 收件箱
-  //-       th 编辑
-  //-   tbody
-  //-     for domain, idx in domains
-  //-       tr
-  //-         td #{idx}
-  //-         td #{domain.domain}
-  //-         td #{domain.forward_type}
-  //-         td #{domain.forward_email || '未设置'}
-  //-         td 
-  //-           a(href="/domains/setup?domain=" + domain.domain).btn.btn-info.btn-xs 设置            
-  //- a(href="/domains/addNewDomain").btn.btn-success 添加新域名
+              a(href="/domains/deleteDomain?domain=" + domain.domain) #{__("删除")}

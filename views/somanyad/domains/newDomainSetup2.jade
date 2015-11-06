@@ -4,32 +4,32 @@ block content
   .container
     .row
       .col-md-8.col-md-offset-1
-        p 将域名
+        p #{__('将域名')}
           strong @#{domain.domain}
-          | 收到的邮件转发到 #{domain.email}
+          | #{__('收到的邮件转发到')} #{domain.email}
         .panel.panel-default
-          .panel-heading 完成创建
+          .panel-heading #{__('完成创建')}
           .panel-body
-            h5 感谢您申请域名邮箱转发服务 (这里需要做ajax 处理, 用api 方式,防止卡主用户)
+            h5 #{__('感谢您申请域名邮箱转发服务')}
             table.table.table-bordered
               tbody
                 tr
-                  th.type CNAME 验证
+                  th.type #{__('CNAME 验证')}
                   if domain.cname_hadVerify
-                    th.status 通过
+                    th.status #{__('通过')}
                   else
-                    th.status 尚未通过(一般在2~24小时内生效)
+                    th.status #{__('尚未通过(一般在2~24小时内生效)')}
                 tr
-                  th.type MX 记录
+                  th.type #{__('MX 记录')}
                   if domain.mx_hadVerify
-                    th.status 通过
+                    th.status #{__('通过')}
                   else
-                    th.status 未设置或暂未生效(一般在2~24小时内生效)
+                    th.status #{__('未设置或暂未生效(一般在2~24小时内生效)')}
                 tr
-                  th.type 邮件地址验证(#{domain.email})
+                  th.type #{__('邮件地址验证(%s)', domain.email)}
                   if domain.email_hadVerify
-                    th.status 通过
+                    th.status #{__('通过')}
                   else
-                    th.status 邮件链接未点击
-            p 我们正在验证您的域名, 请稍后查看验证进度.
-            a(href="/domains/").btn.btn-success 完成
+                    th.status #{__('邮件链接未点击')}
+            p #{__('我们正在验证您的域名, 请稍后查看验证进度.')}
+            a(href="/domains/").btn.btn-success #{__('完成')}

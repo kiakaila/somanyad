@@ -2,30 +2,30 @@
   br
   .row
     .col-md-4
-      p.pull-right 购买流量包类型:
+      p.pull-right #{__("购买流量包类型:")}
     .col-md-8
-      p 免费流量包 (不限量转发)
+      p #{__("免费流量包 (不限量转发)")}
   br
   .row
     .col-md-4
-      p.pull-right 应付金额:
+      p.pull-right #{__("应付金额:")}
     .col-md-8
-      p 0元
+      p #{__("0元")}
       p.duration
 
   br
   .row
     .col-md-4
-      p.pull-right 开通时长:
+      p.pull-right #{__("开通时长:")}
     .col-md-8
-      p 10天
+      p #{__("10天")}
 
   br
   .row
     .col-md-4
-      p.pull-right 支付:
+      p.pull-right #{__("支付:")}
     .col-md-8
       form(action="/members/free", method="post")
         input(type='hidden', name='_csrf', value=_csrf)
         //- .btn-group.btn-group-justified
-        button(type="submit").btn.btn-default 购买
+        button(type="submit").btn.btn-default #{__("购买")}

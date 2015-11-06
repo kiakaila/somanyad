@@ -6,8 +6,8 @@ block content
     if emailV
       .row
         .col-md-6
-          p 你好, 你的邮件地址#{emailV.email}已经验证
+          p #{__("你好, 你的邮件地址%s已经验证", emailV.email)}
     else
       .row
         .col-md-6
-          p 抱歉, 验证链接不正确, 请重新发送链接, 或者联系管理员
+          p #{__("抱歉, 验证链接不正确, 请重新发送链接, 或者联系管理员")}

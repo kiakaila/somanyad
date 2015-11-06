@@ -3,13 +3,13 @@
     .panel-title
       .row
         .col-md-8
-          p 账号: #{accountId} &nbsp;&nbsp;&nbsp; (#{user.email && user.email}) &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 有效期到: #{ plan && plan.member_expireAt}
+          p #{__("账号: %s     (%s)         有效期到: %s", accountId, user.email && user.email, plan && plan.member_expireAt)}
           p.hidden#currentPlan_expireAt #{ plan && plan.expireAt.getTime()}
   .panel-body
     if plans.length == 0
       .row
         .col-md-12
-          p 无购买记录
+          p #{__("无购买记录")}
     else
       .row
         .col-md-offset-1.col-md-10
@@ -17,13 +17,13 @@
             thead
               tr
                 th  #
-                th  下单日期
-                th  支付类型
-                th  金额
-                th  会员开始日期
-                th  会员结束日期
-                th  时长
-                th  当前订单状态
+                th  #{__("下单日期")}
+                th  #{__("支付类型")}
+                th  #{__("金额")}
+                th  #{__("会员开始日期")}
+                th  #{__("会员结束日期")}
+                th  #{__("时长")}
+                th  #{__("当前订单状态")}
             tbody
               each plan,idx in plans
                 tr
@@ -35,16 +35,16 @@
                   th  #{plan.member_expireAt}
                   th  #{plan.duration}
                   if plan.pay_finish || plan.status == '订单已生效'
-                    th 订单已生效
+                    th #{__("订单已生效")}
                   else
                     th  #{plan.status[plan.status.length - 1]} 
                       if plan.status[plan.status.length - 1] == '已创建'
                         | &nbsp;&nbsp;&nbsp;
-                        a(href="/members/gotopay?id=#{plan._id}", target='_blank') 去付款
+                        a(href="/members/gotopay?id=#{plan._id}", target='_blank') #{__('去付款')}
                       else if plan.status[plan.status.length - 1] == '等待用户付款'
                         | &nbsp;&nbsp;&nbsp;
-                        a(href="/members/gotopay?id=#{plan._id}", target='_blank') 去付款
+                        a(href="/members/gotopay?id=#{plan._id}", target='_blank') #{__('去付款')}
                       else if plan.status[plan.status.length - 1] == '等待用户确认收货'
                         | &nbsp;&nbsp;&nbsp;
-                        a(href='https://www.alipay.com', target='_blank') 去支付宝确认收货
+                        a(href='https://www.alipay.com', target='_blank') #{__('去支付宝确认收货')}
                       

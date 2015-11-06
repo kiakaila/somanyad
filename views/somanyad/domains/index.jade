@@ -5,7 +5,7 @@ block content
     .row
       ul.nav.nav-tabs
         li(role="presentation" class=active_item=="home" ? "active": "")
-          a(href="/domains/") 首页
+          a(href="/domains/") #{__('首页')}
         for domain in domains
           li(role="presentation" class=active_item==domain.domain ? "active": "")
             a(href="/domains/edit?domain=" + domain.domain) #{domain.domain}
