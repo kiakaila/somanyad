@@ -28,10 +28,10 @@ $(document).ready(function() {
 
   var currentPlan_expireAt = parseInt($("#currentPlan_expireAt").text()) || (new Date()).getTime()
   var now = moment.utc(currentPlan_expireAt);
-  var nextD = moment.utc(currentPlan_expireAt).subtract(-1, "years");
+  var nextD = moment.utc(currentPlan_expireAt).subtract(-1, "years").subtract(1, "days");
 
   console.log(now, "JJJJJJ");
-  var fee_text = "" + moment().format("YYYY-MM-DD") + "  ----  " + moment().subtract(-10, "days").format("YYYY-MM-DD")
+  var fee_text = "" + moment().format("YYYY-MM-DD") + "  ----  " + moment().subtract(-9, "days").format("YYYY-MM-DD")
   var pay_text = "" + now.format("YYYY-MM-DD") + "  ----  " + nextD.format("YYYY-MM-DD")
   $("#free .duration").text( fee_text )
   $("#pay .duration").text( pay_text );
@@ -41,13 +41,13 @@ $(document).ready(function() {
     var price = count * 10;
     $("#pay .shouldPay").text( price + "元(每年10元)")
 
-    var nextD = moment.utc(currentPlan_expireAt).subtract(-count, "years");
+    var nextD = moment.utc(currentPlan_expireAt).subtract(-count, "years").subtract(1, "days");
     $("#pay .duration").text( "" + now.format("YYYY-MM-DD") + "  ----  " + nextD.format("YYYY-MM-DD"));
   });
 });
 
 
-// 
+//
 // $(document).ready(function () {
 //   // Get the context of the canvas element we want to select
 //   var ctx = document.getElementById("myChart").getContext("2d");

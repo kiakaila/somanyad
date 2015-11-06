@@ -172,7 +172,7 @@ exports.middleware_plans = function (req, res, next) {
     })
     plans.forEach(function (plan) {
       plan.member_createdAt = moment(plan.createdAt).format("YYYY-MM-DD")
-      plan.member_expireAt = moment(plan.expireAt).format("YYYY-MM-DD");
+      plan.member_expireAt = moment(plan.expireAt).subtract(1, "days").format("YYYY-MM-DD");
       plan.member_startAt = moment(plan.startAt).format("YYYY-MM-DD");
     })
     for (plan of plans) {
