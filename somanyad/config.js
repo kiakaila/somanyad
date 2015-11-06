@@ -103,7 +103,7 @@ _.extend(conf, {
     clientID: process.env.LINKEDIN_ID || '75crhkmh0we4vb',
     clientSecret: process.env.LINKEDIN_SECRET || 'AHZKTY5c2skgpB8B',
     callbackURL: process.env.LINKEDIN_CALLBACK_URL || 'http://somanyad.com/auth/linkedin/callback',
-    scope: ['r_fullprofile'],
+    scope: ['r_basicprofile'],
     passReqToCallback: true
   },
   //
