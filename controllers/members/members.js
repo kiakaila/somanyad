@@ -393,6 +393,7 @@ exports.pay_return_url = function (req, res) {
 
     plan.pay_obj.pay_to_alipay = req.query;
     plan.status.push('等待用户确认收货')
+    plan.pay_finish = true;
     plan.save(function (err) {
       if (err) {
         console.log(err);
