@@ -8,6 +8,8 @@ Hackathon Starter [![Dependency Status](https://david-dm.org/sahat/hackathon-sta
 
 Jump to [What's new in 3.2.0?](#changelog)
 
+
+
 A boilerplate for **Node.js** web applications.
 
 If you have attended any hackathons in the past, then you know how much time it takes to
