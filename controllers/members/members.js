@@ -250,7 +250,7 @@ exports.alipay_post = function (req, res) {
     logistics_fee	: "0",
     logistics_type	: "EXPRESS",
     logistics_payment	: "SELLER_PAY",
-    create_partner_trade_by_buyer_notify_url: create_partner_trade_by_buyer_notify_url,
+    // create_partner_trade_by_buyer_notify_url: create_partner_trade_by_buyer_notify_url,
     show_url: req.headers.origin + req.baseUrl
   };
 
