@@ -74,7 +74,7 @@ exports.change_forward_email_post = function (req, res) {
           err = new Error("发送邮件失败, 请联系管理员")
           req.flash('errors', { msg: err.message });
         } else {
-          req.flash('info', { msg: 'An e-mail has been sent to ' + forward_email + ' with further instructions.' });
+          req.flash('info', { msg: res.__('An e-mail has been sent to ') + forward_email + res.__(' with further instructions.') });
         }
         done(err, emailVerify);
       });
@@ -92,7 +92,7 @@ exports.change_forward_email_post = function (req, res) {
       req.flash('errors', { msg: err.message })
     }
     if (emailVerify.passVerify) {
-      req.flash('success', { msg: "邮件修改成功" })
+      req.flash('success', { msg: res.__("邮件修改成功") })
     }
     return res.redirect( req.baseUrl + "/edit?domain=" + domain_str);
   })
