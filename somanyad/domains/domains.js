@@ -74,7 +74,7 @@ exports.change_forward_email_post = function (req, res) {
           err = new Error(res.__("发送邮件失败, 请联系管理员"))
           req.flash('errors', { msg: err.message });
         } else {
-          req.flash('info', { msg: res.__('An e-mail has been sent to ') + forward_email + res.__(' with further instructions.') });
+          req.flash('info', { msg: res.__('已经发送验证链接到你的邮箱: %s ,请点击里面的链接', forward_email) });
         }
         done(err, emailVerify);
       });
@@ -136,7 +136,7 @@ exports.addNewDomain_post = function (req, res) {
         if (err.code == 11000) {
           err = new Error("该域名( " + domain_str + " )已经被绑定了, 请联系管理员进行操作")
         }
-        req.flash('errors', { msg: (err || new Error("create domain failure, please contact adminster!")).message });
+        req.flash('errors', { msg: (err || new Error( res.__("创建域名失败, 请联系管理员"))).message });
         return res.redirect( req.baseUrl + '/addNewDomain');
       }
       return res.redirect( req.baseUrl + "/newDomainSetup?domain=" + domain_str)
@@ -158,7 +158,7 @@ exports.newDomainSetup = function (req, res) {
     function (domain, done) {
       EmailVerify.findOne({_id: domain.forward_email}, function (err, emailV) {
         err = err ||
-              emailV == null ? new Error("never found email record") : null;
+              emailV == null ? new Error( res.__("没有找到邮箱记录") ) : null;
         done(err, domain, emailV)
       });
     },
@@ -171,7 +171,7 @@ exports.newDomainSetup = function (req, res) {
       var mailOptions = {
         to: emailVerify.email,
         from: secrets.verifyEmailSender,
-        subject: '验证邮箱所有权',
+        subject: res.__("验证邮箱所有权"),
         text: '你是否允许用户: '  + req.user.email + '转发邮件给你, 如果允许请点击下面的链接, 或者将下面的链接复制到浏览器地址栏\n\n' +
           'http://' + req.headers.host +  req.baseUrl + '/emailVerify?id=' + emailVerify._id + '&email=' + emailVerify.email + '\n\n' +
           ' 如果不允许, 则无需进行操作.\n'
@@ -182,7 +182,7 @@ exports.newDomainSetup = function (req, res) {
           err = new Error(res.__("发送邮件失败, 请联系管理员"));
           req.flash('errors', { msg: err.message });
         } else {
-          req.flash('info', { msg: 'An e-mail has been sent to ' + emailVerify.email + ' with further instructions.' });
+          req.flash('info', { msg: res.__('已经发送验证链接到你的邮箱: %s ,请点击里面的链接', forward_email)  });
         }
         done(err, domain, emailVerify);
       });
@@ -316,7 +316,7 @@ exports.deleteDomain_post = function (req, res) {
   var domain_str = req.query.domain;
   Domain.remove({domain: domain_str, user: req.user._id}, function (err, domains) {
     if (err || domains == null) {
-      err = err || new Error("not found domain: " + domain_str);
+      err = err || new Error( res.__("没有找到域名: %s", domain_str) );
       req.flash('errors', { msg: err.message });
     }
     return res.render("somanyad/domains/deleteDomain2", {
@@ -333,7 +333,7 @@ exports.emailVerify = function (req, res) {
 
   EmailVerify.findOne({_id: id, email: email}, function (err, emailV) {
     if (err || emailV == null) {
-      req.flash('errors', (err || new Error("email verify record not found!")));
+      req.flash('errors', (err || new Error( res.__("找不到相应的记录"))));
       console.log(err, emailV);
       return res.render("somanyad/domains/emailVerify");
     } else {

@@ -59,6 +59,10 @@ i18n.configure({
   directory: __dirname + '/locales'
 });
 
+app.use(function (req, res, next) {
+  req.flash('errors', { msg: "目前处于测试阶段"});
+  next();
+})
 /**
  * Express configuration.
  */
