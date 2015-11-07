@@ -176,7 +176,7 @@ exports.middleware_plans = function (req, res, next) {
       plan.member_expireAt = moment(plan.expireAt).subtract(1, "days").format("YYYY-MM-DD");
       plan.member_startAt = moment(plan.startAt).format("YYYY-MM-DD");
     })
-    res.locals.plan = null;  // 这个很严重的错误是哪边导致的??? express, jade ? 会遗留上个request的 plan 
+    res.locals.plan = null;  // 这个很严重的错误是哪边导致的??? express, jade ? 会遗留上个request的 plan
     for (plan of plans) {
       if (plan.pay_finish) {
         res.locals.plan = plan;
@@ -230,7 +230,7 @@ exports.alipay_post = function (req, res) {
     return res.redirect( req.baseUrl );
   }
 
-  var startAt = res.locals.plan.expireAt || new Date();
+  var startAt =  res.locals.plan && res.locals.plan.expireAt || new Date();
   startAt = moment(startAt);
   var expireAt = moment(startAt).subtract(-count, "years")
   var plan_id = ObjectId();
