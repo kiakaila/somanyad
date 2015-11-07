@@ -90,10 +90,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
 app.use(function (req, res, next) {
-  req.flash('errors', { msg: "目前处于测试阶段"});
-  next();
-})
-app.use(function (req, res, next) {
   if (req.path.indexOf("notify") != -1) {
     console.log("notify: ", req.body, req.query);
     next();
