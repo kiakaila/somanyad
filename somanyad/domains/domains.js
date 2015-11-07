@@ -182,7 +182,7 @@ exports.newDomainSetup = function (req, res) {
           err = new Error(res.__("发送邮件失败, 请联系管理员"));
           req.flash('errors', { msg: err.message });
         } else {
-          req.flash('info', { msg: res.__('已经发送验证链接到你的邮箱: %s ,请点击里面的链接', forward_email)  });
+          req.flash('info', { msg: res.__('已经发送验证链接到你的邮箱: %s ,请点击里面的链接', emailVerify.email)  });
         }
         done(err, domain, emailVerify);
       });
