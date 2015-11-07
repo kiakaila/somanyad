@@ -15,20 +15,18 @@ router.use(function (req, res, next) {
   next();
 })
 
-router.use(members.middleware_plans);
-
 
 // 显示所有域名相关信息
-router.get('/', passportConf.isAuthenticated, members.index);
-router.post('/free', passportConf.isAuthenticated, members.free_post);
-router.post('/pay', passportConf.isAuthenticated, members.alipay_post);
-router.get('/gotopay', passportConf.isAuthenticated, members.gotopay);
+router.get('/', passportConf.isAuthenticated, members.middleware_plans, members.index);
+router.post('/free', passportConf.isAuthenticated, members.middleware_plans, members.free_post);
+router.post('/pay', passportConf.isAuthenticated, members.middleware_plans, members.alipay_post);
+router.get('/gotopay', passportConf.isAuthenticated, members.middleware_plans, members.gotopay);
 // 显示最近两周的转发记录
-router.get('/forwardCount', passportConf.isAuthenticated, members.forwardCount);
+// router.get('/forwardCount', passportConf.isAuthenticated, members.middleware_plans, members.forwardCount);
 router.post('/aplipay/create_partner_trade_by_buyer/:pid/notify_url', members.easy_pay);
-router.all('/aplipay/create_partner_trade_by_buyer/notify_url', members.create_partner_trade_by_buyer_notify);
+// router.all('/aplipay/create_partner_trade_by_buyer/notify_url', members.create_partner_trade_by_buyer_notify);
 // router.get('/auto_send_goods', members.auto_send_goods);
-router.get('/aplipay/create_partner_trade_by_buyer/return_url', members.pay_return_url);
+router.get('/aplipay/create_partner_trade_by_buyer/return_url', members.middleware_plans, members.pay_return_url);
 // // 订单详情
 // router.get('/order', passportConf.isAuthenticated, members.order_detail)
 
