@@ -396,6 +396,14 @@ exports.pay_return_url = function (req, res) {
     plan.pay_obj.pay_to_alipay = req.query;
     plan.status.push('等待用户确认收货')
     plan.pay_finish = true;
+    var trade_no = req.query.trade_no;
+    var data = {
+       trade_no: trade_no
+      ,logistics_name: "好多广告网自动发货部"
+      ,invoice_no: plan._id
+      ,transport_type: "EXPRESS"
+     };
+    alipay.send_goods_confirm_by_platform(data);
     plan.save(function (err) {
       if (err) {
         console.log(err);
