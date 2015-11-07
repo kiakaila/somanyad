@@ -161,6 +161,7 @@ exports.middleware_plans = function (req, res, next) {
       })
     }
   ], function (err, freePlans, alipayPlans) {
+    
     console.log("a", freePlans, alipayPlans, res.locals.plan, res.locals.plans);
     if (err) {
       console.log(err);
