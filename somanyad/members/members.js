@@ -161,13 +161,11 @@ exports.middleware_plans = function (req, res, next) {
       })
     }
   ], function (err, freePlans, alipayPlans) {
-    // console.log("a", freePlans, alipayPlans, res.locals.plan, res.locals.plans);
     if (err) {
       console.log(err);
       req.flash('errors', { msg: "查找购买记录失败,请联系管理员"})
       return next(err)
     }
-    // console.log("b", freePlans, alipayPlans, res.locals.plan, res.locals.plans);
     var plans = _.union(freePlans, alipayPlans)
     plans.sort(function (plan1, plan2) {
       return plan1.expireAt.getTime() < plan2.expireAt.getTime()
@@ -178,18 +176,16 @@ exports.middleware_plans = function (req, res, next) {
       plan.member_expireAt = moment(plan.expireAt).subtract(1, "days").format("YYYY-MM-DD");
       plan.member_startAt = moment(plan.startAt).format("YYYY-MM-DD");
     })
-    // console.log("d", freePlans, alipayPlans, res.locals.plan, res.locals.plans);
+    res.locals.plan = null;  // 这个很严重的错误是哪边导致的??? express, jade ? 会遗留上个request的 plan 
     for (plan of plans) {
       if (plan.pay_finish) {
         res.locals.plan = plan;
         break;
       }
     }
-    // console.log("e", freePlans, alipayPlans, res.locals.plan, res.locals.plans);
     plans.sort(function (plan1, plan2) {
       return plan1.createdAt.getTime() < plan2.createdAt.getTime()
     })
-    // console.log("f", freePlans, alipayPlans, res.locals.plan, res.locals.plans);
     res.locals.plans = plans;
     next();
   })

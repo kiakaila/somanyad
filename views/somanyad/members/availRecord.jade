@@ -3,12 +3,9 @@
     .panel-title
       .row
         .col-md-8
-          p #{__("账号: %s     (%s)         有效期到: %s", accountId, user.email && user.email, plan && plan.member_expireAt)}
+          p #{__("账号: %s     (%s)         有效期到: %s", accountId, user.email && user.email, plan && plan.member_expireAt || "")}
           p.hidden#currentPlan_expireAt #{ plan && plan.expireAt.getTime()}
-          p #{user}
-          p #{plan}
-          each plan,idx in plans
-            p #{plan}
+
   .panel-body
     if plans.length == 0
       .row
