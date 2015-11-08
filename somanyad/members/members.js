@@ -388,8 +388,9 @@ exports.pay_return_url = function (req, res) {
   }
   alipayPlan.findOne({_id: out_trade_no}, function (err, plan) {
     if (err || plan == null) {
-      console.log(err || new Error("plan was null for out_trade_no:", out_trade_no));
-      req.flash("errors", { msg: "找不到订单,请联系管理员"});
+      err = err || new Error( res.__("找不到订单号: %s", out_trade_no))
+      console.log(err);
+      req.flash("errors", { msg: res.__("找不到订单,请联系管理员")});
       return res.redirect( req.baseUrl )
     }
 
@@ -407,16 +408,17 @@ exports.pay_return_url = function (req, res) {
     plan.save(function (err) {
       if (err) {
         console.log(err);
-        req.flash('errors', { msg: "订单更新失败, 请联系管理员"})
+        req.flash('errors', { msg: res.__("订单更新失败, 请联系管理员")})
         return res.redirect( req.baseUrl )
       }
-      req.flash('success', { msg: "支付宝已经收到你的付款了"})
+      req.flash('success', { msg: res.__("支付宝已经收到你的付款了")})
       res.locals.plan = plan;
       res.redirect( req.baseUrl );
     })
   })
 }
 
+// cb(err) if user never pay, return err, else return null
 exports.user_had_pay = function (uid, cb) {
 
   async.waterfall([
