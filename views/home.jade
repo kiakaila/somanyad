@@ -24,14 +24,133 @@ block content
         p &nbsp;
         p.text-center
           a.btn.btn-lg.btn-success(href='/signup') #{__("马上使用我们的域名邮箱服务")}
+  section#issue
+    .container
+      .row
+        .col-md-12
+          h1 #{__("问题")}
+          
+          .panel-group#accordion
+            .panel.panel-default
+              .panel-heading
+                h4.panel-title
+                  a.collapsed(data-toggle="collapse", data-parent="#accordion", href="#issue1")
+                    | 我可以信任你吗?
+              .panel-collapse.collapse#issue1
+                .panel-body
+                  p 这个问题, 很难回答.
+                  p 但是不管怎样, 从我的角度, 我必须说, 可以
+                  p 那么从你的角度, 你应该信任我吗? 作为一个程序员, 我只能告诉你不应该
+                  p 除非你是自己搭建邮件服务器来进行转发的(其实, 这个, 也是要考虑到, 如果dns 被黑了怎么办...)
+                  p 否则, 无论, 你使用谁的邮件转发服务, 你的邮件必然是要经过他的服务器的, 那么便有可能遇到说要是对方拦截你的邮件怎么办   ----   这个问题, 无解. 
+                  p 我想
+                  p 重要的网站, 像支付宝什么的, 你应该继续使用 gmail (哈哈,等哪天我跟淘宝,谷歌一样大的时候, 你就可以信任了...现在只能先默默奋斗) 
+                  p 像一些边角站, 在上面的安全并不重要, 便利些会更好
+                  p 譬如有时候,逛到某个网站, 他们要求你注册的时候, 验证邮件地址, 把你的gmail 地址填上去, 让他发广告? 或者是随意取个你域名邮箱的地址, 哪天他发广告,就屏蔽了这个地址
+
+            .panel.panel-default
+              .panel-heading
+                h4.panel-title
+                  a.collapsed(data-toggle="collapse", data-parent="#accordion", href="#issue2")
+                    | 你的服务稳定吗?
+                  span &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; by &nbsp;
+                    a(href="http://www.v2ex.com/t/234470#reply15", target="_blank") @aprikyblue 
+              .panel-collapse.collapse#issue2
+                .panel-body
+                  p 目前设有, 断电自动重启, 程序崩溃自动重启, 恩, 我们的网站系统, 和邮件系统是相分离的, 网站出问题, 不会影响到邮件的转发
+                  p 然后我们的邮件系统是基于开源邮件服务器&nbsp;
+                    a(href="https://github.com/haraka/Haraka", target="_blank") Haraka
+                    | &nbsp;进行二次开发的, 基于开源邮件服务器的一个很大的优点是, 很多安全问题, 稳定性问题 是大家一起解决的
+                  p 很多时候, 问题你还没碰到, 便被提出来, 解决掉了
+                  p 然后, 设置了两个mx 服务器, mx1.somanyad.com, mx2.somanyad.com , 目前是指向同一台服务器(主要是财力方面的考虑, 放两台服务器进行空转, 太浪费了)
+                  p 嗯, 出了任何问题, 你可以通过导航栏的"联系我", 中的任何方式来联系我( 希望不要出问题... )
+                  
+            .panel.panel-default
+              .panel-heading
+                h4.panel-title
+                  a.collapsed(data-toggle="collapse", data-parent="#accordion", href="#issue3")
+                    | 这个服务, 会不会做到一半, 突然不做了, 你钱收了, 然后就没有然后了
+                  span &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; by &nbsp;
+                    a(href="http://www.v2ex.com/t/234470#reply15", target="_blank") @aprikyblue 
+              .panel-collapse.collapse#issue3
+                .panel-body
+                  p 任何服务, 肯定是要长久才能赚钱
+                  p 其实, 这个服务最大的成本是, 人工成本
+                  p 其他的成本, 像服务器, 流量, 域名, 成本很小的, 维持这么一个服务的成本, 并不高
+                  p 当然, 有时候, 会出现说某个用户他消耗的流量比较大, 但是, 这个会被大部分的正常的用户给摊薄掉
+                  p 而且,一个人他的精力是有限的, 也就是说他能够处理的邮件是有限的, 那么即使有出现比较大消耗的用户, 其实体量并不大 so 我并不担心
+                  p &nbsp;
+                  p 另外一点, 我自己也需要用这个东西, 恩, 每多为一个人服务, 就摊薄一些成本
+                  
+            .panel.panel-default
+              .panel-heading
+                h4.panel-title
+                  a.collapsed(data-toggle="collapse", data-parent="#accordion", href="#issue4")
+                    | 不只是收, 你能发么?
+                  span &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; by &nbsp;
+                    a(href="http://www.v2ex.com/t/234470#reply16", target="_blank") @ryd994
+              .panel-collapse.collapse#issue4
+                .panel-body
+                  p 恩, 你可以直接回复对方的邮件
+                  p 我们只负责将对方的邮件转发给你, 不负责将你的邮件转发给对方
+                  p &nbsp;
+                  p 我们是这样考虑的: 
+                  p &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;一般来说, 你与对方互动, 基本上, 都是直接和人聊, 不怎么需要担忧垃圾邮件的问题.
+                  p &nbsp;
+                  p 需要担忧垃圾邮件的情形主要有: 
+                  p &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;你在某个网站上注册, 然后对方批量的给他们的用户发送广告
+                  p &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;你在某个网站上发帖留言, 然后, 被网上的爬虫抓取了你的邮件地址
+
+            .panel.panel-default
+              .panel-heading
+                h4.panel-title
+                  a.collapsed(data-toggle="collapse", data-parent="#accordion", href="#issue5")
+                    | 方便记忆一点
+              .panel-collapse.collapse#issue5
+                .panel-body
+                  p 将你的域名的 email.yourdomain.com 也指向我们的网站 somanyad.com
+                  p 自己的域名不会忘记, 而且方便续费 
+                  p 等什么时候需要注册 xxx 网站,然后他们又要求你提供邮箱才给注册 
+                  p 你就可以先过来,续个免费合约, 然后取个 xxxx@yourdomain.com 的邮件地址进行注册 
+                  p 哦偶, 不过,可能会忘记我这个网站...恩, 想到一个好招, 注册的时候 把 email.yourdomain.com 也指向 somanyad.com 然后要用的时候续一下免费合约就ok了
+                  p 很方便记忆,而且方便续费 :)                
+            .panel.panel-default
+              .panel-heading
+                h4.panel-title
+                  a.collapsed(data-toggle="collapse", data-parent="#accordion", href="#issue6")
+                    | 给 200 可以终身么
+                  span &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; by &nbsp;
+                    a(href="http://www.v2ex.com/t/234470#reply9", target="_blank") @d8
+              .panel-collapse.collapse#issue6
+                .panel-body
+                  p 哈哈, 很不错的建议啊...
+                  p 然后,我就想到弄个200元80年的, 后面已经写到了一半了, 后来想想, 还是不要弄这个吧
+                  p 我挺讨厌那些十分吸引眼球的东西的
+                  p 就像一次次被商家消费的"免费", 先吸引你的注意力, 最后再去告诉你, "免费, 是有哪些哪些哪些条件的...甚至不告诉你, 等出了问题, 在把你签了却没有看的条款拿出来"
+                  p 现在看到"免费", 我感觉又是一个来让社会互相提防的公司 (即使, 大公司, 其实也很喜欢利用"免费" 来消费人们的信任感)
+                  p 另外一个我感觉那只是冲动消费, 而且这个承诺太难做到了
+                  p 举个很简单的例子, 我不知道哪天, 或者会有意外发生在我身上, 然后我就 game over 了
+                  p 
+            .panel.panel-default
+              .panel-heading
+                h4.panel-title
+                  a.collapsed(data-toggle="collapse", data-parent="#accordion", href="#issue7")
+                    | 我可以查找之前的邮件吗 ?
+              .panel-collapse.collapse#issue7
+                .panel-body
+                  p 我们只负责, 转发, 本身并不存储你的任何邮件内容, 所以也没法提供任何查询服务....
+          
+          
   section#product
     .container
       .row
         .col-md-12
-          h3 #{__("域名设置界面")}
-          img(src="/img/2.png")
+          h2 产品展示
           h3 #{__("域名列表界面")}
           img(src="/img/1.png")
+          h3 #{__("域名设置界面")}
+          img(src="/img/2.png")
+          
           
   section#price
     .container
@@ -59,17 +178,3 @@ block content
               p #{__("绑定域名个数：不限")}
               p
                 a.btn.btn-success(href='/members/') #{__("马上使用")}
-
-
-          
-  section#contact
-    .container
-      .row
-        .col-md-12
-          h3 #{__("北京海淀区东北旺西路8号4号楼软件广场C座3层")}
-          h3 #{__("邮箱：")}
-            img(src="/img/email.png")
-          h3 #{__("电话：")}
-            img(src="/img/phone.png")
-          a.text-center(href="http://map.baidu.com/?shareurl=1&poiShareUid=51de75cbe0dcb197b35c6aeb&cityCode=131&tn=B_NORMAL_MAP&hb=B_SATELLITE_STREET", target="_blank")
-            img(src="/img/map.png")

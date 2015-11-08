@@ -302,6 +302,11 @@ exports.gotopay = function (req, res) {
 exports.easy_pay = function (req, res) {
   var id = req.params.pid;
   alipayPlan.findOne({_id: id}, function (err, plan) {
+    if (err || plan == null) {
+      err = err || new Error( res.__("找不到订单: %s", id))
+      console.log(err);
+      return res.send("fail");
+    }
     plan.notify_url_count += 1;
     if (plan.notify_url_count >= 2) {
       plan.pay_finish = true;
