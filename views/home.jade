@@ -153,7 +153,18 @@ block content
               .panel-collapse.collapse#issue7
                 .panel-body
                   p 我们只负责, 转发, 本身并不存储你的任何邮件内容, 所以也没法提供任何查询服务....
-          
+            .panel.panel-default
+              .panel-heading
+                h4.panel-title
+                  a.collapsed(data-toggle="collapse", data-parent="#accordion", href="#issue8")
+                    | 嘿, 如果你使用 gmail 这里有条对你可能很有用的信息
+                  span.pull-right
+                    a(href="https://ruby-china.org/topics/27986", target="_blank") @rel
+              .panel-collapse.collapse#issue8
+                .panel-body
+                  p gmail 可以通过 account+label@gmail.com 来收邮件的
+                  p 这个或许没法躲避智能爬虫,但是对于大部分的爬虫都是有效的
+                    
           
   section#product
     .container
