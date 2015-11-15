@@ -20,7 +20,7 @@ router.use(function (req, res, next) {
 router.get('/', passportConf.isAuthenticated, members.middleware_plans, members.middleware_expireNotifyAddress, members.index);
 router.post('/free', passportConf.isAuthenticated, members.middleware_plans, members.free_post);
 router.post('/pay', passportConf.isAuthenticated, members.middleware_plans, members.alipay_post);
-router.post('/update_plan_expire_notify_address', passportConf.isAuthenticated, members.update_plan_expire_notify_address)
+router.post('/update_plan_expire_notify_address', passportConf.isAuthenticated, members.middleware_plans, members.update_plan_expire_notify_address)
 router.get('/gotopay', passportConf.isAuthenticated, members.middleware_plans, members.gotopay);
 router.get('/tomorry_expire', members.tomorry_expire);
 router.get('/send_expire_notify_for_test', passportConf.isAuthenticated, members.send_expire_notify_for_test);

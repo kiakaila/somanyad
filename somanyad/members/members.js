@@ -259,11 +259,13 @@ exports.update_plan_expire_notify_address = function (req, res) {
   var notify_email = req.body.notify_email;
   var user = req.user._id;
 
-  ExpireNotifyAddress.updateNotifyEmail(user, notify_email, function (err) {
+  var expireAt = res.locals.plan && res.locals.plan.expireAt || new Date();
+  ExpireNotifyAddress.updateNotifyEmail(user, notify_email, expireAt, function (err) {
     if (err) {
       req.flash("errors", { msg: res.__("更新到期提醒地址失败")})
       return res.redirect( req.baseUrl );
     };
+
     req.flash('success', { msg: res.__("更新到期提醒地址成功")});
     return res.redirect( req.baseUrl );
   });

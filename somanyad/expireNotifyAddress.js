@@ -43,13 +43,14 @@ exports.updateExpireTimeIfIsLaterExpireTime = function (expireAt, cb) {
 
 // 更新提醒地址, 如果没有就创建一个
 // cb(err)
-exports.updateNotifyEmail = function (user, email, cb) {
+exports.updateNotifyEmail = function (user, email, expireAt, cb) {
   expireNotifyAddress.findOrCreate({user: user}, function (err, notifyAddress, created) {
     if (err || notifyAddress == null) {
       err = err || new Error("无法创建通知计划")
       return cb(err);
     };
     notifyAddress.email = email;
+    notifyAddress.expireAt = expireAt;
     notifyAddress.save(function (err) {
       return cb(err);
     });
