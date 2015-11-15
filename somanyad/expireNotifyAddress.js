@@ -33,8 +33,8 @@ exports.updateExpireTimeIfIsLaterExpireTime = function (expireAt, cb) {
     console.log("updateExpireNotifyByPlan: ", notifyAddress.expireAt, plan);
     if (notifyAddress.expireAt.getTime() < plan.expireAt.getTime()) {
       notifyAddress.expireAt = plan.expireAt;
-      notifyAddress.had_notify = false;
     }
+    notifyAddress.had_notify = false;
     notifyAddress.save(function (err) {
       cb(err)
     })
