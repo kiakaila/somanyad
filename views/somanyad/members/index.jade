@@ -21,7 +21,7 @@ block content
       .col-md-8
         .input-group
           span.input-group-addon #{__("会员计划到期提醒,邮箱地址(如果不设置,或者未设置,则不发送到期提醒邮件!!!) :")}
-          input(type="email", name="notify_email", value="#{ notify_email }").form-control
+          input(type="email", name="notify_email", value='#{ notify_email && notify_email || "" }').form-control
       .col-md-3
         .col-md-4
           button(type="submit").btn.btn-success #{__("更新")}
