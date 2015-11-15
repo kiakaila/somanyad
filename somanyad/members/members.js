@@ -673,7 +673,6 @@ function sendExpireNotifyTo(addresses, errCB, successCB) {
       from: secrets.expireNotifyEmailSender,
       subject: '你的会员计划快要过期了',
       text: '你在SoManyAd的会员计划快要过期了, 续期请进入 http://somanyad.com/members \n' +
-            '如果你想退订, 请登录,然后在 http://somanyad.com/members 将"会员到期提醒" 设为空白.\n' +
             '谢谢您的支持'
     };
     sendMail(mailOptions, function(err) {
