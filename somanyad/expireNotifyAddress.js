@@ -30,7 +30,6 @@ exports.updateExpireTimeIfIsLaterExpireTime = function (expireAt, cb) {
       err = err || new Error("无法创建通知计划")
       return cb(err)
     }
-    console.log("updateExpireNotifyByPlan: ", notifyAddress.expireAt, plan);
     if (notifyAddress.expireAt.getTime() < plan.expireAt.getTime()) {
       notifyAddress.expireAt = plan.expireAt;
     }
