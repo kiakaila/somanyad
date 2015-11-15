@@ -10,7 +10,6 @@ var blacklist = require("./blacklist");
 
 // models
 var Domain = require("../models/Domain").Domain;
-var EmailVerify = require("../models/Domain").EmailVerify;
 
 // middleware
 var m = require('./middleware');

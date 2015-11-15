@@ -6,7 +6,12 @@ var mongoose = require('mongoose')
 
 var freePlan = require("./models").freePlan;
 var alipayPlan = require("./models").alipayPlan;
+var ExpireNotifyAddress = require("../expireNotifyAddress");
+var Domain = require("../models/Domain").Domain;
 
+var secrets = require("../../somanyad/config");
+
+var sendMail = require('../../lib/swaks').sendMail;
 var ForwardRecords = require("../models/ForwardRecord").ForwardRecords;
 var alipay = require("../../somanyad/config").alipay;
 
@@ -76,6 +81,9 @@ alipay.on('verify_fail', function(){console.log('emit verify_fail')})
       }
       plan.status.push("订单已生效")
       plan.pay_finish = true;
+      updateExpireNotifyByPlan(plan, function (err) {
+        err && console.log("更新到期提醒计划失败", err, plan.user)
+      })
       plan.save(function (err) {
         if (err) {
           console.log(out_trade_no, trade_no, "订单已生效", err);
@@ -140,43 +148,89 @@ alipay.on('verify_fail', function(){console.log('emit verify_fail')})
 	// .on('trade_create_by_buyer_trade_finished', function(out_trade_no, trade_no){});
 
 
-// 当前用户的购买记录(免费+ 支付宝的)
-exports.middleware_plans = function (req, res, next) {
-  if (!req.user) {
-    return next();
+// cb(plans) plans = plans || []
+function findAllPlanSortByExpire(uid, cb) {
+  if (uid == null) {
+    return cb([]);
   }
   async.waterfall([
     function (done) {
       // 找到免费的记录
-      var q = {user: req.user._id}
+      var q = {user: uid}
       freePlan.find(q, function (err, plans) {
         done(err, plans)
       });
     },
     function (freePlans, done) {
       // 找到付费的记录
-      var q = { user: req.user._id}
+      var q = { user: uid}
       alipayPlan.find(q, function (err, plans) {
         done(err, freePlans, plans)
       })
     }
   ], function (err, freePlans, alipayPlans) {
     if (err) {
-      console.log(err);
-      req.flash('errors', { msg: "查找购买记录失败,请联系管理员"})
-      return next(err)
+      console.log("查找用户的会员计划失败: ",err);
+      return cb([])
     }
     var plans = _.union(freePlans, alipayPlans)
     plans.sort(function (plan1, plan2) {
       return plan1.expireAt.getTime() < plan2.expireAt.getTime()
     })
-    // console.log("c", freePlans, alipayPlans, res.locals.plan, res.locals.plans);
+    return cb(plans)
+  })
+}
+// cb(plan)  plan = plan || null
+function findLastPlan(user, cb) {
+  findAllPlanSortByExpire(user, function (plans) {
+    for (plan of plans) {
+      if (plan.pay_finish) {
+        return cb(plan)
+      }
+    }
+    cb(null)
+  })
+}
+
+// 根据plan 更新到期提醒情形
+// cb(err)
+function updateExpireNotifyByPlan(plan, cb) {
+  // 如果是比较旧的日期,就更新提醒计划
+  ExpireNotifyAddress.updateExpireTimeIfIsLaterExpireTime(plan.expireAt, function (err) {
+    cb(err);
+  });
+}
+
+
+exports.middleware_expireNotifyAddress = function (req, res, next) {
+  if (!req.user) {
+    return next();
+  }
+  // 查找用户的到期提醒地址
+  var user = req.user._id;
+  ExpireNotifyAddress.findUserNotifyEmailAddress(user, function (err, notify_email) {
+    if (err) {
+      console.log(err);
+      // req.flash('errors', { msg: res.__("查找用户的到期提醒地址失败")});
+      return next();
+    }
+    res.locals.notify_email = notify_email || "";
+    return next();
+  });
+}
+// 当前用户的购买记录(免费+ 支付宝的)
+exports.middleware_plans = function middleware_plans (req, res, next) {
+  if (!req.user) {
+    return next();
+  }
+  findAllPlanSortByExpire(req.user._id, function (plans) {
+    res.locals.plan = null;  // 这个很严重的错误是哪边导致的??? express, jade ? 会遗留上个request的 plan
     plans.forEach(function (plan) {
       plan.member_createdAt = moment(plan.createdAt).format("YYYY-MM-DD")
       plan.member_expireAt = moment(plan.expireAt).subtract(1, "days").format("YYYY-MM-DD");
       plan.member_startAt = moment(plan.startAt).format("YYYY-MM-DD");
-    })
-    res.locals.plan = null;  // 这个很严重的错误是哪边导致的??? express, jade ? 会遗留上个request的 plan
+    });
+
     for (plan of plans) {
       if (plan.pay_finish) {
         res.locals.plan = plan;
@@ -184,12 +238,14 @@ exports.middleware_plans = function (req, res, next) {
       }
     }
     plans.sort(function (plan1, plan2) {
-      return plan1.createdAt.getTime() < plan2.createdAt.getTime()
+      var diff = plan1.createdAt.getTime() - plan2.createdAt.getTime();
+      return -diff;
     })
     res.locals.plans = plans;
     next();
-  })
+  });
 }
+
 // 显示所有域名相关信息
 exports.index = function (req, res) {
   // 找到当前付费类型
@@ -197,6 +253,20 @@ exports.index = function (req, res) {
   return res.render('somanyad/members/index', {
         active_item: "index"
       });
+}
+
+exports.update_plan_expire_notify_address = function (req, res) {
+  var notify_email = req.body.notify_email;
+  var user = req.user._id;
+
+  ExpireNotifyAddress.updateNotifyEmail(user, notify_email, function (err) {
+    if (err) {
+      req.flash("errors", { msg: res.__("更新到期提醒地址失败")})
+      return res.redirect( req.baseUrl );
+    };
+    req.flash('success', { msg: res.__("更新到期提醒地址成功")});
+    return res.redirect( req.baseUrl );
+  });
 }
 
 // 购买免费包
@@ -215,7 +285,14 @@ exports.free_post = function (req, res) {
     }
 
     req.flash("success", {msg: "购买成功"})
-    return res.redirect( req.baseUrl )
+    findLastPlan(req.user._id, function (plan) {
+      updateExpireNotifyByPlan(plan, function (err) {
+        if (err) {
+          err = new Error(res.__("无法更新到期提醒计划!!!"))
+        }
+        return res.redirect( req.baseUrl )
+      })
+    })
   });
 }
 
@@ -296,7 +373,7 @@ exports.gotopay = function (req, res) {
       }
       var data = plan.pay_obj.register_to_pay;
       alipay.create_partner_trade_by_buyer(data, res);
-    })
+    });
   });
 }
 exports.easy_pay = function (req, res) {
@@ -310,6 +387,9 @@ exports.easy_pay = function (req, res) {
     plan.notify_url_count += 1;
     if (plan.notify_url_count >= 2) {
       plan.pay_finish = true;
+      updateExpireNotifyByPlan(plan, function (err) {
+        err && console.log("更新到期提醒计划失败", err, plan.user)
+      })
     }
     plan.save(function (err) {
       if (err) {
@@ -320,6 +400,7 @@ exports.easy_pay = function (req, res) {
     })
   })
 }
+
 exports.create_partner_trade_by_buyer_notify = function (req, res) {
   alipay.create_partner_trade_by_buyer_notify(req, res);
 }
@@ -402,6 +483,9 @@ exports.pay_return_url = function (req, res) {
     plan.pay_obj.pay_to_alipay = req.query;
     plan.status.push('等待用户确认收货')
     plan.pay_finish = true;
+    updateExpireNotifyByPlan(plan, function (err) {
+      err && console.log("更新到期提醒计划失败", err, plan.user)
+    });
     var trade_no = req.query.trade_no;
     var data = {
        trade_no: trade_no
@@ -449,15 +533,172 @@ exports.user_had_pay = function (uid, cb) {
     }
     var plans = _.union(freePlans, alipayPlans).sort(function (plan1, plan2) {
       return plan1.expireAt.getTime() < plan2.expireAt.getTime()
-    })
+    });
 
     var now = new Date();
     for (plan of plans) {
       if (plan.pay_finish && plan.expireAt.getTime() > now.getTime()) {
-        cb(null)
+        cb(null);
         break;
       }
     }
-    cb(new Error("没有找到购买记录,请联系管理员"))
+    cb(new Error("没有找到购买记录,请联系管理员"));
   });
+}
+
+
+// 发送一封要到期的邮件通知给用户...用户自测(so, 强制发送, 不管是否要到期)
+// 且发送完也不设为已发送
+exports.send_expire_notify_for_test = function (req, res, next) {
+  var user = req.user._id;
+  // 找到他的转发地址
+  ExpireNotifyAddress.findAddressByUser(user, function (err, notifyAddress) {
+    if (err) {
+      console.log(err);
+    }
+    if (err || notifyAddress == null || (notifyAddress.email || "").length < 3) {
+      req.flash('errors', { msg: "没有找到通知邮件地址, 点更新来保存下"});
+      return res.redirect( req.baseUrl );
+    }
+
+    var errHandler = function (err) {
+      if (err) {
+        console.log(err);
+      }
+      req.flash('errors', { msg: "发送邮件失败, 请联系管理员, 谢谢"});
+      return res.redirect( req.baseUrl );
+    }
+    // 发送通知邮件
+    sendExpireNotifyTo([notifyAddress], errHandler, function (sendExpireNotifySuccessAddresses) {
+      console.log('call sendExpireNotifyTo success');
+      req.flash('success', { msg: "发送到期提醒邮件成功, 请及时查收, 谢谢"});
+      return res.redirect( req.baseUrl );
+    });
+  });
+}
+
+// 发邮件通知用户, 您的会员明天到
+// 策略, 利用 crontab 每天 10 点, 自动访问表中有登记域名且快要到期的用户
+// 通知他们, 他们的会员, 明天将会到期
+//
+exports.tomorry_expire = function(req, res, next) {
+  // 找到后天将要过期的会员
+  // 找到有登记域名的, 并且通过域名登记的 cname mx 双记录
+  // 然后根据域名找用户
+  // 接着查找该用户的最后到期日期
+  // 假设到期日期为 x
+  // 如果 今天 now - x  == 2 days 且, 该计划还未发过到期邮件, 那么发到期邮件给用户
+  var errHandler = function (err) {
+    if (err) {
+      console.log(err);
+    }
+    res.send("failure");
+  }
+  // 找到近期要过期的会员
+  ExpireNotifyAddress.findRecentlyExpireNotifyAddress(errHandler, function (recentlyExpireNotifyAddresses) {
+    // 发送通知邮件
+    sendExpireNotifyTo(recentlyExpireNotifyAddresses, errHandler, function (sendExpireNotifySuccessAddresses) {
+      console.log('call sendExpireNotifyTo success');
+      // 将通知状态设为已通知
+      setExpireNotifyTrue(sendExpireNotifySuccessAddresses, errHandler, function (results) {
+        res.send("success");
+      });
+    });
+    // 过滤掉没有域名绑定的会员, 为什么要过滤, 不要过滤
+    // filterAddressByDomainVerify(recentlyExpireNotifyAddresses, errHandler, function (filterAddresses) {
+    // })
+  });
+}
+
+
+// function filterAddressByDomainVerify(addresses, errCB, successCB) {
+//   // 确保这些用户都有域名绑定成功, 没有绑定域名的无视他们
+//   var users = addresses.map(function (address) {
+//     return address.user;
+//   });
+//   var match = {
+//     $match: {
+//       user: {
+//         $in: users
+//       },
+//       cnameVerifyStatus: true,
+//       mxVerifyStatus: true,
+//     }
+//   };
+//   var group = {
+//     $group: {
+//       _id: "$user",
+//     }
+//   };
+//   var aggregate = [
+//       match
+//     , group
+//   ]
+//   Domain.aggregate(aggregate, function (err, results) {
+//     if (results == null) {
+//       err = err || new Error(addresses, "can't get match domain verify")
+//     }
+//     err && errCB(err);
+//     if (results) {
+//       var addresses_filterby_domain_verify = results.map(function (obj) {
+//         for(address of addresses) {
+//           if (obj._id.equals(address.user)) {
+//             return address
+//           }
+//         }
+//       });
+//       successCB(addresses_filterby_domain_verify);
+//     }
+//   });
+// }
+
+function sendExpireNotifyTo(addresses, errCB, successCB) {
+  var debug = false;
+  // debug = true;
+  if (debug) {
+    addresses.forEach(function (notifyAddress) {
+      console.log(notifyAddress.email);
+    });
+    return errCB(new Error("debug mode"))
+  }
+  var success_list = [];
+  var err_list = [];
+  async.each(addresses, function (address, done) {
+    // done: (err, sendSuccessAddress, sendFailAddress)
+    // 如果这个记录没有通过验证, 那么需要发送验证邮件
+    var mailOptions = {
+      to: address.email,
+      from: secrets.expireNotifyEmailSender,
+      subject: '你的会员计划快要过期了',
+      text: '你在SoManyAd的会员计划快要过期了, 续期请进入 http://somanyad.com/members \n' +
+            '如果你想退订, 请登录,然后在 http://somanyad.com/members 将"会员到期提醒" 设为空白.\n' +
+            '谢谢您的支持'
+    };
+    sendMail(mailOptions, function(err) {
+      if (err) {
+        console.log(err);
+        err = new Error("发送邮件失败, 请联系管理员")
+        err_list.push(address);
+        done(null); // 不能干扰其他callback 的执行
+      } else {
+        success_list.push(address);
+        done(null); // 不能干扰其他 callback 的执行
+      }
+    });
+  }, function (err) {
+    if (err_list.length > 0) {
+      return errCB(err_list);
+    }
+    return successCB(success_list);
+  });
+}
+
+function setExpireNotifyTrue(addresses, errCB, successCB) {
+  var ids = addresses.map(function (address) {
+    return address._id;
+  })
+  ExpireNotifyAddress.makeHadNotifys(ids, function (err, results) {
+    err && errCB(err)
+    results && successCB(results)
+  })
 }

@@ -91,7 +91,7 @@ app.use(passport.session());
 app.use(flash());
 app.use(function (req, res, next) {
   if (req.path.indexOf("notify") != -1) {
-    console.log("notify: ", req.body, req.query);
+    // 如果是支付通知(支付宝的服务器发起的url 里面包含notify), 则不进行 csrf 效验
     next();
   } else {
     lusca({

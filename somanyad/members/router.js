@@ -17,10 +17,13 @@ router.use(function (req, res, next) {
 
 
 // 显示所有域名相关信息
-router.get('/', passportConf.isAuthenticated, members.middleware_plans, members.index);
+router.get('/', passportConf.isAuthenticated, members.middleware_plans, members.middleware_expireNotifyAddress, members.index);
 router.post('/free', passportConf.isAuthenticated, members.middleware_plans, members.free_post);
 router.post('/pay', passportConf.isAuthenticated, members.middleware_plans, members.alipay_post);
+router.post('/update_plan_expire_notify_address', passportConf.isAuthenticated, members.update_plan_expire_notify_address)
 router.get('/gotopay', passportConf.isAuthenticated, members.middleware_plans, members.gotopay);
+router.get('/tomorry_expire', members.tomorry_expire);
+router.get('/send_expire_notify_for_test', passportConf.isAuthenticated, members.send_expire_notify_for_test);
 // 显示最近两周的转发记录
 // router.get('/forwardCount', passportConf.isAuthenticated, members.middleware_plans, members.forwardCount);
 router.post('/aplipay/create_partner_trade_by_buyer/:pid/notify_url', members.easy_pay);

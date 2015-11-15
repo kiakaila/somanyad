@@ -1,6 +1,6 @@
 var async = require('async');
 var Domain = require("../models/Domain").Domain;
-var EmailVerify = require("../models/Domain").EmailVerify;
+var Emails = require("../emails");
 var ForwardRecords = require("../models/ForwardRecord").ForwardRecords;
 
 
@@ -33,8 +33,8 @@ exports.locals_domains = function (req, res, next) {
 
   async.parallel([
     function (done) {
-      EmailVerify.find({user: req.user._id}, function (err, emailVs) {
-        done(err, emailVs);
+      Emails.findAllVerifyStatus(req.user._id, function (err, emailVs) {
+        done(err, emailVs)
       });
     },
     function (done) {

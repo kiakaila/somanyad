@@ -17,7 +17,7 @@ var freePlanSchema = new Schema({
   expireAt: Date,
   duration: { type: String, default: "10天" },
   status: { type: String, default: "订单已生效" },
-  pay_finish: { type: Boolean, default: true }
+  pay_finish: { type: Boolean, default: true },
 });
 freePlanSchema.plugin(stampIt);
 // 支付宝付费
@@ -37,7 +37,7 @@ var alipayPlanSchema = new Schema({
     notify_from_alipay: Schema.Types.Mixed,
     pay_to_alipay: Schema.Types.Mixed,
     had_send_goods: { type: Number, default: 0 }
-  }
+  },
 })
 alipayPlanSchema.virtual("pay_money").get(function () {
   return this.pay_obj.register_to_pay.price;

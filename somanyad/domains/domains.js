@@ -1,7 +1,7 @@
 
 var Domain = require("../models/Domain").Domain;
 var Forward = require("../models/Domain").Forward;
-var EmailVerify = require("../models/Domain").EmailVerify;
+var Emails = require("../emails");
 var BlackReceiveList = require("../models/Domain").BlackReceiveList;
 var dnslookup = require("../../lib/dnslookup");
 var secrets = require("../../somanyad/config");
@@ -46,54 +46,29 @@ exports.change_forward_email_post = function (req, res) {
   var forward_email = req.body.forward_email;
 
   async.waterfall([
-    // 查找之前的转发记录,
-    function (done) {
-      EmailVerify.findOrCreate({user: req.user._id, email: forward_email}, function (err, emailV) {
-        done(err, emailV)
-      })
-    },
+    // 查找之前的转发记录, 或者创建新的
     // 发送验证邮箱所有权的邮件
-    function (emailVerify, done) {
-
-      if (emailVerify.passVerify) {
-        done(null, emailVerify);
-        return;
-      }
-      // 如果这个记录没有通过验证, 那么需要发送验证邮件
-      var mailOptions = {
-        to: forward_email,
-        from: secrets.verifyEmailSender,
-        subject: '验证邮箱所有权',
-        text: '你是否允许用户: '  + req.user.email + '转发邮件给你, 如果允许请点击下面的链接, 或者将下面的链接复制到浏览器地址栏\n\n' +
-          'http://' + req.headers.host +  req.baseUrl + '/emailVerify?id=' + emailVerify._id + '&email=' + emailVerify.email + '\n\n' +
-          ' 如果不允许, 则无需进行操作.\n'
-      };
-      sendMail(mailOptions, function(err) {
-        if (err) {
-          console.log(err);
-          err = new Error(res.__("发送邮件失败, 请联系管理员"))
-          req.flash('errors', { msg: err.message });
-        } else {
-          req.flash('info', { msg: res.__('已经发送验证链接到你的邮箱: %s ,请点击里面的链接', forward_email) });
-        }
-        done(err, emailVerify);
-      });
+    function (done) {
+      var nickname = req.user.email;
+      Emails.sendNewVerifyEmailIfNeed(req.user._id, nickname, forward_email, res.__, function (err, emailVID, passVerify) {
+        done(err, emailVID)
+      })
     },
     // 关联域名记录与邮箱所有权记录
-    function (emailVerify, done) {
+    function (emailVID, done) {
       var domain = res.locals.domain;
-      domain.forward_email = emailVerify._id;
+      domain.forward_email = emailVID;
       domain.save(function (err) {
-        done(err, domain, emailVerify);
+        done(err);
       })
     },
-  ], function (err, domain, emailVerify) {
+  ], function (err) {
     if (err) {
       req.flash('errors', { msg: err.message })
-    }
-    if (emailVerify.passVerify) {
+    } else {
       req.flash('success', { msg: res.__("邮件修改成功") })
     }
+
     return res.redirect( req.baseUrl + "/edit?domain=" + domain_str);
   })
 }
@@ -119,15 +94,15 @@ exports.addNewDomain_post = function (req, res) {
     },
     // 查找或者创建一条邮箱所有权的记录
     function (domain, done) {
-      EmailVerify.findOrCreate({user: user._id, email: forward_email}, function (err, emailVerify) {
-        done(err, domain, emailVerify)
+      Emails.is_verified_address( user._id, forward_email, function (err, is_verified, emailVID) {
+        done(err, domain, emailVID)
       })
     },
     // 关联域名记录与邮箱所有权记录
-    function (domain, emailVerify, done) {
-      domain.forward_email = emailVerify._id;
+    function (domain, emailVID, done) {
+      domain.forward_email = emailVID;
       domain.save(function (err) {
-        done(err, domain, 'done');
+        done(err, domain);
       })
     }],
     // 渲染请求
@@ -155,45 +130,30 @@ exports.newDomainSetup = function (req, res) {
       })
     },
     // 查找相关的转发目的地
-    function (domain, done) {
-      EmailVerify.findOne({_id: domain.forward_email}, function (err, emailV) {
-        err = err ||
-              emailV == null ? new Error( res.__("没有找到邮箱记录") ) : null;
-        done(err, domain, emailV)
-      });
-    },
     // 发送验证邮箱所有权的邮件
-    function (domain, emailVerify, done) {
-      if (emailVerify.passVerify) {
-        return done(null, domain, emailVerify)
-      }
-      // 如果这个记录没有通过验证, 那么需要发送验证邮件
-      var mailOptions = {
-        to: emailVerify.email,
-        from: secrets.verifyEmailSender,
-        subject: res.__("验证邮箱所有权"),
-        text: '你是否允许用户: '  + req.user.email + '转发邮件给你, 如果允许请点击下面的链接, 或者将下面的链接复制到浏览器地址栏\n\n' +
-          'http://' + req.headers.host +  req.baseUrl + '/emailVerify?id=' + emailVerify._id + '&email=' + emailVerify.email + '\n\n' +
-          ' 如果不允许, 则无需进行操作.\n'
-      };
-      sendMail(mailOptions, function(err) {
+    function (domain, done) {
+      // 找到邮箱地址, 如果没有通过验证, 则发送验证邮件
+      var emailVID = domain.forward_email;
+      var nickname = req.user.email;
+      Emails.sendVerifyEmailIfNeed(nickname, emailVID, function (err, email, passVerify) {
         if (err) {
           console.log(err);
-          err = new Error(res.__("发送邮件失败, 请联系管理员"));
-          req.flash('errors', { msg: err.message });
-        } else {
-          req.flash('info', { msg: res.__('已经发送验证链接到你的邮箱: %s ,请点击里面的链接', emailVerify.email)  });
+          err = new Error( res.__("发送邮件失败, 请联系管理员"));
+          req.flash('errors', { msg: err.message })
         }
-        done(err, domain, emailVerify);
-      });
+        if (!passVerify) {
+          req.flash('info', { msg: res.__("已经发送验证链接到你的邮箱: %s , 请点击里面的链接", email)});
+        }
+        done(err, domain, email, passVerify)
+      })
     }],
     // 渲染
-    function (err, domain, emailV) {
+    function (err, domain, email, passVerify) {
       var cname = dnslookup.cnameFun(domain_str, req.user._id);
       var mailServers = secrets.mailServers;
-      if (domain && emailV) {
-        domain.email = emailV.email;
-        domain.email_hadVerify = emailV.passVerify;
+      if (domain) {
+        domain.email = email;
+        domain.email_hadVerify = passVerify;
       }
 
       if (err) {
@@ -231,9 +191,11 @@ exports.newDomainSetup2 = function (req, res) {
     },
     // 查找域名的转发邮件记录
     function (domain, done) {
-      EmailVerify.findOne({_id: domain.forward_email}, function (err, emailV) {
-        done(err, domain, emailV)
-      })
+      var emailVID = domain.forward_email
+      Emails.getPassVerifyAndAddressById( emailVID, function (err, is_verified, email) {
+        var emailV = {passVerify: is_verified, email: email}
+        done(err, domain, emailV);
+      });
     },
     // 查看 cname 验证情况
     function (domain, emailV, done) {
@@ -328,24 +290,17 @@ exports.deleteDomain_post = function (req, res) {
 
 // 验证允许转发的邮件地址
 exports.emailVerify = function (req, res) {
-  var id = req.query.id;
   var email = req.query.email;
+  var emailVID = req.query.id;
 
-  EmailVerify.findOne({_id: id, email: email}, function (err, emailV) {
-    if (err || emailV == null) {
-      req.flash('errors', (err || new Error( res.__("找不到相应的记录"))));
-      console.log(err, emailV);
-      return res.render("somanyad/domains/emailVerify");
-    } else {
-      emailV.passVerify = true;
-      emailV.save(function (err) {
-        if (err) {
-          req.flash('errors', { msg: err.message });
-        }
-        console.log(err, emailV);
-        res.locals.emailV = emailV;
-        return res.render("somanyad/domains/emailVerify");
-      });
-    }
+  Emails.verifyAddress(emailVID, email, res.__, function (err, passVerify) {
+    if (err) {
+      req.flash('errors', { msg: err.message });
+      return res.render('somanyad/domains/emailVerify');
+    };
+    return res.render('somanyad/domains/emailVerify', {
+      passVerify: passVerify,
+      email: email
+    });
   });
 }

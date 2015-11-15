@@ -20,9 +20,12 @@ html.no-js
   body
     block header
       include partials/header
-
+    
+    .container(style="margin-top: 40px;")
+      .row
     block flash
       include partials/flash
+    
     .container
       block content
     block footer

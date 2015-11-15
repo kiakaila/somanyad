@@ -13,4 +13,21 @@ block content
         .panel-body
           include pay
 
+  br
+  br
+  .row
+    form(action="/members/update_plan_expire_notify_address", method="post")
+      input(type='hidden', name='_csrf', value=_csrf)
+      .col-md-8
+        .input-group
+          span.input-group-addon #{__("会员计划到期提醒,邮箱地址(如果不设置,或者未设置,则不发送到期提醒邮件!!!) :")}
+          input(type="email", name="notify_email", value="#{ notify_email }").form-control
+      .col-md-3
+        .col-md-4
+          button(type="submit").btn.btn-success #{__("更新")}
+        .col-md-4
+          a(href="/members/send_expire_notify_for_test").btn.btn-warning #{__("发一封来看看(记得要先更新邮件地址哦)")}
+
+  br
+        
   include availRecord

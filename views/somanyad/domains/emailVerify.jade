@@ -3,10 +3,10 @@ extends ../../layout
 block content
 
   .container
-    if emailV
+    if passVerify
       .row
         .col-md-6
-          p #{__("你好, 你的邮件地址%s已经验证", emailV.email)}
+          p #{__("你好, 你的邮件地址%s已经验证", email)}
     else
       .row
         .col-md-6
