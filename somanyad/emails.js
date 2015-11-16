@@ -38,6 +38,9 @@ var send_verify_email = exports.send_verify_email = function (nickname, emailVID
   if (cb == null) {
     cb = __;
     __ = function (text) {
+      for (var i = 1; i < arguments.length; i++) {
+        text = text.replace("%s", arguments[i])
+      }
       return text;
     }
   };
@@ -47,8 +50,8 @@ var send_verify_email = exports.send_verify_email = function (nickname, emailVID
       err = err || new Error(__("找不到验证记录"));
       return cb(err);
     };
-    // 如果这个记录没有通过验证, 那么需要发送验证邮件
-    var text = "你是否允许用户: %s 转发邮件给你, 如果允许请点击下面的链接, 或者将下面的链接复制到浏览器地址栏\n\n %s?id=%s&email=%s+\n\n如果不允许,则无需进行操作.\n";
+    // 如果这个记录没有通过验证, 那么需要发送验证邮件 
+    var text = "你是否允许用户: %s 转发邮件给你, 如果允许请点击下面的链接, 或者将下面的链接复制到浏览器地址栏\n\n %s?id=%s&email=%s\n\n如果不允许,则无需进行操作.\n";
     text = __(text, nickname, secrets.verifyEmailLinkPre, emailVID, emailV.email);
     var mailOptions = {
       to: emailV.email,
@@ -73,6 +76,9 @@ exports.getEmailAddressById = function (emailVID, __, cb) {
   if (cb == null) {
     cb = __;
     __ = function (text) {
+      for (var i = 1; i < arguments.length; i++) {
+        text = text.replace("%s", arguments[i])
+      }
       return text;
     }
   };
@@ -92,6 +98,9 @@ exports.getPassVerifyAndAddressById = function (emailVID, __, cb) {
   if (cb == null) {
     cb = __;
     __ = function (text) {
+      for (var i = 1; i < arguments.length; i++) {
+        text = text.replace("%s", arguments[i])
+      }
       return text;
     }
   };
@@ -112,6 +121,9 @@ exports.sendVerifyEmailIfNeed = function (nickname, emailVID, __, cb) {
   if (cb == null) {
     cb = __;
     __ = function (text) {
+      for (var i = 1; i < arguments.length; i++) {
+        text = text.replace("%s", arguments[i])
+      }
       return text
     }
   }
@@ -135,6 +147,9 @@ exports.verifyAddress = function (emailVID, email, __, cb) {
   if (cb == null) {
     cb = __;
     __ = function (text) {
+      for (var i = 1; i < arguments.length; i++) {
+        text = text.replace("%s", arguments[i])
+      }
       return text;
     };
   };

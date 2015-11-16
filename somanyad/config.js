@@ -29,7 +29,7 @@ _.extend(conf, {
   cnamePointTo: "somanyad.com",
   sendMailDomain: "somanyad.com",
   verifyEmailSender: "verify@somanyad.com",
-  verifyEmailLinkPre: "http://somanyad.com/members/emailVerify",
+  verifyEmailLinkPre: "http://somanyad.com/domains/emailVerify",
   expireNotifyEmailSender: "expireNotify@somanyad.com",
   no_reply_passwordHasBeenChanged: "no_reply_passwordHasBeenChanged@somanyad.com",
   domain: "somanyad.com",
