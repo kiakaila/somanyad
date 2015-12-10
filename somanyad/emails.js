@@ -23,6 +23,15 @@ emailVerifySchema.plugin(findOrCreate);
 
 var EmailVerify = mongoose.model("EmailVerifyq", emailVerifySchema);
 
+exports.hadRegisterEmailAddress = function (email, cb) {
+  var q = {email: email};
+  EmailVerify.findOne(q, function(err, emailV) {
+    if (emailV) {
+      return cb(null, email);
+    };
+    return cb(err || new Error("Email address not found"), null);
+  });
+}
 // 用户是否点击了验证邮件, 如果用户还没有这个记录, 那么就创建
 // cb(err, is_verified, emailVID)
 exports.is_verified_address = function (uid, email, cb) {
