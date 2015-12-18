@@ -59,7 +59,7 @@ var send_verify_email = exports.send_verify_email = function (nickname, emailVID
       err = err || new Error(__("找不到验证记录"));
       return cb(err);
     };
-    // 如果这个记录没有通过验证, 那么需要发送验证邮件 
+    // 如果这个记录没有通过验证, 那么需要发送验证邮件
     var text = "你是否允许用户: %s 转发邮件给你, 如果允许请点击下面的链接, 或者将下面的链接复制到浏览器地址栏\n\n %s?id=%s&email=%s\n\n如果不允许,则无需进行操作.\n";
     text = __(text, nickname, secrets.verifyEmailLinkPre, emailVID, emailV.email);
     var mailOptions = {
@@ -164,15 +164,15 @@ exports.verifyAddress = function (emailVID, email, __, cb) {
   };
   EmailVerify.findOne({_id: emailVID, email: email}, function (err, emailV) {
     if (emailV == null || err) {
-      err = err || new Error( __("找不到邮件记录") )
-      cb(err, false);
+      err = err || new Error( __("找不到邮件记录: email:" + email + "id: " + emailVID) )
+      return cb(err, false);
     };
     emailV.passVerify = true;
     emailV.save(function (err) {
       if (err) {
-        cb(err, false);
+        return cb(err, false);
       };
-      cb(null, true);
+      return cb(null, true);
     });
   });
 }
