@@ -1,6 +1,6 @@
 var mongoose = require('mongoose')
   , Schema = mongoose.Schema
-  , ObjectId = Schema.ObjectId;
+  , ObjectId = mongoose.Types.ObjectId;
 var stampIt = require("mongoose-stamp");
 var findOrCreate = require("mongoose-findorcreate");
 
