@@ -33,7 +33,7 @@ exports.findErrorUrl = function (err, cb) {
     if (err || errUrl == null) {
       return cb(err.message);
     }
-    return cb("http://somanyad.com/members/errurl/" + errurl._id);
+    return cb("http://somanyad.com/members/errurl/" + errUrl._id);
   });
 }
 
