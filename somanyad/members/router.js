@@ -5,7 +5,7 @@ var async = require("async");
 var dnslookup = require("../../lib/dnslookup");
 var feePlan = require("./models").feePlan;
 var m = require("moment");
-
+var errHandler = require("../errHandler").errorHandler;
 var members = require("./members");
 
 router.use(function (req, res, next) {
@@ -32,5 +32,5 @@ router.post('/aplipay/create_partner_trade_by_buyer/:pid/notify_url', members.ea
 router.get('/aplipay/create_partner_trade_by_buyer/return_url', members.middleware_plans, members.pay_return_url);
 // // 订单详情
 // router.get('/order', passportConf.isAuthenticated, members.order_detail)
-
+router.get('/errurl/:id', errorHandler)
 exports.router = router;

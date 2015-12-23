@@ -10,3 +10,4 @@ exports.getPassVerifyAndAddressById = require("./somanyad/emails").getPassVerify
 exports.hadRegisterEmailAddress = require("./somanyad/emails").hadRegisterEmailAddress;
 exports.user_had_pay = require("./somanyad/members/members").user_had_pay;
 exports.secrets = require("./somanyad/config");
+exports.findErrorUrl = require("./somanyad/errHandler").findErrorUrl;
