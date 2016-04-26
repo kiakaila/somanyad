@@ -126,6 +126,15 @@ exports.newDomainSetup = function (req, res) {
     // 查找该域名
     function (done) {
       Domain.findOne({domain: domain_str, user: req.user._id}, function (err, domain) {
+        if (domain == null) {
+          var msg = "domain: " + domain_str + " user: " + req.user._id;
+          console.log(msg);
+          if (!err) {
+            err = new Error( res.__("数据库无法找到该域名" + msg))
+          }
+          done(err, null);
+          return;
+        }
         done(err, domain)
       })
     },
